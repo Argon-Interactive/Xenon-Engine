@@ -1,6 +1,8 @@
+#define XENON
 #include "xenon.h"
 #include <iostream>
+#include <all.hpp>
 
 void testMe() {
-	std::cout << "I work\n";
+	ALL_ENT("Welcome in Xenon Engine");
 }
