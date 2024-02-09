@@ -18,9 +18,9 @@ namespace core {
 		{ r -= col.r; g -= col.g; b -= col.b; a -= col.a; return *this; }
 		color operator*(float mul)
 		{ return { 
-			static_cast<uint8_t>(static_cast<float>(r) * mul), 
-			static_cast<uint8_t>(static_cast<float>(g) * mul),  
-			static_cast<uint8_t>(static_cast<float>(b) * mul), 
+			static_cast<uint8_t>(static_cast<float>(r) * mul),
+			static_cast<uint8_t>(static_cast<float>(g) * mul),
+			static_cast<uint8_t>(static_cast<float>(b) * mul),
 			static_cast<uint8_t>(static_cast<float>(a) * mul)
 		}; }
 		color operator*=(float mul)
@@ -33,9 +33,9 @@ namespace core {
 		}
 		color operator/(float div)
 		{ return { 
-			static_cast<uint8_t>(static_cast<float>(r) / div), 
-			static_cast<uint8_t>(static_cast<float>(g) / div),  
-			static_cast<uint8_t>(static_cast<float>(b) / div), 
+			static_cast<uint8_t>(static_cast<float>(r) / div),
+			static_cast<uint8_t>(static_cast<float>(g) / div),
+			static_cast<uint8_t>(static_cast<float>(b) / div),
 			static_cast<uint8_t>(static_cast<float>(a) / div)
 		}; }
 		color operator/=(float div)
@@ -46,6 +46,8 @@ namespace core {
 			a = static_cast<uint8_t>(static_cast<float>(a) / div);
 			return *this;
 		}
+		bool operator==(color col)
+		{ return (r == col.r) && (g == col.g) && (b == col.b) && (a == col.a); }
 	};
 
 	struct vertice2
