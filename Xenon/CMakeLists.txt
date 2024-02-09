@@ -12,3 +12,6 @@ include_directories(vendor/stb)
 include_directories(vendor/all)
 
 add_subdirectory(src)
+
+target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch/pch.h)
+target_precompile_headers(XenonEngine PRIVATE src/pch/pch.h)

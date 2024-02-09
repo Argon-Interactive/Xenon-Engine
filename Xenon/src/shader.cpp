@@ -1,6 +1,5 @@
 #include"shader.h"
 
-
 unsigned int xen::Shader::sm_currBind = 0;
 
 unsigned int xen::Shader::CompileShader(unsigned int type, const std::string& src)
