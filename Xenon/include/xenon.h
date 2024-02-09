@@ -4,5 +4,8 @@
 	#define XAPI __declspec(dllimport) 
 #endif
 
-
-XAPI void testMe();
+namespace xen
+{
+	XAPI void testMe();
+	XAPI void runApp(const char* name);
+}

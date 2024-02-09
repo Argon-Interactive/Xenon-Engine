@@ -3,5 +3,5 @@
 #include "xenon.h"
 
 int main() {
-	testMe();
+	xen::runApp("test");
 }
