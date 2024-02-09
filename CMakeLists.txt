@@ -34,6 +34,7 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
 endif()
 
 include_directories(Xenon/include)
+include_directories(Xenon/src)
 include_directories(Xenon/vendor/glad/include/glad)
 include_directories(Xenon/vendor/glad/include/KHR)
 include_directories(Xenon/vendor/glad/include)

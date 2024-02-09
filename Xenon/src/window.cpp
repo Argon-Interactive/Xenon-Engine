@@ -1,54 +1,50 @@
 #include"window.h"
 #include<stb_image.h>
+#include <numeric>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 { glViewport(0, 0, width, height); }
 
-xen::Window::Window(uint32_t width, uint32_t height, std::string title)
-	:m_isVSync(true), m_isBorderless(false), m_ID(nullptr), m_title(title), m_monitor(nullptr), m_icon{0, 0}, m_winPosX(0), m_winPosY(0), m_winSizeW(width), m_winSizeH(height) {}
-xen::Window::~Window()
-{ glfwDestroyWindow(m_ID); }
-
-void xen::Window::create()
+core::Window::Window(uint32_t width, uint32_t height, std::string title)
+	:m_isVSync(true), m_isBorderless(false), m_ID(nullptr), m_title(title), m_monitor(nullptr) 
 {
 	m_monitor = glfwGetPrimaryMonitor();
 	glfwWindowHint(GLFW_SAMPLES, 4);
-	m_ID = glfwCreateWindow(m_winSizeW, m_winSizeH, m_title.c_str(), NULL, NULL);
-	if (!m_ID)
-	{
+	m_ID = glfwCreateWindow(width, height, m_title.c_str(), NULL, NULL);
+	if (!m_ID) {
 		ALL_ERR("Error with creation of a window named \"{0}\".", m_title);
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
 	glfwMakeContextCurrent(m_ID);
-	// vsync on by default!
-	glfwSwapInterval(1);
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
+	glfwSwapInterval(true); // vsync on by default!
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		ALL_ERR("Failed to initialize GLAD.");
 		exit(EXIT_FAILURE);
 	}
 	glfwSetFramebufferSizeCallback(m_ID, framebuffer_size_callback);
 }
 
-bool xen::Window::closeCallBack() const
+core::Window::~Window()
+{ glfwDestroyWindow(m_ID); }
+
+bool core::Window::closeCallBack() const
 {
 	if (!m_ID) return false;
 	return glfwWindowShouldClose(m_ID);
 }
 
-void xen::Window::close() const
+void core::Window::close() const
 { if (m_ID == nullptr) { return; } glfwSetWindowShouldClose(m_ID, GLFW_TRUE); }
 
-void xen::Window::setFullscreen(bool fullscreen)
+void core::Window::setFullscreen(bool fullscreen)
 {
-	if (m_ID == nullptr)
-	{ ALL_ERR("Window hasn't yet been created. First create a window before trying to set fullscreen."); return; }
 	if (isFullscreen() == fullscreen) return;
+	int posx = 0, posy = 0, sizew = 0, sizeh = 0;
 	if (fullscreen)
 	{
-		glfwGetWindowPos(m_ID, &m_winPosX, &m_winPosY);
-		glfwGetWindowSize(m_ID, &m_winSizeW, &m_winSizeH);
+		glfwGetWindowPos(m_ID, &posx, &posy);
+		glfwGetWindowSize(m_ID, &sizew, &sizeh);
 		const GLFWvidmode* mode = glfwGetVideoMode(m_monitor);
 		if (m_isVSync) {
 			glfwSetWindowMonitor(m_ID, m_monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
@@ -57,14 +53,11 @@ void xen::Window::setFullscreen(bool fullscreen)
 		}
 	}
 	else
-	{ glfwSetWindowMonitor(m_ID, nullptr, m_winPosX, m_winPosY, m_winSizeW, m_winSizeH, 0); }
+	{ glfwSetWindowMonitor(m_ID, m_monitor, posx, posy, sizew, sizeh, 0); }
 }
 
-void xen::Window::setBorderless(bool borderless)
+void core::Window::setBorderless(bool borderless)
 {
-	if (m_ID == nullptr)
-	{ ALL_ERR("Window hasn't yet been created. First create a window before trying to set borderless."); return; }
-
 	if (isBorderless() == borderless) return;
 	if (borderless)
 	{ glfwSetWindowAttrib(m_ID, GLFW_DECORATED, GLFW_FALSE); maximizeWindow(true); }
@@ -73,7 +66,7 @@ void xen::Window::setBorderless(bool borderless)
 	m_isBorderless = borderless;
 }
 
-void xen::Window::setVSync(bool vsync)
+void core::Window::setVSync(bool vsync)
 { 
 	glfwSwapInterval(vsync); 
 	if (isFullscreen()) {
@@ -82,146 +75,115 @@ void xen::Window::setVSync(bool vsync)
 	}
 }
 
-void xen::Window::setWindowSize(uint32_t width, uint32_t height)
+void core::Window::setWindowSize(uint32_t width, uint32_t height)
+{ glfwSetWindowSize(m_ID, width, height); }
+
+void core::Window::setWindowSize(std::pair<uint32_t, uint32_t> dims)
+{ glfwSetWindowSize(m_ID, dims.first, dims.second); }
+
+void core::Window::setWindowPos(uint32_t x, uint32_t y)
+{ glfwSetWindowPos(m_ID, static_cast<int>(x), static_cast<int>(y)); }
+
+void core::Window::setWindowPos(std::pair<uint32_t, uint32_t> pos)
+{ glfwSetWindowPos(m_ID, static_cast<int>(pos.first), static_cast<int>(pos.second)); }
+
+void core::Window::setSizeLimits(uint32_t minW, uint32_t minH, uint32_t maxW, uint32_t maxH)
+{ glfwSetWindowSizeLimits(m_ID, static_cast<int>(minW), static_cast<int>(minH), static_cast<int>(maxW), static_cast<int>(maxH));  }
+
+void core::Window::setSizeLimits(std::pair<uint32_t, uint32_t> minDims, std::pair<uint32_t, uint32_t> maxDims)
+{  glfwSetWindowSizeLimits(m_ID, static_cast<int>(minDims.first), static_cast<int>(minDims.second), static_cast<int>(maxDims.first), static_cast<int>(maxDims.second)); }
+
+void core::Window::setTitle(std::string title)
+{ glfwSetWindowTitle(m_ID, title.c_str()); m_title = title; }
+
+void core::Window::FEP() const
 {
-	if (m_ID == nullptr)
-	{ ALL_ERR("Window hasn't yet been created. First create a window before trying to set size."); return; }
-	glfwSetWindowSize(m_ID, width, height);
-}
-
-void xen::Window::setWindowSize(glm::uvec2 dims)
-{
-	if (m_ID == nullptr)
-	{ ALL_ERR("Window hasn't yet been created. First create a window before trying to set size."); return; }
-	glfwSetWindowSize(m_ID, dims.x, dims.y);
-}
-
-void xen::Window::setWindowPos(uint32_t x, uint32_t y)
-{
-	if (m_ID == nullptr)
-	{ ALL_ERR("Window hasn't yet been created. First create a window before trying to set position."); return; }
-	glfwSetWindowPos(m_ID, static_cast<int>(x), static_cast<int>(y));
-}
-
-void xen::Window::setWindowPos(glm::uvec2 pos)
-{
-	if (m_ID == nullptr)
-	{ ALL_ERR("Window hasn't yet been created. First create a window before trying to set position."); return; }
-	glfwSetWindowPos(m_ID, static_cast<int>(pos.x), static_cast<int>(pos.y));
-}
-
-void xen::Window::setSizeLimits(uint32_t minW, uint32_t minH, uint32_t maxW, uint32_t maxH)
-{ 
-	if (m_ID == nullptr)
-	{ ALL_ERR("Window hasn't yet been created. First create a window before trying to set size limits."); return; }
-	glfwSetWindowSizeLimits(m_ID, static_cast<int>(minW), static_cast<int>(minH), static_cast<int>(maxW), static_cast<int>(maxH));
-}
-
-void xen::Window::setSizeLimits(glm::uvec2 minDims, glm::uvec2 maxDims)
-{ 
-	if (m_ID == nullptr)
-	{ ALL_ERR("Window hasn't yet been created. First create a window before trying to set size limits."); return; }
-	glfwSetWindowSizeLimits(m_ID, static_cast<int>(minDims.x), static_cast<int>(minDims.y), static_cast<int>(maxDims.x), static_cast<int>(maxDims.y));
-}
-
-void xen::Window::setTitle(std::string title)
-{
-	if (m_ID == nullptr)
-	{ ALL_ERR("Window hasn't yet been created. First create a window before trying to set a title."); return; }
-	glfwSetWindowTitle(m_ID, title.c_str());
-	m_title = title;
-}
-
-void xen::Window::FEP() const
-{
-	if (m_ID == nullptr)
-	{ ALL_ERR("Window hasn't yet been created. First create a window before setting a frame end point."); return; }
 	glfwSwapBuffers(m_ID);
 	glfwPollEvents();
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void xen::Window::setIcon(std::string icon, std::string icon_small)
+void core::Window::setIcon(std::string icon, std::string icon_small)
 {
-	if (m_ID == nullptr)
-	{ ALL_ERR("Window hasn't yet been created. First create a window before trying to set an icon."); return; }
-
+	GLFWimage iconImage[2];
 	stbi_set_flip_vertically_on_load(0);
-	m_icon[0].pixels = stbi_load(icon.c_str(), &m_icon[0].width, &m_icon[0].height, 0, 4);
-	m_icon[1].pixels = stbi_load(icon.c_str(), &m_icon[1].width, &m_icon[1].height, 0, 4);
+	iconImage[0].pixels = stbi_load(icon.c_str(), &iconImage[0].width, &iconImage[0].height, 0, 4);
+	iconImage[1].pixels = stbi_load(icon_small.c_str(), &iconImage[1].width, &iconImage[1].height, 0, 4);
 
-
-	if (m_icon[0].pixels == nullptr || m_icon[1].pixels == nullptr)
+	if (iconImage[0].pixels == nullptr || iconImage[1].pixels == nullptr)
 	{ ALL_ERR("Failed to load window icon."); return; }
 
-	glfwSetWindowIcon(m_ID, 2, m_icon);
-	stbi_image_free(m_icon[0].pixels);
-	stbi_image_free(m_icon[1].pixels);
+	glfwSetWindowIcon(m_ID, 2, iconImage);
+	stbi_image_free(iconImage[0].pixels);
+	stbi_image_free(iconImage[1].pixels);
 	stbi_set_flip_vertically_on_load(1);
 }
 
-void xen::Window::setIcon() const
+void core::Window::setIcon(std::string icon)
 {
-	if (m_ID == nullptr)
-	{ ALL_ERR("Window hasn't yet been created. First create a window before trying to set an icon."); return; }
-	glfwSetWindowIcon(m_ID, 0, NULL);
+	GLFWimage iconImage;
+	stbi_set_flip_vertically_on_load(0);
+	iconImage.pixels = stbi_load(icon.c_str(), &iconImage.width, &iconImage.height, 0, 4);
+
+	if (iconImage.pixels == nullptr)
+	{ ALL_ERR("Failed to load window icon."); return; }
+
+	glfwSetWindowIcon(m_ID, 1, &iconImage);
+	stbi_image_free(iconImage.pixels);
+	stbi_set_flip_vertically_on_load(1);
 }
 
-void xen::Window::maximizeWindow(bool maximize) const
+void core::Window::setIcon() const
+{ glfwSetWindowIcon(m_ID, 0, NULL); }
+
+void core::Window::maximizeWindow(bool maximize) const
 {
-	if (m_ID == nullptr)
-	{ ALL_ERR("Window hasn't yet been created. First create a window before trying to set it's maximization."); return; }
-	if (maximize)
-	glfwMaximizeWindow(m_ID);
-	else
-	glfwRestoreWindow(m_ID);
+	if (maximize) glfwMaximizeWindow(m_ID);
+	else glfwRestoreWindow(m_ID);
 }
 
-void xen::Window::setResizable(bool resizable) const
-{
-	if (m_ID == nullptr)
-	{ ALL_ERR("Window hasn't yet been created. First create a window before trying to set it's resizing."); return; }
-	glfwSetWindowAttrib(m_ID, GLFW_RESIZABLE, resizable);
-}
+void core::Window::setResizable(bool resizable) const
+{ glfwSetWindowAttrib(m_ID, GLFW_RESIZABLE, resizable); }
 
-bool xen::Window::isBorderless() const
+bool core::Window::isBorderless() const
 { return m_isBorderless; }
 
-bool xen::Window::isFullscreen() const
+bool core::Window::isFullscreen() const
 { return (m_ID == nullptr) ? false : glfwGetWindowMonitor(m_ID) != nullptr; }
 
-std::string xen::Window::getTitle()
+std::string core::Window::getTitle()
 { return m_title; }
 
-glm::uvec2 xen::Window::getWindowSize()
+std::pair<uint32_t, uint32_t> core::Window::getWindowSize()
 {
 	int w, h;
-	if (m_ID == nullptr)
-	{ ALL_ERR("Window hasn't yet been created. First create a window before trying to get window size."); return {}; }
 	glfwGetWindowSize(m_ID, &w, &h);
 	return { static_cast<uint32_t>(w), static_cast<uint32_t>(h) };
 }
 
-glm::ivec2 xen::Window::getWindowPos()
+std::pair<int, int> core::Window::getWindowPos()
 {
 	int x, y;
-	if (m_ID == nullptr)
-	{ ALL_ERR("Window hasn't yet been created. First create a window before trying to get window position."); return {}; }
 	glfwGetWindowSize(m_ID, &x, &y);
 	return { x, y };
 }
 
-glm::uvec2 xen::Window::getScreenResolution()
+std::pair<uint32_t, uint32_t> core::Window::getScreenResolution()
 {
-	if (m_ID == nullptr)
-	{ ALL_ERR("Window hasn't yet been created. First create a window before trying to get screen resolution."); return {}; }
 	const GLFWvidmode* mode = glfwGetVideoMode(m_monitor);
 	return { static_cast<uint32_t>(mode->width), static_cast<uint32_t>(mode->height) };
 }
 
-bool xen::Window::getVSync() const
+std::pair<uint32_t, uint32_t> core::Window::getScreenAspectRatio()
+{
+	auto res = getScreenResolution();
+	int gcd = std::gcd(res.first, res.second);
+	return { res.first / gcd, res.second / gcd };
+}
+
+bool core::Window::getVSync() const
 { return m_isVSync; }
 
-GLFWwindow* xen::Window::passPointer() const
+GLFWwindow* core::Window::passPointer() const
 { return m_ID; }
 

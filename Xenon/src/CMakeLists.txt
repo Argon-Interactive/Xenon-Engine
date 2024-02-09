@@ -3,9 +3,9 @@ set(XENON_SRC
 	xenon.cpp
 	window.cpp
 	window.h
-	shader.cpp
-	shader.h
-)
+	"rendering/shader.cpp"
+	"rendering/shader.h"
+ "rendering/renderer2d.cpp" "rendering/renderer2d.h" "dataStructures.h")
 
 add_library(XenonEngine SHARED ${XENON_SRC})
 

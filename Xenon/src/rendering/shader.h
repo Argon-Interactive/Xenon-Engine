@@ -8,7 +8,7 @@
 #include<unordered_map>
 
 
-namespace xen
+namespace core
 {
 	class Shader
 	{

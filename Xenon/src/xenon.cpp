@@ -1,10 +1,8 @@
-#define XENON
 #include "xenon.h"
-#include <iostream>
 #include <all.hpp>
 #include "window.h"
 
-namespace xen
+namespace Xenon
 {
 	void testMe() {
 		ALL_ENT("Welcome in Xenon Engine");
@@ -12,10 +10,10 @@ namespace xen
 	void runApp(const char* name) {
 		if (glfwInit() == GLFW_FALSE)
 		{ ALL_ERR("Failed to initialize GLFW"); exit(EXIT_FAILURE); }
-		xen::Window window(128, 128, name);
-		while (window.closeCallBack())
+		core::Window window(480, 480, name);
+		while (!window.closeCallBack())
 		{
-			//run
+			window.FEP();
 		}
 		glfwTerminate();
 	}
