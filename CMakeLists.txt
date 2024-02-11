@@ -34,6 +34,7 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
 endif()
 
 include_directories(Xenon/include)
+include_directories(Xenon/vendor/all)
 
 add_subdirectory(Xenon)
 add_subdirectory(Sandbox)

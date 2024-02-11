@@ -9,7 +9,6 @@ include_directories(vendor/glad/include)
 include_directories(vendor/glfw/include/GLFW)
 include_directories(vendor/glm)
 include_directories(vendor/stb)
-include_directories(vendor/all)
 
 add_subdirectory(src)
 

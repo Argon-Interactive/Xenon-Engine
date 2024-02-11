@@ -5,7 +5,8 @@ set(XENON_SRC
 	window.h
 	shader.cpp
 	shader.h
-)
+	core.h
+ "application.h" "entryPoint.h" "application.cpp")
 
 include_directories(pch)
 

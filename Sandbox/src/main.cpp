@@ -2,6 +2,17 @@
 
 #include "xenon.h"
 
-int main() {
-	xen::runApp("test");
+class Sandbox : public Xenon::Application
+{
+public:
+	Sandbox() {
+
+	}
+	~Sandbox() override {
+
+	}
+};
+
+Xenon::Application* Xenon::create() {
+	return new Sandbox();
 }
