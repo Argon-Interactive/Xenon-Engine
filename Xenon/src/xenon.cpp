@@ -1,5 +1,4 @@
 #define XENON_DLL_BUILD
-#include "xenon.h"
 #include "all.hpp"
 #include <iostream>
 #include "window.h"

@@ -4,8 +4,11 @@
 #include "application.h"
 #include <memory>
 
+//extern Xenon::Application* Xenon::create();
+
 int main(int argc, char** argv) {
-	std::unique_ptr<Xenon::Application> game(Xenon::create());
+	Xenon::Application* ptr = Xenon::create();
+	std::unique_ptr<Xenon::Application> game(ptr);
 	game->run();
 }
 
