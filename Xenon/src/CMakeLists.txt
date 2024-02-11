@@ -8,7 +8,8 @@ set(XENON_SRC
 	core.h
 	application.h
 	entryPoint.h
-	application.cpp)
+	application.cpp
+)
 
 include_directories(pch)
 

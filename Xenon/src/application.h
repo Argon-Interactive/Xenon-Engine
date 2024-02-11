@@ -1,8 +1,9 @@
 #ifndef _XENON_APPLICATION_H_
 #define _XENON_APPLICATION_H_
 
-
 #include "core.h"
+
+int main(int argc, char** argv);
 
 namespace Xenon
 {
@@ -13,7 +14,10 @@ namespace Xenon
 		Application();
 		virtual ~Application();
 
+	private:
 		void run();
+
+		friend int ::main(int argc, char** argv);
 	};
 
 	Application* create();
