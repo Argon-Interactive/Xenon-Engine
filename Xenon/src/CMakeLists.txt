@@ -1,14 +1,18 @@
 set(XENON_SRC 
 
-	xenon.cpp
+	entryPoint.h
+	core.h
+	application.h
+	application.cpp
+
+	appData.h
+	appData.cpp
+
 	window.cpp
 	window.h
 	shader.cpp
 	shader.h
-	core.h
-	application.h
-	entryPoint.h
-	application.cpp
+
 )
 
 include_directories(pch)
