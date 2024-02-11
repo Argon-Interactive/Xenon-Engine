@@ -24,8 +24,4 @@ namespace Xenon
 
 }
 
-
-
-
-
 #endif // !_XENON_APPLICATION_H_

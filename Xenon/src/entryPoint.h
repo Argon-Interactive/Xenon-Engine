@@ -12,5 +12,4 @@ int main(int argc, char** argv) {
 	game->run();
 }
 
-
 #endif // !_XENON_ENTRYPOINT_H_

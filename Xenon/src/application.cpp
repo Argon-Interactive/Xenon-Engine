@@ -1,4 +1,3 @@
-#define XENON_DLL_BUILD
 #include "application.h"
 
 #include "all.hpp"

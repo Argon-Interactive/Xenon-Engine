@@ -13,5 +13,4 @@
 #endif
 
 
-
 #endif // !_XENON_CORE_H_
