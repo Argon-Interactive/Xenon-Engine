@@ -1,14 +1,13 @@
 #pragma once
-#include<all.hpp>
-#include<glad.h>
-#include<glfw3.h>
+
 #include<glm/glm.hpp>
 #include<glm/gtc/type_ptr.hpp>
 #include<glm/gtc/matrix_transform.hpp>
 #include<unordered_map>
+#include<vector>
+#include<string>
 
-
-namespace xen
+namespace Core
 {
 	class Shader
 	{
@@ -53,31 +52,6 @@ namespace xen
 		void setUniform1iv(const std::string& varName, const std::vector<int>& arr);
 		void setUniform1uv(const std::string& varName, const std::vector<uint32_t>& arr);
 
-		template<size_t S>
-		void setUniform1fv(const std::string& varName, const std::array<float, S>& arr)
-		{
-			glUseProgram(m_ID);
-			if (getUniformLoc(varName, m_ID)) return;
-			glUniform1fv(uniformLocs[varName], S, &arr[0]);
-			glUseProgram(sm_currBind);
-		}
-		template<size_t S>
-		void setUniform1iv(const std::string& varName, const std::array<int, S>& arr)
-		{
-			glUseProgram(m_ID);
-			if (getUniformLoc(varName, m_ID)) return;
-			glUniform1iv(uniformLocs[varName], S, &arr[0]);
-			glUseProgram(sm_currBind);
-		}
-		template<size_t S>
-		void setUniform1uv(const std::string& varName, const std::array<uint32_t, S>& arr)
-		{
-			glUseProgram(m_ID);
-			if (getUniformLoc(varName, m_ID)) return;
-			glUniform1uiv(uniformLocs[varName], S, &arr[0]);
-			glUseProgram(sm_currBind);
-		}
-				
 		void setUniformMatrix3(const std::string& varName, glm::mat3 v0);
 		void setUniformMatrix4(const std::string& varName, glm::mat4 v0);
 	private:

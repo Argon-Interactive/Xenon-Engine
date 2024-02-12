@@ -1,21 +1,25 @@
 set(XENON_SRC 
-
-	entryPoint.h
 	core.h
-	application.h
-	application.cpp
-
-	appData.h
-	appData.cpp
-
-	window.cpp
-	window.h
-	shader.cpp
-	shader.h
-
+	window/window.cpp
+	window/window.h
+	rendering/shader.cpp
+	rendering/shader.h
+	devTools/timer.hpp
+	devTools/logger.hpp
+	devTools/logger.cpp
+	devTools/xenonDevTools.cpp
+	core/appData.cpp
+	core/appData.h
+	core/application.cpp
+	core/application.h
+	core/entryPoint.h
 )
 
+include_directories(core)
+include_directories(devTools)
 include_directories(pch)
+include_directories(rendering)
+include_directories(window)
 
 add_library(XenonEngine SHARED ${XENON_SRC})
 

@@ -3,7 +3,7 @@
 
 #include "window.h"
 
-namespace core
+namespace Core
 {
 
 	class AppData
@@ -14,14 +14,14 @@ namespace core
 		static void init(uint32_t width, uint32_t height, const std::string& title);
 		static void terminate();
 
-		static xen::Window& getWindow();
+		static Core::Window& getWindow();
 
 	private:
 		AppData();
 
 		static AppData& getInstance();
 
-		xen::Window m_window;
+		Core::Window m_window;
 	};
 
 }

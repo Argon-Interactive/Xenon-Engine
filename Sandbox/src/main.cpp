@@ -1,16 +1,17 @@
-#include <iostream>
+#include <chrono>
 
 #include "xenon.h"
-#include "all.hpp"
+#include "xenonDevTools.h"
 
 class Sandbox : public Xenon::Application
 {
 public:
 	Sandbox() {
-		ALL_INF("Hello from sandbox");
+		Xenon::LogInf("Hello from sandbox");
+		Xenon::LogBR();
 	}
 	~Sandbox() override {
-		ALL_INF("Bye from sandbox");
+		Xenon::LogInf("Bye from sandbox");
 	}
 };
 
