@@ -2,9 +2,6 @@
 #include"logger.hpp"
 #include<chrono>
 
-const std::string Core::Logger::m_type[4] = { "[ENT] ", "[INF] ", "[WAR] ", "[ERR] " };
-std::string Core::Logger::m_colors[4] = { XN_LOG_WHITE, XN_LOG_GREEN, XN_LOG_YELLOW, XN_LOG_RED};
-
 Core::Logger Core::Logger::m_LogCore;
 Core::Logger Core::Logger::m_LogClient;
 
@@ -61,5 +58,10 @@ Core::Logger::~Logger() {
 		out << m_msg.str(); out.close();
 	}
 }
-void Core::Logger::breakLine()
-{ std::cout << "=========================================================================\n"; }
+
+void Core::Logger::breakLine(XN_COLOR color)
+{ std::cout << color << "=========================================================================\033[0m\n"; }
+
+void Core::Logger::breakLine(logMode mode)
+{ std::cout << m_colors[static_cast<int>(mode)] << "=========================================================================\033[0m\n"; }
+

@@ -71,7 +71,17 @@ namespace Core {
 		{
 			const std::lock_guard<std::mutex> lg(m_mutex);
 			if (!m_toFile) m_msg << m_colors[static_cast<int>(mode)];
-			m_msg << getTime() << m_type[static_cast<int>(mode)];
+			m_msg << getTime();
+			switch (mode) {
+			case logMode::ent:
+				m_msg << "[ENT] "; break;
+			case logMode::inf:
+				m_msg << "[INF] "; break;
+			case logMode::war:
+				m_msg << "[WAR] "; break;
+			case logMode::err:
+				m_msg << "[ERR] "; break;
+			}
 			output(first, args...);
 			m_msg << '\n';
 			if (!m_toFile) { 
@@ -81,7 +91,8 @@ namespace Core {
 				m_msg = std::stringstream();
 			}
 		}
-		void XAPI breakLine();
+		void XAPI breakLine(XN_COLOR color = XN_LOG_WHITE);
+		void XAPI breakLine(logMode mode);
 		//===============================================================================
 		// settings
 		//===============================================================================
@@ -90,16 +101,15 @@ namespace Core {
 		void XAPI setFilePath(const std::string& filePath);
 		void XAPI setFilePath(const char* filePath);
 	private:
-		Logger() :m_timeStart(std::chrono::steady_clock::now()), m_toFile(false) {}
+		Logger() :m_timeStart(std::chrono::steady_clock::now()), m_toFile(false), m_colors{ XN_LOG_WHITE, XN_LOG_GREEN, XN_LOG_YELLOW, XN_LOG_RED} {}
 		const std::chrono::steady_clock::time_point m_timeStart;
 		bool m_toFile;
+		std::string m_colors[4];
 		std::string m_filepath;
 		std::stringstream m_msg;
 		std::mutex m_mutex;
 		XAPI static Logger m_LogCore;
 		XAPI static Logger m_LogClient;
-		XAPI const static std::string m_type[4];
-		XAPI static std::string m_colors[4];
 		//===============================================================================
 		// helper funcions
 		//===============================================================================

@@ -5,5 +5,8 @@ void Xenon::setLogColors(XN_COLOR entrtColor, XN_COLOR infoColor, XN_COLOR warrn
 { Core::Logger::getInstanceClient().setColors(entrtColor, infoColor, warrningColor, errorColor); }
 void Xenon::setLogToFile(const std::string& path)
 { Core::Logger::getInstanceClient().setFilePath(path); }
-void Xenon::LogBR()
-{ Core::Logger::getInstanceClient().breakLine(); }
+
+void Xenon::LogBR(XN_COLOR color)
+{ Core::Logger::getInstanceClient().breakLine(color); }
+void Xenon::LogBR(Core::Logger::logMode mode)
+{ Core::Logger::getInstanceClient().breakLine(mode); }

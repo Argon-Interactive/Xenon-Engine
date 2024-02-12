@@ -18,6 +18,7 @@ namespace Xenon
 	{ Core::Logger::getInstanceClient().log(Core::Logger::logMode::err, Args...); }
 	void XAPI setLogColors(XN_COLOR entrtColor, XN_COLOR infoColor, XN_COLOR warrningColor, XN_COLOR errorColor);
 	void XAPI setLogToFile(const std::string& path);
-	void XAPI LogBR();
+	void XAPI LogBR(XN_COLOR color = XN_LOG_WHITE);
+	void XAPI LogBR(Core::Logger::logMode mode);
 }
 
