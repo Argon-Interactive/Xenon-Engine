@@ -1,11 +1,6 @@
-#ifdef XENON
-	#define XAPI __declspec(dllexport) 
-#else
-	#define XAPI __declspec(dllimport) 
-#endif
+#ifndef _XENON_XENON_H_
+#define _XENON_XENON_H_
 
-namespace Xenon
-{
-	XAPI void testMe();
-	XAPI void runApp(const char* name);
-}
+#include "../src/core/entryPoint.h"
+
+#endif // !_XENON_XENON_H_

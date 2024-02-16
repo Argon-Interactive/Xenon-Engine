@@ -1,9 +1,11 @@
 #include"shader.h"
+#include"../devTools/logger.hpp"
+#include<glad.h>
+#include<glfw3.h>
 
+unsigned int Core::Shader::sm_currBind = 0;
 
-unsigned int core::Shader::sm_currBind = 0;
-
-unsigned int core::Shader::CompileShader(unsigned int type, const std::string& src)
+unsigned int Core::Shader::CompileShader(unsigned int type, const std::string& src)
 {
 	unsigned int id = glCreateShader(type);
 	const char* srcc = src.c_str();
@@ -32,14 +34,14 @@ unsigned int core::Shader::CompileShader(unsigned int type, const std::string& s
 				errorshadertype = "Geometry";
 				break;
 		}
-		ALL_ERR("Compilaton of a shader with a type of \"{0}\" failed. Error message:\n{0}\n", errorshadertype, errorlog);
+		XN_LOG_ERR("Compilaton of a shader with a type of \"{0}\" failed. Error message:\n{0}\n", errorshadertype, errorlog);
 		delete[] message;
 		return 0;
 	}
 	return id;
 }
 
-bool core::Shader::getUniformLoc(const std::string& varName, uint32_t id)
+bool xen::Shader::getUniformLoc(const std::string& varName, uint32_t id)
 {
 	if (!(uniformLocs.contains(varName)))
 	{
@@ -47,7 +49,7 @@ bool core::Shader::getUniformLoc(const std::string& varName, uint32_t id)
 
 		if (Id == -1)
 		{
-			ALL_ERR("Shader uniform with a name of \"{0}\" wasn't found", varName);
+			XN_LOG_ERR("Shader uniform with a name of \"{0}\" wasn't found", varName);
 			glUseProgram(sm_currBind);
 			return true;
 		}
@@ -56,12 +58,12 @@ bool core::Shader::getUniformLoc(const std::string& varName, uint32_t id)
 	return false;
 }
 
-core::Shader::Shader(const std::string& FilePath)
+xen::Shader::Shader(const std::string& FilePath)
 	: m_ID(0)
 {
 	std::ifstream shaderFile;
 	shaderFile.open(FilePath);
-	if (!shaderFile.is_open()) { ALL_ERR("Couldn't open shader file. Path: {0}", FilePath); return; }
+	if (!shaderFile.is_open()) { XN_LOG_ERR("Couldn't open shader file. Path: {0}", FilePath); return; }
 	shaderType currType = none;
 	std::string currLine;
 	std::string vertexsrc;
@@ -76,7 +78,7 @@ core::Shader::Shader(const std::string& FilePath)
 			if (currLine.find(" vertex") != std::string::npos) currType = vertex;
 			else if (currLine.find(" fragment") != std::string::npos) currType = fragment;
 			else if (currLine.find(" geometry") != std::string::npos) currType = geometry;
-			else ALL_ERR("Unsupported shader type in file \"{0}\"", FilePath);
+			else XN_LOG_ERR("Unsupported shader type in file \"{0}\"", FilePath);
 			continue;
 		}
 		if (currType == none) continue;
@@ -101,15 +103,15 @@ core::Shader::Shader(const std::string& FilePath)
 	}
 	if (!vertexsrc.size() || !fragmentsrc.size())
 	{
-		if (!vertexsrc.size()) ALL_ERR("Vertex shader not provided");
-		if (!fragmentsrc.size()) ALL_ERR("Fragment shader not provided");
+		if (!vertexsrc.size()) XN_LOG_ERR("Vertex shader not provided");
+		if (!fragmentsrc.size()) XN_LOG_ERR("Fragment shader not provided");
 	}
 	//compiling and linking shader program
-	unsigned int vertexShaderId = core::Shader::CompileShader(GL_VERTEX_SHADER, vertexsrc);
-	unsigned int fragmentShaderId = core::Shader::CompileShader(GL_FRAGMENT_SHADER, fragmentsrc);
+	unsigned int vertexShaderId = xen::Shader::CompileShader(GL_VERTEX_SHADER, vertexsrc);
+	unsigned int fragmentShaderId = xen::Shader::CompileShader(GL_FRAGMENT_SHADER, fragmentsrc);
 	unsigned int geometryShaderId = 0;
 	if (!vertexsrc.size() || !fragmentsrc.size()) exit(EXIT_FAILURE);
-	if(geometrysrc.size()) geometryShaderId = core::Shader::CompileShader(GL_GEOMETRY_SHADER, geometrysrc);
+	if(geometrysrc.size()) geometryShaderId = xen::Shader::CompileShader(GL_GEOMETRY_SHADER, geometrysrc);
 	m_ID = glCreateProgram();
 	glAttachShader(m_ID, vertexShaderId);
 	glAttachShader(m_ID, fragmentShaderId);
@@ -126,7 +128,7 @@ core::Shader::Shader(const std::string& FilePath)
 		char* message = new char[logLength];
 		glGetProgramInfoLog(m_ID, logLength, &logLength, message);
 		std::string errorlog(message);
-		ALL_ERR("Linking of a shader program failed. Error message:\n{0}\n", errorlog);
+		XN_LOG_ERR("Linking of a shader program failed. Error message:\n{0}\n", errorlog);
 		delete[] message;
 	}
 	glDeleteShader(vertexShaderId);
@@ -134,14 +136,14 @@ core::Shader::Shader(const std::string& FilePath)
 	if (geometryShaderId) glDeleteShader(geometryShaderId);
 }
 
-core::Shader::Shader(const std::string& VertexFilePath, const std::string& FragmentFilePath, const std::string& GeometryFilePath)
+xen::Shader::Shader(const std::string& VertexFilePath, const std::string& FragmentFilePath, const std::string& GeometryFilePath)
 	: m_ID(0)
 {
-	unsigned int vertexShaderId = core::Shader::CompileShader(GL_VERTEX_SHADER, VertexFilePath);
-	unsigned int fragmentShaderId = core::Shader::CompileShader(GL_FRAGMENT_SHADER, FragmentFilePath);
+	unsigned int vertexShaderId = xen::Shader::CompileShader(GL_VERTEX_SHADER, VertexFilePath);
+	unsigned int fragmentShaderId = xen::Shader::CompileShader(GL_FRAGMENT_SHADER, FragmentFilePath);
 	unsigned int geometryShaderId = 0;
 	if (!VertexFilePath.size() || !FragmentFilePath.size()) { ALL_ERR("Vertex or Fragment shader is empty or failed to open correctly. Shader compiling failed"); return; }
-	if (GeometryFilePath.size()) geometryShaderId = core::Shader::CompileShader(GL_GEOMETRY_SHADER, GeometryFilePath);
+	if (GeometryFilePath.size()) geometryShaderId = xen::Shader::CompileShader(GL_GEOMETRY_SHADER, GeometryFilePath);
 	m_ID = glCreateProgram();
 	glAttachShader(m_ID, vertexShaderId);
 	glAttachShader(m_ID, fragmentShaderId);
@@ -158,16 +160,15 @@ core::Shader::Shader(const std::string& VertexFilePath, const std::string& Fragm
 		char* message = new char[logLength];
 		glGetProgramInfoLog(m_ID, logLength, &logLength, message);
 		std::string errorlog(message);
-		ALL_ERR("Linking of a shader program failed. Error message:\n{0}\n", errorlog);
+		XN_LOG_ERR("Linking of a shader program failed. Error message:\n{0}\n", errorlog);
 		delete[] message;
 	}
 	glDeleteShader(vertexShaderId);
 	glDeleteShader(fragmentShaderId);
 	if (geometryShaderId) glDeleteShader(geometryShaderId);
 }
-//floats==================================================================================================================================
-
-void core::Shader::setUniform1f(const std::string& varName, float v0)
+//!floats==================================================================================================================================
+void xen::Shader::setUniform1f(const std::string& varName, float v0)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -175,7 +176,7 @@ void core::Shader::setUniform1f(const std::string& varName, float v0)
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform2f(const std::string& varName, float v0, float v1)
+void xen::Shader::setUniform2f(const std::string& varName, float v0, float v1)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -183,7 +184,7 @@ void core::Shader::setUniform2f(const std::string& varName, float v0, float v1)
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform3f(const std::string& varName, float v0, float v1, float v2)
+void xen::Shader::setUniform3f(const std::string& varName, float v0, float v1, float v2)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -191,7 +192,7 @@ void core::Shader::setUniform3f(const std::string& varName, float v0, float v1, 
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform4f(const std::string& varName, float v0, float v1, float v2, float v3)
+void xen::Shader::setUniform4f(const std::string& varName, float v0, float v1, float v2, float v3)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -199,7 +200,7 @@ void core::Shader::setUniform4f(const std::string& varName, float v0, float v1, 
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform2f(const std::string& varName, glm::vec2 v0)
+void xen::Shader::setUniform2f(const std::string& varName, glm::vec2 v0)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -207,7 +208,7 @@ void core::Shader::setUniform2f(const std::string& varName, glm::vec2 v0)
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform3f(const std::string& varName, glm::vec3 v0)
+void xen::Shader::setUniform3f(const std::string& varName, glm::vec3 v0)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -215,16 +216,15 @@ void core::Shader::setUniform3f(const std::string& varName, glm::vec3 v0)
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform4f(const std::string& varName, glm::vec4 v0)
+void xen::Shader::setUniform4f(const std::string& varName, glm::vec4 v0)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
 	glUniform4f(uniformLocs[varName], v0.x, v0.y, v0.z, v0.w);
 	glUseProgram(sm_currBind);
 }
-//ints==================================================================================================================================
-
-void core::Shader::setUniform1i(const std::string& varName, int v0)
+//!ints==================================================================================================================================
+void xen::Shader::setUniform1i(const std::string& varName, int v0)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -232,7 +232,7 @@ void core::Shader::setUniform1i(const std::string& varName, int v0)
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform2i(const std::string& varName, int v0, int v1)
+void xen::Shader::setUniform2i(const std::string& varName, int v0, int v1)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -240,7 +240,7 @@ void core::Shader::setUniform2i(const std::string& varName, int v0, int v1)
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform3i(const std::string& varName, int v0, int v1, int v2)
+void xen::Shader::setUniform3i(const std::string& varName, int v0, int v1, int v2)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -248,7 +248,7 @@ void core::Shader::setUniform3i(const std::string& varName, int v0, int v1, int 
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform4i(const std::string& varName, int v0, int v1, int v2, int v3)
+void xen::Shader::setUniform4i(const std::string& varName, int v0, int v1, int v2, int v3)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -256,7 +256,7 @@ void core::Shader::setUniform4i(const std::string& varName, int v0, int v1, int 
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform2i(const std::string& varName, glm::ivec2 v0)
+void xen::Shader::setUniform2i(const std::string& varName, glm::ivec2 v0)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -264,7 +264,7 @@ void core::Shader::setUniform2i(const std::string& varName, glm::ivec2 v0)
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform3i(const std::string& varName, glm::ivec3 v0)
+void xen::Shader::setUniform3i(const std::string& varName, glm::ivec3 v0)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -272,16 +272,15 @@ void core::Shader::setUniform3i(const std::string& varName, glm::ivec3 v0)
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform4i(const std::string& varName, glm::ivec4 v0)
+void xen::Shader::setUniform4i(const std::string& varName, glm::ivec4 v0)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
 	glUniform4i(uniformLocs[varName], v0.x, v0.y, v0.z, v0.w);
 	glUseProgram(sm_currBind);
 }
-//uints==================================================================================================================================
-
-void core::Shader::setUniform1u(const std::string& varName, uint32_t v0)
+//!uints==================================================================================================================================
+void xen::Shader::setUniform1u(const std::string& varName, uint32_t v0)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -289,7 +288,7 @@ void core::Shader::setUniform1u(const std::string& varName, uint32_t v0)
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform2u(const std::string& varName, uint32_t v0, uint32_t v1)
+void xen::Shader::setUniform2u(const std::string& varName, uint32_t v0, uint32_t v1)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -297,7 +296,7 @@ void core::Shader::setUniform2u(const std::string& varName, uint32_t v0, uint32_
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform3u(const std::string& varName, uint32_t v0, uint32_t v1, uint32_t v2)
+void xen::Shader::setUniform3u(const std::string& varName, uint32_t v0, uint32_t v1, uint32_t v2)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -305,7 +304,7 @@ void core::Shader::setUniform3u(const std::string& varName, uint32_t v0, uint32_
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform4u(const std::string& varName, uint32_t v0, uint32_t v1, uint32_t v2, uint32_t v3)
+void xen::Shader::setUniform4u(const std::string& varName, uint32_t v0, uint32_t v1, uint32_t v2, uint32_t v3)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -313,7 +312,7 @@ void core::Shader::setUniform4u(const std::string& varName, uint32_t v0, uint32_
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform2u(const std::string& varName, glm::uvec2 v0)
+void xen::Shader::setUniform2u(const std::string& varName, glm::uvec2 v0)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -321,7 +320,7 @@ void core::Shader::setUniform2u(const std::string& varName, glm::uvec2 v0)
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform3u(const std::string& varName, glm::uvec3 v0)
+void xen::Shader::setUniform3u(const std::string& varName, glm::uvec3 v0)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -329,16 +328,15 @@ void core::Shader::setUniform3u(const std::string& varName, glm::uvec3 v0)
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform4u(const std::string& varName, glm::uvec4 v0)
+void xen::Shader::setUniform4u(const std::string& varName, glm::uvec4 v0)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
 	glUniform4ui(uniformLocs[varName], v0.x, v0.y, v0.z, v0.w);
 	glUseProgram(sm_currBind);
 }
-//vecs==================================================================================================================================
-
-void core::Shader::setUniform1fv(const std::string& varName, float* ptr, size_t size)
+//!vecs==================================================================================================================================
+void xen::Shader::setUniform1fv(const std::string& varName, float* ptr, size_t size)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -346,7 +344,7 @@ void core::Shader::setUniform1fv(const std::string& varName, float* ptr, size_t 
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform1iv(const std::string& varName, int* ptr, size_t size)
+void xen::Shader::setUniform1iv(const std::string& varName, int* ptr, size_t size)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -354,37 +352,36 @@ void core::Shader::setUniform1iv(const std::string& varName, int* ptr, size_t si
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniform1uv(const std::string& varName, uint32_t * ptr, size_t size)
+void xen::Shader::setUniform1uv(const std::string& varName, uint32_t * ptr, size_t size)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
 	glUniform1uiv(uniformLocs[varName], size, ptr);
 	glUseProgram(sm_currBind);
 }
-void core::Shader::setUniform1fv(const std::string& varName, const std::vector<float>& arr)
+void xen::Shader::setUniform1fv(const std::string& varName, const std::vector<float>& arr)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
 	glUniform1fv(uniformLocs[varName], arr.size(), &arr[0]);
 	glUseProgram(sm_currBind);
 }
-void core::Shader::setUniform1iv(const std::string& varName, const std::vector<int>& arr)
+void xen::Shader::setUniform1iv(const std::string& varName, const std::vector<int>& arr)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
 	glUniform1iv(uniformLocs[varName], arr.size(), &arr[0]);
 	glUseProgram(sm_currBind);
 }
-void core::Shader::setUniform1uv(const std::string& varName, const std::vector<uint32_t>& arr)
+void xen::Shader::setUniform1uv(const std::string& varName, const std::vector<uint32_t>& arr)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
 	glUniform1uiv(uniformLocs[varName], arr.size(), &arr[0]);
 	glUseProgram(sm_currBind);
 }
-//matrixes==================================================================================================================================
-
-void core::Shader::setUniformMatrix3(const std::string& varName, glm::mat3 v0)
+//!matrixes==================================================================================================================================
+void xen::Shader::setUniformMatrix3(const std::string& varName, glm::mat3 v0)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -392,7 +389,7 @@ void core::Shader::setUniformMatrix3(const std::string& varName, glm::mat3 v0)
 	glUseProgram(sm_currBind);
 }
 
-void core::Shader::setUniformMatrix4(const std::string& varName, glm::mat4 v0)
+void xen::Shader::setUniformMatrix4(const std::string& varName, glm::mat4 v0)
 {
 	glUseProgram(m_ID);
 	if (getUniformLoc(varName, m_ID)) return;
@@ -400,24 +397,24 @@ void core::Shader::setUniformMatrix4(const std::string& varName, glm::mat4 v0)
 	glUseProgram(sm_currBind);
 }
 
-core::Shader::~Shader()
+xen::Shader::~Shader()
 {
 	glDeleteProgram(m_ID);
 }
 
-void core::Shader::bind() const
+void xen::Shader::bind() const
 {
 	glUseProgram(m_ID);
 	sm_currBind = m_ID;
 }
 
-void core::Shader::unbind()
+void xen::Shader::unbind()
 {
 	glUseProgram(0);
 	sm_currBind = 0;
 }
 
-void core::Shader::enableBlending()
+void xen::Shader::enableBlending()
 {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
