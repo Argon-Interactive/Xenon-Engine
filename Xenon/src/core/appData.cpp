@@ -13,7 +13,6 @@ namespace Core
 		XN_LOG_BR;
 		XN_LOG_ENT("Application Systems initialization...");
 
-		getWindow().create();
 		getWindow().setWindowSize(width, height);
 		getWindow().setTitle(title);
 
@@ -28,9 +27,9 @@ namespace Core
 		XN_LOG_INF("Application systems terminated successfully");
 		XN_LOG_BR;
 	}
-
+	
 	AppData::AppData()
-		:m_window(512, 256, "elo ¿elo") {}
+		:m_window(1, 1, "") {}
 
 	Window& AppData::getWindow() {
 		return getInstance().m_window;

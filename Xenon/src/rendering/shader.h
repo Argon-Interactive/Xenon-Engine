@@ -8,7 +8,7 @@
 #include<string>
 
 
-namespace core
+namespace Core
 {
 	class Shader
 	{

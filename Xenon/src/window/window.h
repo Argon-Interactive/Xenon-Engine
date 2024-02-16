@@ -1,9 +1,8 @@
 #pragma once 
-#include"../devTools/logger.hpp"
 #include<glfw3.h>
-#include<glm/glm.hpp>
+#include<string>
 
-namespace core
+namespace Core
 {
 	class Window
 	{
