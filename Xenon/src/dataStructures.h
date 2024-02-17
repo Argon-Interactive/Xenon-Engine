@@ -1,5 +1,4 @@
 #pragma once
-#include<glm/glm.hpp>
 
 namespace Xenon {
 
@@ -48,5 +47,20 @@ namespace Xenon {
 		}
 		bool operator==(Color col)
 		{ return (r == col.r) && (g == col.g) && (b == col.b) && (a == col.a); }
+		int getCompressed()
+		{ return (static_cast<int>(r) | static_cast<int>(g) << 8 | static_cast<int>(b) << 16 | static_cast<int>(a) << 24); } //ABGR
+	};
+
+	struct Vec2
+	{
+		union {
+			struct {
+				float x, y;
+			};
+			struct {
+				float u, v;
+			};
+		};
 	};
 }
+
