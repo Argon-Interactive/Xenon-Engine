@@ -4,6 +4,8 @@ set(XENON_SRC
 	window/window.h
 	rendering/shader.cpp
 	rendering/shader.h
+	rendering/renderer2d.h
+	rendering/renderer2d.cpp
 	devTools/timer.hpp
 	devTools/logger.hpp
 	devTools/logger.cpp
