@@ -1,4 +1,4 @@
-#include"../src/core.h"
+#include"../src/core/core.h"
 #include"../src/devTools/logger.hpp"
 #include"../src/devTools/timer.hpp"
 

@@ -1,4 +1,4 @@
-#include"xenonDevTools.h"
+#include"devTools.h"
 #include"timer.hpp"
 
 void Xenon::setLogColors(XN_COLOR entrtColor, XN_COLOR infoColor, XN_COLOR warrningColor, XN_COLOR errorColor)

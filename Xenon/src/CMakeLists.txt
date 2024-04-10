@@ -1,11 +1,14 @@
 set(XENON_SRC 
-	core.h
+	core/core.h
 	window/window.cpp
 	window/window.h
 	rendering/shader.cpp
 	rendering/shader.h
-	rendering/renderer2d.h
-	rendering/renderer2d.cpp
+	rendering/renderer2D_core.hpp
+	rendering/renderer2D_core.cpp
+	rendering/renderer2D_api.hpp
+	rendering/texture_core.cpp
+	rendering/texture_core.hpp
 	devTools/timer.hpp
 	devTools/logger.hpp
 	devTools/logger.cpp
@@ -15,6 +18,7 @@ set(XENON_SRC
 	core/application.cpp
 	core/application.h
 	core/entryPoint.h
+	temporary/engDataStruct.hpp
 )
 
 include_directories(core)
@@ -22,9 +26,10 @@ include_directories(devTools)
 include_directories(pch)
 include_directories(rendering)
 include_directories(window)
+include_directories(temporary)
 
 add_library(XenonEngine SHARED ${XENON_SRC})
 
 target_compile_definitions(XenonEngine PUBLIC XENON_DLL_BUILD)
 
-target_link_libraries(XenonEngine PRIVATE xenon_options xenon_warnings glm glfw glad stb )
+target_link_libraries(XenonEngine PRIVATE xenon_options xenon_warnings glm glfw glad stb)
