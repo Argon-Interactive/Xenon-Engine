@@ -3,10 +3,44 @@
 #include"texture_core.hpp"
 #include<queue>
 #include<memory>
+#include<glm/glm.hpp>
+#include<glm/gtc/matrix_transform.hpp>
 
 namespace Core {
 
 	struct Quad {};
+
+	class Camera {
+	public:
+		Camera();
+		virtual ~Camera();
+
+		virtual glm::mat4 getMatrix() const;
+
+	protected:
+		
+	};
+
+	class OrthographicCamera : Camera {
+	public:
+		OrthographicCamera();
+		~OrthographicCamera() override;
+
+		glm::mat4 getMatrix() const override;
+	private:
+
+	};
+
+	class PerspictiveCamera : Camera {
+	public:
+		PerspictiveCamera();
+		~PerspictiveCamera() override;
+
+		glm::mat4 getMatrix() const override;
+	private:
+
+	};
+
 
 	class Renderer2D {
 	public:
@@ -15,7 +49,7 @@ namespace Core {
 		Renderer2D& operator = (const Renderer2D&) = delete;
 		static Renderer2D& getInstance();
 
-		Xenon::ID createStaticLayer(Core::Quad quadList[], size_t quadListSize, Core::Texture2D textureList[], size_t textureListSize);
+		Xenon::ID createStaticLayer(Core::Quad quadList[], size_t quadListSize, std::shared_ptr<Core::Texture2D> textureList[], size_t textureListSize);
 		Xenon::ID createDynamicLayer();
 		void deleteStaticLayer(Xenon::ID layerID);
 		void deleteDynamicLayer(Xenon::ID layerID);
