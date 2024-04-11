@@ -22,14 +22,14 @@ namespace Core {
 	};
 
 	//TODO
-	class TextureAtlas {
+	class Texture2DAtlas {
 	public:
-		TextureAtlas();
-		~TextureAtlas();
-		TextureAtlas(const TextureAtlas& oth) = delete; //TODO Implementing all of these probably is a good idea
-		TextureAtlas& operator=(const TextureAtlas& oth) = delete; 
-		TextureAtlas(TextureAtlas&& oth) = delete; 
-		TextureAtlas& operator=(TextureAtlas&& oth) = delete;
+		Texture2DAtlas();
+		~Texture2DAtlas();
+		Texture2DAtlas(const Texture2DAtlas& oth) = delete; //TODO Implementing all of these probably is a good idea
+		Texture2DAtlas& operator=(const Texture2DAtlas& oth) = delete; 
+		Texture2DAtlas(Texture2DAtlas&& oth) = delete; 
+		Texture2DAtlas& operator=(Texture2DAtlas&& oth) = delete;
 
 	private:
 

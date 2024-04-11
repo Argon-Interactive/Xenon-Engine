@@ -42,7 +42,7 @@ Core::Texture2D::Texture2D(const Texture2D& oth)
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, &data);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	delete[] data;
-	//This look kinda wrong but i have no way of testing this right now
+	//TODO This look kinda wrong but i have no way of testing this right now
 }
 
 Core::Texture2D& Core::Texture2D::operator=(const Texture2D& oth)
@@ -65,7 +65,7 @@ Core::Texture2D& Core::Texture2D::operator=(const Texture2D& oth)
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, &data);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	delete[] data;
-	//This look kinda wrong but i have no way of testing this right now
+	//TODO This look kinda wrong but i have no way of testing this right now
 	return *this;
 }
 

@@ -1,6 +1,7 @@
 #include"engDataStruct.hpp"
 #include"texture_core.hpp"
-#include<glm/glm.hpp>
+#include<queue>
+#include<memory>
 
 namespace Core {
 
@@ -8,23 +9,29 @@ namespace Core {
 
 	class Renderer2D {
 	public:
-		~Renderer2D() = default;
+		~Renderer2D();
 		Renderer2D(const Renderer2D&) = delete;
 		Renderer2D& operator = (const Renderer2D&) = delete;
 		static Renderer2D& getInstance();
-		void addStaticQuad(const Quad& quad);
-		void addStaticQuad(Quad* quadList, size_t listSize);
-		Xenon::XenID addDynamicLayer();
-		Xenon::XenID setDynamicLayerData(Xenon::XenID LayerID, Quad* quadList, size_t listSize, Core::Texture* TextureList, int32_t textureAmmount);
-		void removeDynamicLayer(Xenon::XenID LayerID);
+
+		Xenon::ID createStaticLayer(Core::Quad quadList[], size_t quadListSize, Core::Texture2D textureList[], size_t textureListSize);
+		Xenon::ID createDynamicLayer();
+		void deleteStaticLayer(Xenon::ID ID);
+		void deleteDynamicLayer(Xenon::ID layerID);
+
 		void render();
 
 
 		
 	private:
+		struct m_layerData {
+			uint32_t VAO, VBO, EBO;
+		};
 		Renderer2D();
 		static Renderer2D s_instance;
-
+		std::deque<Xenon::ID> m_freeIDList;
+		std::vector<m_layerData> m_layers;
+		std::vector<std::shared_ptr<Core::Texture2D>> m_textures;
 	};
 
 	
