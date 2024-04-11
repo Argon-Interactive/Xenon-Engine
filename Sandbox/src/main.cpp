@@ -9,6 +9,7 @@ class Sandbox : public Xenon::Application
 public:
 	Sandbox() {
 		Xenon::LogInf("Hello from sandbox");
+		Xenon::ID Id = 0;
 		Xenon::LogBR(XN_LOG_MODE_INF);
 	}
 	~Sandbox() override {

@@ -1,12 +1,11 @@
 set(XENON_SRC 
-	core/core.h
+	core.h
 	window/window.cpp
 	window/window.h
 	rendering/shader.cpp
 	rendering/shader.h
 	rendering/renderer2D_core.hpp
 	rendering/renderer2D_core.cpp
-	rendering/renderer2D_api.hpp
 	rendering/texture_core.cpp
 	rendering/texture_core.hpp
 	devTools/timer.hpp

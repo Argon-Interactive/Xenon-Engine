@@ -1,3 +1,4 @@
+#pragma once
 #include"engDataStruct.hpp"
 #include"texture_core.hpp"
 #include<queue>
@@ -16,7 +17,7 @@ namespace Core {
 
 		Xenon::ID createStaticLayer(Core::Quad quadList[], size_t quadListSize, Core::Texture2D textureList[], size_t textureListSize);
 		Xenon::ID createDynamicLayer();
-		void deleteStaticLayer(Xenon::ID ID);
+		void deleteStaticLayer(Xenon::ID layerID);
 		void deleteDynamicLayer(Xenon::ID layerID);
 
 		void render();
@@ -24,11 +25,9 @@ namespace Core {
 
 		
 	private:
-		struct m_layerData {
-			uint32_t VAO, VBO, EBO;
-		};
-		Renderer2D();
 		static Renderer2D s_instance;
+		Renderer2D() = default;
+		struct m_layerData { uint32_t VAO, VBO, EBO; };
 		std::deque<Xenon::ID> m_freeIDList;
 		std::vector<m_layerData> m_layers;
 		std::vector<std::shared_ptr<Core::Texture2D>> m_textures;

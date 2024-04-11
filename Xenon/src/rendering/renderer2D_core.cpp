@@ -6,6 +6,8 @@
 #define vertice int
 #define textureSlotsAmmount 32 //TODO Make it device dependent
 
+Core::Renderer2D Core::Renderer2D::s_instance;
+
 Core::Renderer2D::~Renderer2D()
 {
 	for (auto a : m_layers)
@@ -81,14 +83,14 @@ Xenon::ID Core::Renderer2D::createDynamicLayer()
 	return Xenon::ID();
 }
 
-void Core::Renderer2D::deleteStaticLayer(Xenon::ID ID)
+void Core::Renderer2D::deleteStaticLayer(Xenon::ID layerID)
 {
 	//opengl should automaticly ignore invalid ids
-	if (std::find(m_freeIDList.begin(), m_freeIDList.end(), ID) == std::end(m_freeIDList)) { XN_LOG_ERR("Static layer with the id: {0} was already deleted", ID); return; }
-	glDeleteBuffers(2, &(m_layers[ID].VBO));
-	glDeleteVertexArrays(1, &(m_layers[ID].VAO));
-	m_layers[ID] = { 0, 0, 0 };
-	m_freeIDList.push_back(ID);
+	if (std::find(m_freeIDList.begin(), m_freeIDList.end(), layerID) == std::end(m_freeIDList)) { XN_LOG_ERR("Static layer with the id: {0} was already deleted", layerID); return; }
+	glDeleteBuffers(2, &(m_layers[layerID].VBO));
+	glDeleteVertexArrays(1, &(m_layers[layerID].VAO));
+	m_layers[layerID] = { 0, 0, 0 };
+	m_freeIDList.push_back(layerID);
 }
 
 void Core::Renderer2D::deleteDynamicLayer(Xenon::ID LayerID)
