@@ -6,7 +6,7 @@
 #include<vector>
 #include<mutex>
 
-#include "../core.h"
+#include "../api.h"
 
 #if defined __DEBUG__ || __RELESE__
 	#define XN_LOG_ENT(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::ent, first, ## __VA_ARGS__)

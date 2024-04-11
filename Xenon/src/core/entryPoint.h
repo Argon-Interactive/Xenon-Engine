@@ -1,7 +1,7 @@
 #ifndef _XENON_ENTRYPOINT_H_
 #define _XENON_ENTRYPOINT_H_
 
-#include "../core.h"
+#include "../api.h"
 #include "application.h"
 #include <memory>
 

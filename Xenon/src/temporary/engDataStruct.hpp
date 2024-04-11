@@ -1,6 +1,6 @@
 #pragma once
 #include<cstdint>
-#include"../core.h"
+#include"../api.h"
 
 namespace Xenon {
 	typedef uint32_t ID;

@@ -1,5 +1,5 @@
 set(XENON_SRC 
-	core.h
+	api.h
 	window/window.cpp
 	window/window.h
 	rendering/shader.cpp
