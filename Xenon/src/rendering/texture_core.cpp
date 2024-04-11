@@ -82,5 +82,5 @@ Core::Texture2D::Texture2D(Texture2D&& oth) :m_ID(oth.m_ID), m_width(oth.m_width
 int32_t Core::Texture2D::getWidth() { return m_width; }
 int32_t Core::Texture2D::getHeigth() { return m_height; }
 
-void Core::Texture2D::bind() { glBindTexture(GL_TEXTURE_2D, m_ID); }
+void Core::Texture2D::bind(uint32_t slot) { glActiveTexture(GL_TEXTURE0 + slot); glBindTexture(GL_TEXTURE_2D, m_ID); }
 void Core::Texture2D::unbind() { glBindTexture(GL_TEXTURE_2D, 0); }

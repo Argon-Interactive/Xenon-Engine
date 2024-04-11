@@ -12,7 +12,7 @@ namespace Core {
 
 		int32_t getWidth();
 		int32_t getHeigth();
-		void bind();
+		void bind(uint32_t slot = 0);
 		static void unbind();
 
 
