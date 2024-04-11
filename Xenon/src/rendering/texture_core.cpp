@@ -3,7 +3,7 @@
 #include <stb_image.h>
 #include <glad/glad.h>
 
-Core::Texture::Texture(const std::string& path, int32_t minFilter, int32_t magFilter, int32_t wrapS, int32_t wrapT)
+Core::Texture2D::Texture2D(const std::string& path, int32_t minFilter, int32_t magFilter, int32_t wrapS, int32_t wrapT)
 	:m_ID(0), m_width(0), m_height(0)
 {
 	int width = 0, height = 0, bpp = 0;
@@ -22,9 +22,9 @@ Core::Texture::Texture(const std::string& path, int32_t minFilter, int32_t magFi
 	}
 }
 
-Core::Texture::~Texture() { if (m_ID != 0) { glDeleteTextures(1, &m_ID); } }
+Core::Texture2D::~Texture2D() { if (m_ID != 0) { glDeleteTextures(1, &m_ID); } }
 
-Core::Texture::Texture(const Texture& oth)
+Core::Texture2D::Texture2D(const Texture2D& oth)
 	:m_ID(0), m_width(oth.m_width), m_height(oth.m_height)
 {
 	glGenTextures(1, &m_ID);
@@ -45,7 +45,7 @@ Core::Texture::Texture(const Texture& oth)
 	//This look kinda wrong but i have no way of testing this right now
 }
 
-Core::Texture& Core::Texture::operator=(const Texture& oth)
+Core::Texture2D& Core::Texture2D::operator=(const Texture2D& oth)
 {
 	m_ID = 0;
 	m_width = oth.m_width;
@@ -69,9 +69,9 @@ Core::Texture& Core::Texture::operator=(const Texture& oth)
 	return *this;
 }
 
-Core::Texture::Texture(Texture&& oth) :m_ID(oth.m_ID), m_width(oth.m_width), m_height(oth.m_height) { oth.m_ID = 0; }
+Core::Texture2D::Texture2D(Texture2D&& oth) :m_ID(oth.m_ID), m_width(oth.m_width), m_height(oth.m_height) { oth.m_ID = 0; }
 
-[[noexcept]] Core::Texture& Core::Texture::operator=(Texture&& oth) { 
+[[noexcept]] Core::Texture2D& Core::Texture2D::operator=(Texture2D&& oth) { 
 	m_ID = oth.m_ID; 
 	m_width = oth.m_width;
 	m_height = oth.m_height;
@@ -79,8 +79,8 @@ Core::Texture::Texture(Texture&& oth) :m_ID(oth.m_ID), m_width(oth.m_width), m_h
 	return *this; 
 }
 
-int32_t Core::Texture::getWidth() { return m_width; }
-int32_t Core::Texture::getHeigth() { return m_height; }
+int32_t Core::Texture2D::getWidth() { return m_width; }
+int32_t Core::Texture2D::getHeigth() { return m_height; }
 
-void Core::Texture::bind() { glBindTexture(GL_TEXTURE_2D, m_ID); }
-void Core::Texture::unbind() { glBindTexture(GL_TEXTURE_2D, 0); }
+void Core::Texture2D::bind() { glBindTexture(GL_TEXTURE_2D, m_ID); }
+void Core::Texture2D::unbind() { glBindTexture(GL_TEXTURE_2D, 0); }

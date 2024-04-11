@@ -1,14 +1,14 @@
 #include <string>
 
 namespace Core {
-	class Texture {
+	class Texture2D {
 	public:
-		Texture(const std::string& path, int32_t minFilter, int32_t magFilter, int32_t wrapS, int32_t wrapT);
-		~Texture();
-		Texture(const Texture& oth);
-		Texture& operator=(const Texture& oth);
-		Texture(Texture&& oth); 
-		Texture& operator=(Texture&& oth);
+		Texture2D(const std::string& path, int32_t minFilter, int32_t magFilter, int32_t wrapS, int32_t wrapT);
+		~Texture2D();
+		Texture2D(const Texture2D& oth);
+		Texture2D& operator=(const Texture2D& oth);
+		Texture2D(Texture2D&& oth); 
+		Texture2D& operator=(Texture2D&& oth);
 
 		int32_t getWidth();
 		int32_t getHeigth();
