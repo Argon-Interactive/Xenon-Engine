@@ -8,7 +8,11 @@
 
 Core::Renderer2D::~Renderer2D()
 {
-
+	for (auto a : m_layers)
+	{
+		glDeleteBuffers(2, &(a.VBO));
+		glDeleteVertexArrays(1, &(a.VAO));
+	}
 }
 
 Core::Renderer2D& Core::Renderer2D::getInstance() { return s_instance; }
@@ -79,10 +83,11 @@ Xenon::ID Core::Renderer2D::createDynamicLayer()
 
 void Core::Renderer2D::deleteStaticLayer(Xenon::ID ID)
 {
-	//opengl should automaticly ignore invalid id's
+	//opengl should automaticly ignore invalid ids
 	if (std::find(m_freeIDList.begin(), m_freeIDList.end(), ID) == std::end(m_freeIDList)) { XN_LOG_ERR("Static layer with the id: {0} was already deleted", ID); return; }
 	glDeleteBuffers(2, &(m_layers[ID].VBO));
 	glDeleteVertexArrays(1, &(m_layers[ID].VAO));
+	m_layers[ID] = { 0, 0, 0 };
 	m_freeIDList.push_back(ID);
 }
 
