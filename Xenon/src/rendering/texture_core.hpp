@@ -10,11 +10,18 @@ namespace Core {
 		Texture(Texture&& oth); 
 		Texture& operator=(Texture&& oth);
 
+		int32_t getWidth();
+		int32_t getHeigth();
+		void bind();
+		static void unbind();
+
+
 	private:
 		uint32_t m_ID;
 		int32_t m_width, m_height;
 	};
 
+	//TODO
 	class TextureAtlas {
 	public:
 		TextureAtlas();

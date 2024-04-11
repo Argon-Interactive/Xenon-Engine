@@ -25,6 +25,7 @@ Core::Texture::Texture(const std::string& path, int32_t minFilter, int32_t magFi
 Core::Texture::~Texture() { if (m_ID != 0) { glDeleteTextures(1, &m_ID); } }
 
 Core::Texture::Texture(const Texture& oth)
+	:m_ID(0), m_width(oth.m_width), m_height(oth.m_height)
 {
 	glGenTextures(1, &m_ID);
 	glBindTexture(GL_TEXTURE_2D, m_ID);
@@ -37,17 +38,18 @@ Core::Texture::Texture(const Texture& oth)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, param);
 	glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, &param);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, param);
-	uint8_t* data = new uint8_t[oth.m_width * oth.m_height * 4 * sizeof(uint8_t)];
+	uint8_t* data = new uint8_t[m_width * m_height * 4 * sizeof(uint8_t)];
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, &data);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, oth.m_width, oth.m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	delete[] data;
-	m_width = oth.m_width;
-	m_height = oth.m_height;
 	//This look kinda wrong but i have no way of testing this right now
 }
 
 Core::Texture& Core::Texture::operator=(const Texture& oth)
 {
+	m_ID = 0;
+	m_width = oth.m_width;
+	m_height = oth.m_height;
 	glGenTextures(1, &m_ID);
 	glBindTexture(GL_TEXTURE_2D, m_ID);
 	int32_t param;
@@ -59,12 +61,10 @@ Core::Texture& Core::Texture::operator=(const Texture& oth)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, param);
 	glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, &param);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, param);
-	uint8_t* data = new uint8_t[oth.m_width * oth.m_height * 4 * sizeof(uint8_t)];
+	uint8_t* data = new uint8_t[m_width * m_height * 4 * sizeof(uint8_t)];
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, &data);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, oth.m_width, oth.m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	delete[] data;
-	m_width = oth.m_width;
-	m_height = oth.m_height;
 	//This look kinda wrong but i have no way of testing this right now
 	return *this;
 }
@@ -78,3 +78,9 @@ Core::Texture::Texture(Texture&& oth) :m_ID(oth.m_ID), m_width(oth.m_width), m_h
 	oth.m_ID = 0; 
 	return *this; 
 }
+
+int32_t Core::Texture::getWidth() { return m_width; }
+int32_t Core::Texture::getHeigth() { return m_height; }
+
+void Core::Texture::bind() { glBindTexture(GL_TEXTURE_2D, m_ID); }
+void Core::Texture::unbind() { glBindTexture(GL_TEXTURE_2D, 0); }
