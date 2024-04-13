@@ -4,4 +4,7 @@
 #include"../src/core/entryPoint.h"
 #include"../src/temporary/engDataStruct.hpp"
 
+#include"../src/rendering/texture_core.hpp"
+#include"../src/test/test.hpp"
+
 #endif // !_XENON_XENON_H_

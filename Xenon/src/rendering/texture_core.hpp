@@ -1,8 +1,9 @@
 #pragma once
 #include <string>
+#include"../api.h"
 
 namespace Core {
-	class Texture2D {
+	XAPI class Texture2D {
 	public:
 		Texture2D(const std::string& path, int32_t minFilter, int32_t magFilter, int32_t wrapS, int32_t wrapT);
 		~Texture2D();

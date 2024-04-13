@@ -6,6 +6,15 @@
 #define vertice int
 #define textureSlotsAmmount 32 //TODO Make it device dependent
 
+
+glm::mat4 Core::Camera::getMatrix() const { return glm::mat4(); }
+
+Core::OrthographicCamera::OrthographicCamera() :pos(0.f, 0.f, 0.f), size(100.f, 100.f) {}
+Core::OrthographicCamera::OrthographicCamera(float x, float y, float z, float width, float height) :pos(x, y, z), size(width, height) {}
+glm::mat4 Core::OrthographicCamera::getMatrix() const { return glm::ortho(pos.x, pos.x + size.x, pos.y, pos.y + size.y, -10.f, 10.f); }
+
+
+
 Core::Renderer2D Core::Renderer2D::s_instance;
 
 Core::Renderer2D::~Renderer2D()
@@ -19,7 +28,7 @@ Core::Renderer2D::~Renderer2D()
 
 Core::Renderer2D& Core::Renderer2D::getInstance() { return s_instance; }
 
-Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quadListSize, Core::Texture2D textureList[], size_t textureListSize)
+Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quadListSize, std::shared_ptr<Core::Texture2D> textureList[], size_t textureListSize)
 {
 	if (textureListSize > textureSlotsAmmount) { XN_LOG_ERR("{0} exeeds the allowed ammount of textures per layer, the allowed ammount is {0}", textureListSize, textureSlotsAmmount); return 0; }
 	Xenon::ID layerId = 0;
@@ -29,8 +38,8 @@ Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quad
 
 		m_textures.reserve(textureSlotsAmmount);
 		//TODO Make sure this works bcoz im not 100% sure vector.reserve doesnt changes vector.size and vector.end
-		std::fill_n(m_textures.end(), textureSlotsAmmount, std::shared_ptr<Core::Texture2D>(nullptr));
-		memcpy(&m_textures[m_textures.size()], textureList, textureListSize * sizeof(std::shared_ptr<Core::Texture2D>));
+		for (int i = 0; i < 32; ++i) m_textures.emplace_back(nullptr);
+		memcpy(&m_textures[m_textures.size() - textureSlotsAmmount], textureList, textureListSize * sizeof(std::shared_ptr<Core::Texture2D>));
 	}
 	else {
 		layerId = m_freeIDList.front();
@@ -74,6 +83,8 @@ Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quad
 
 	glBindVertexArray(0);
 
+	buffers->size = quadListSize;
+
 	delete[] indices;
 	return layerId;
 }
@@ -95,4 +106,17 @@ void Core::Renderer2D::deleteStaticLayer(Xenon::ID layerID)
 
 void Core::Renderer2D::deleteDynamicLayer(Xenon::ID LayerID)
 {
+}
+
+void Core::Renderer2D::render(const Core::Camera& camera, Core::Shader& shader, Xenon::ID layerID) {
+	//TODO Textures, and rendering without texture
+	m_layerData* buffer = &m_layers[layerID];
+	glBindVertexArray(buffer->VAO);
+	glBindBuffer(GL_VERTEX_ARRAY, buffer->VBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->EBO);
+	shader.bind();
+
+	shader.setUniformMatrix4("u_ProjMatrix", camera.getMatrix());
+
+	glDrawElements(GL_TRIANGLES, buffer->size, GL_UNSIGNED_INT, nullptr);
 }
