@@ -67,15 +67,14 @@ Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quad
 	glBindBuffer(GL_ARRAY_BUFFER, buffers->VBO);
 	glBufferData(GL_ARRAY_BUFFER, quadListSize * 4 * sizeof(Core::Vertice), quadList, GL_STATIC_DRAW); //TODO Vertice should be implemented rn its just an int as a placeholder
 
-	GLsizei stride = 10 * sizeof(float);
+	GLsizei stride = 9 * sizeof(float);
 	glEnableVertexAttribArray(0); //position
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)(0 * sizeof(float)));
 	glEnableVertexAttribArray(1); //uv
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(2); //texId
+	glEnableVertexAttribArray(2); //color
 	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, stride, (void*)(5 * sizeof(float)));
-	glEnableVertexAttribArray(3); //color
-	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, stride, (void*)(9 * sizeof(float)));
+
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers->EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, quadListSize * 6 * sizeof(uint32_t), indices, GL_STATIC_DRAW);
@@ -116,6 +115,7 @@ void Core::Renderer2D::render(const Core::Camera& camera, Core::Shader& shader, 
 	shader.bind();
 
 	shader.setUniformMatrix4("u_projMatrix", camera.getMatrix());
+	shader.setUniform1i("u_Tex", 0);
 
 	glDrawElements(GL_TRIANGLES, buffer->size * 6, GL_UNSIGNED_INT, nullptr);
 }
