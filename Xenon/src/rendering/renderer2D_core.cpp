@@ -67,15 +67,15 @@ Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quad
 	glBindBuffer(GL_ARRAY_BUFFER, buffers->VBO);
 	glBufferData(GL_ARRAY_BUFFER, quadListSize * 4 * sizeof(Core::Vertice), quadList, GL_STATIC_DRAW); //TODO Vertice should be implemented rn its just an int as a placeholder
 
-	GLsizei stride = 5 * sizeof(float) + 2 * sizeof(uint32_t);
+	GLsizei stride = 9 * sizeof(float) + 1 * sizeof(uint32_t);
 	glEnableVertexAttribArray(0); //position
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)(0 * sizeof(float)));
 	glEnableVertexAttribArray(1); //uv
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(2); //texId
-	glVertexAttribPointer(2, 1, GL_UNSIGNED_INT, GL_FALSE, stride, (void*)(5 * sizeof(float)));
+	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, stride, (void*)(5 * sizeof(float)));
 	glEnableVertexAttribArray(3); //color
-	glVertexAttribPointer(3, 1, GL_UNSIGNED_INT, GL_FALSE, stride, (void*)(5 * sizeof(float) + 1 * sizeof(uint32_t)));
+	glVertexAttribPointer(3, 1, GL_UNSIGNED_INT, GL_FALSE, stride, (void*)(9 * sizeof(float)));
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers->EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, quadListSize * 6 * sizeof(uint32_t), indices, GL_STATIC_DRAW);
