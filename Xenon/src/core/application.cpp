@@ -2,6 +2,7 @@
 
 #include "appData.h"
 #include "logger.hpp"
+#include "shader.h"
 
 namespace Xenon
 {
@@ -13,6 +14,7 @@ namespace Xenon
 			XN_LOG_ERR("Failed to initialize GLFW"); exit(EXIT_FAILURE);
 		}
 		Core::AppData::init(800, 600, "ta rakieta");
+		Core::Shader::enableBlending();
 	}
 
 	Application::~Application() {

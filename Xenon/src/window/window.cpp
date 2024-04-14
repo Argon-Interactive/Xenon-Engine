@@ -105,6 +105,7 @@ void Core::Window::FEP() const
 {
 	glfwSwapBuffers(m_ID);
 	glfwPollEvents();
+	glClearColor(.0f, 0.f, .0f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 

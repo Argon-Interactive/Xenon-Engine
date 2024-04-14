@@ -3,7 +3,6 @@
 #include <glad/glad.h>
 #include<algorithm>
 
-#define vertice int
 #define textureSlotsAmmount 32 //TODO Make it device dependent
 
 
@@ -28,7 +27,7 @@ Core::Renderer2D::~Renderer2D()
 
 Core::Renderer2D& Core::Renderer2D::getInstance() { return s_instance; }
 
-Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quadListSize, std::shared_ptr<Core::Texture2D> textureList[], size_t textureListSize)
+Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quadListSize, /*std::shared_ptr<Core::Texture2D> textureList[],*/ size_t textureListSize)
 {
 	if (textureListSize > textureSlotsAmmount) { XN_LOG_ERR("{0} exeeds the allowed ammount of textures per layer, the allowed ammount is {0}", textureListSize, textureSlotsAmmount); return 0; }
 	Xenon::ID layerId = 0;
@@ -39,7 +38,7 @@ Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quad
 		m_textures.reserve(textureSlotsAmmount);
 		//TODO Make sure this works bcoz im not 100% sure vector.reserve doesnt changes vector.size and vector.end
 		for (int i = 0; i < 32; ++i) m_textures.emplace_back(nullptr);
-		memcpy(&m_textures[m_textures.size() - textureSlotsAmmount], textureList, textureListSize * sizeof(std::shared_ptr<Core::Texture2D>));
+		//memcpy(&m_textures[m_textures.size() - textureSlotsAmmount], textureList, textureListSize * sizeof(std::shared_ptr<Core::Texture2D>));
 	}
 	else {
 		layerId = m_freeIDList.front();
@@ -47,7 +46,7 @@ Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quad
 
 		//TODO Check if the data is changed correctly
 		std::fill_n(m_textures.begin() + layerId * textureSlotsAmmount, textureSlotsAmmount, std::shared_ptr<Core::Texture2D>(nullptr));
-		memcpy(&m_textures[layerId * textureSlotsAmmount], textureList, textureListSize * sizeof(std::shared_ptr<Core::Texture2D>)); 
+		//memcpy(&m_textures[layerId * textureSlotsAmmount], textureList, textureListSize * sizeof(std::shared_ptr<Core::Texture2D>)); 
 	}
 	uint32_t* indices = new uint32_t[quadListSize * 6];
 	for (int i = 0; i < quadListSize; ++i) {
@@ -63,12 +62,12 @@ Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quad
 
 	glCreateVertexArrays(1, &(buffers->VAO));
 	glBindVertexArray(buffers->VAO);
-	glGenBuffers(2, &(buffers->VBO)); //TODO This should generate VBO and EBO but i have no way of testing if this works rn (it should be tested)
+	glGenBuffers(2, &(buffers->VBO));
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffers->VBO);
-	glBufferData(GL_ARRAY_BUFFER, quadListSize * 4 * sizeof(vertice), quadList, GL_STATIC_DRAW); //TODO Vertice should be implemented rn its just an int as a placeholder (define at the beginning of the files)
+	glBufferData(GL_ARRAY_BUFFER, quadListSize * 4 * sizeof(Core::Vertice), quadList, GL_STATIC_DRAW); //TODO Vertice should be implemented rn its just an int as a placeholder
 
-	GLsizei stride = 5 * sizeof(float) + 1 * sizeof(uint32_t) + 4 * sizeof(uint8_t);
+	GLsizei stride = 5 * sizeof(float) + 2 * sizeof(uint32_t);
 	glEnableVertexAttribArray(0); //position
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)(0 * sizeof(float)));
 	glEnableVertexAttribArray(1); //uv
@@ -76,7 +75,7 @@ Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quad
 	glEnableVertexAttribArray(2); //texId
 	glVertexAttribPointer(2, 1, GL_UNSIGNED_INT, GL_FALSE, stride, (void*)(5 * sizeof(float)));
 	glEnableVertexAttribArray(3); //color
-	glVertexAttribPointer(3, 4, GL_UNSIGNED_BYTE, GL_FALSE, stride, (void*)(5 * sizeof(float) + 1 * sizeof(uint32_t)));
+	glVertexAttribPointer(3, 1, GL_UNSIGNED_INT, GL_FALSE, stride, (void*)(5 * sizeof(float) + 1 * sizeof(uint32_t)));
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers->EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, quadListSize * 6 * sizeof(uint32_t), indices, GL_STATIC_DRAW);
@@ -116,7 +115,7 @@ void Core::Renderer2D::render(const Core::Camera& camera, Core::Shader& shader, 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->EBO);
 	shader.bind();
 
-	shader.setUniformMatrix4("u_ProjMatrix", camera.getMatrix());
+	shader.setUniformMatrix4("u_projMatrix", camera.getMatrix());
 
-	glDrawElements(GL_TRIANGLES, buffer->size, GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_TRIANGLES, buffer->size * 6, GL_UNSIGNED_INT, nullptr);
 }

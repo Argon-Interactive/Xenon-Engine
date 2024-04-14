@@ -23,7 +23,7 @@ namespace Core
 	void AppData::terminate() {
 		XN_LOG_BR;
 		XN_LOG_ENT("Application systems termination...");
-
+		glfwTerminate();
 		XN_LOG_INF("Application systems terminated successfully");
 		XN_LOG_BR;
 	}

@@ -24,6 +24,7 @@ Core::Texture2D::Texture2D(const std::string& path, int32_t minFilter, int32_t m
 
 Core::Texture2D::~Texture2D() { if (m_ID != 0) { glDeleteTextures(1, &m_ID); } }
 
+/**/
 Core::Texture2D::Texture2D(const Texture2D& oth)
 	:m_ID(0), m_width(oth.m_width), m_height(oth.m_height)
 {

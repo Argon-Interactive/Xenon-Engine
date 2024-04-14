@@ -1,26 +1,46 @@
 #include"test.hpp"
 #include"../api.h"
 #include"renderer2D_core.hpp"
-#include<glad/glad.h>
+#include<glad.h>
+#include"appData.h"
+#include"logger.hpp"
 
 void Xenon::testRendering() {
 	Core::Quad q0(
-		{ {0.f, 0.f, 0.f}, {0.f, 0.f}, 0, 255, 255, 255, 255 },
-		{ {-100.f, 0.f, 0.f}, {0.f, 0.f}, 0, 255, 255, 255, 255 },
-		{ {0.f, -100.f, 0.f}, {0.f, 0.f}, 0, 255, 255, 255, 255 },
-		{ {-100.f, -100.f, 0.f}, {0.f, 0.f}, 0, 255, 255, 255, 255 });
+		{ {-50.f, 50.f, 1.f}, {0.f, 0.f}, 0,  0xFFFFFFFF },
+		{ {50.f, 50.f, 1.f}, {0.f, 0.f}, 0,   0xFFFFFFFF },
+		{ {-50.f, -50.f, 1.f}, {0.f, 0.f}, 0, 0xFFFFFFFF },
+		{ {50.f, -50.f, 1.f}, {0.f, 0.f}, 0,  0xFFFFFFFF });
 
-	Core::Quad quads[1] = { q0 };
+	Core::Quad q1(
+		{ {65.f, 90.f, 1.f}, {0.f, 0.f}, 0, 0xFFFFFFFF },
+		{ {90.f, 90.f, 1.f}, {0.f, 0.f}, 0, 0xFFFFFFFF },
+		{ {65.f, 65.f, 1.f}, {0.f, 0.f}, 0, 0xFFFFFFFF },
+		{ {90.f, 65.f, 1.f}, {0.f, 0.f}, 0, 0xFFFFFFFF });
+	
+	Core::Quad quads[2] = { q0, q1 };
+	
+	//Core::Texture2D tex("test.png", 0, 0, 0, 0);
+	//std::shared_ptr<Core::Texture2D> texptr = std::make_shared<Core::Texture2D>();
 
-	Core::Texture2D tex("test.png", GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER);
-
-	std::shared_ptr<Core::Texture2D> texptr = std::make_shared<Core::Texture2D>(tex);
-
-	Xenon::ID testlayer = Core::Renderer2D::getInstance().createStaticLayer(quads, 1, &texptr, 1);
-
-	Core::OrthographicCamera cam(0.f, 0.f, 0.f, 10.f, 10.f);
-
+	
 	Core::Shader testShader("testShader.glsl");
+	Core::OrthographicCamera cam(-50.f, -100.f, 0.f, 200.f, 200.f);
+	
+	uint32_t test = 0xFFDDCCAA;
 
+	float r = ((test >> 24) & 0xFF);
+	float g = ((test >> 16) & 0xFF);
+	float b = ((test >> 8) & 0xFF);
+	float a = (test & 0xFF);
+
+	XN_LOG_WAR(r, g, b, a);
+
+	Xenon::ID testlayer = Core::Renderer2D::getInstance().createStaticLayer(quads, 2, 1);
 	Core::Renderer2D::getInstance().render(cam, testShader, testlayer);
+
+	while (!Core::AppData::getWindow().closeCallBack()) {
+		Core::Renderer2D::getInstance().render(cam, testShader, testlayer);
+		Core::AppData::getWindow().FEP();
+	}
 }

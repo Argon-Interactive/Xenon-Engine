@@ -13,7 +13,7 @@ namespace Core {
 		glm::vec3 pos;
 		glm::vec2 uv;
 		uint32_t texID;
-		uint8_t r, b, g, a;
+		uint32_t color;
 	};
 
 	struct Quad {
@@ -66,7 +66,7 @@ namespace Core {
 		Renderer2D& operator = (const Renderer2D&) = delete;
 		static Renderer2D& getInstance();
 
-		Xenon::ID createStaticLayer(Core::Quad quadList[], size_t quadListSize, std::shared_ptr<Core::Texture2D> textureList[], size_t textureListSize);
+		Xenon::ID createStaticLayer(Core::Quad quadList[], size_t quadListSize, /*std::shared_ptr<Core::Texture2D> textureList[], */size_t textureListSize);
 		Xenon::ID createDynamicLayer();
 		void deleteStaticLayer(Xenon::ID layerID);
 		void deleteDynamicLayer(Xenon::ID layerID);
