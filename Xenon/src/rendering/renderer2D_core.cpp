@@ -27,7 +27,7 @@ Core::Renderer2D::~Renderer2D()
 
 Core::Renderer2D& Core::Renderer2D::getInstance() { return s_instance; }
 
-Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quadListSize, /*std::shared_ptr<Core::Texture2D> textureList[],*/ size_t textureListSize)
+Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quadListSize, std::shared_ptr<Core::Texture2D> textureList[], size_t textureListSize)
 {
 	if (textureListSize > textureSlotsAmmount) { XN_LOG_ERR("{0} exeeds the allowed ammount of textures per layer, the allowed ammount is {0}", textureListSize, textureSlotsAmmount); return 0; }
 	Xenon::ID layerId = 0;
@@ -38,7 +38,7 @@ Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quad
 		m_textures.reserve(textureSlotsAmmount);
 		//TODO Make sure this works bcoz im not 100% sure vector.reserve doesnt changes vector.size and vector.end
 		for (int i = 0; i < 32; ++i) m_textures.emplace_back(nullptr);
-		//memcpy(&m_textures[m_textures.size() - textureSlotsAmmount], textureList, textureListSize * sizeof(std::shared_ptr<Core::Texture2D>));
+		if (!textureList) { memcpy(&m_textures[m_textures.size() - textureSlotsAmmount], textureList, textureListSize * sizeof(std::shared_ptr<Core::Texture2D>)); }
 	}
 	else {
 		layerId = m_freeIDList.front();
@@ -46,7 +46,7 @@ Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quad
 
 		//TODO Check if the data is changed correctly
 		std::fill_n(m_textures.begin() + layerId * textureSlotsAmmount, textureSlotsAmmount, std::shared_ptr<Core::Texture2D>(nullptr));
-		//memcpy(&m_textures[layerId * textureSlotsAmmount], textureList, textureListSize * sizeof(std::shared_ptr<Core::Texture2D>)); 
+		if (!textureList) { memcpy(&m_textures[layerId * textureSlotsAmmount], textureList, textureListSize * sizeof(std::shared_ptr<Core::Texture2D>)); }
 	}
 	uint32_t* indices = new uint32_t[quadListSize * 6];
 	for (int i = 0; i < quadListSize; ++i) {
@@ -67,7 +67,7 @@ Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quad
 	glBindBuffer(GL_ARRAY_BUFFER, buffers->VBO);
 	glBufferData(GL_ARRAY_BUFFER, quadListSize * 4 * sizeof(Core::Vertice), quadList, GL_STATIC_DRAW); //TODO Vertice should be implemented rn its just an int as a placeholder
 
-	GLsizei stride = 9 * sizeof(float) + 1 * sizeof(uint32_t);
+	GLsizei stride = 10 * sizeof(float);
 	glEnableVertexAttribArray(0); //position
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)(0 * sizeof(float)));
 	glEnableVertexAttribArray(1); //uv
@@ -75,7 +75,7 @@ Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quad
 	glEnableVertexAttribArray(2); //texId
 	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, stride, (void*)(5 * sizeof(float)));
 	glEnableVertexAttribArray(3); //color
-	glVertexAttribPointer(3, 1, GL_UNSIGNED_INT, GL_FALSE, stride, (void*)(9 * sizeof(float)));
+	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, stride, (void*)(9 * sizeof(float)));
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers->EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, quadListSize * 6 * sizeof(uint32_t), indices, GL_STATIC_DRAW);
