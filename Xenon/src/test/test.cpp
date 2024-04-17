@@ -7,24 +7,26 @@
 
 void Xenon::testRendering() {
 	Core::Quad q0(
-		{ {-50.f, 50.f, 1.f }, {0.f, 1.f}, {255.f, 0.f, 255.f, 255.f  }, },
-		{ {50.f, 50.f, 1.f  }, {1.f, 1.f}, {255.f, 255.f, 0.f, 255.f  }, },
-		{ {-50.f, -50.f, 1.f}, {0.f, 0.f}, {255.f, 255.f, 255.f, 255.f}, },
-		{ {50.f, -50.f, 1.f }, {1.f, 0.f}, {0.f, 255.f, 255.f, 255.f  }  });
+		{ {-50.f, 50.f, 1.f }, {0.f, 1.f}, {255.f, 0.f, 255.f, 255.f  }, 0.f },
+		{ {50.f, 50.f, 1.f  }, {1.f, 1.f}, {255.f, 255.f, 0.f, 255.f  }, 0.f },
+		{ {-50.f, -50.f, 1.f}, {0.f, 0.f}, {255.f, 255.f, 255.f, 255.f}, 0.f },
+		{ {50.f, -50.f, 1.f }, {1.f, 0.f}, {0.f, 255.f, 255.f, 255.f  }, 0.f });
 
 	Core::Quad q1(
-		{ {65.f, 80.f, 1.f}, {0.f, 0.f}, {255.f, 255.f, 255.f, 255.f}, },
-		{ {80.f, 80.f, 1.f}, {0.f, 0.f}, {255.f, 255.f, 255.f, 255.f}, },
-		{ {65.f, 65.f, 1.f}, {0.f, 0.f}, {255.f, 255.f, 255.f, 255.f}, },
-		{ {80.f, 65.f, 1.f}, {0.f, 0.f}, {255.f, 255.f, 255.f, 255.f}  });
+		{ {65.f, 80.f, 1.f}, {0.f, 1.f}, {255.f, 255.f, 255.f, 255.f}, 1.f },
+		{ {80.f, 80.f, 1.f}, {1.f, 1.f}, {255.f, 255.f, 255.f, 255.f}, 1.f },
+		{ {65.f, 65.f, 1.f}, {0.f, 0.f}, {255.f, 255.f, 255.f, 255.f}, 1.f },
+		{ {80.f, 65.f, 1.f}, {1.f, 0.f}, {255.f, 255.f, 255.f, 255.f}, 1.f });
 	
 	Core::Quad quads[2] = { q0, q1 };
 	
-	Core::Texture2D tex("test.png", GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER);
+	Core::Texture2D tex0("test.png", GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER);
+	Core::Texture2D tex1("sponge.png", GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER);
 
 	Core::Shader testShader("testShader.glsl");
 
-	tex.bind(0);
+	tex0.bind(0);
+	tex1.bind(1);
 
 	Core::OrthographicCamera cam(-50.f, -100.f, 0.f, 200.f, 200.f);
 

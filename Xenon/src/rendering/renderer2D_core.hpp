@@ -13,6 +13,7 @@ namespace Core {
 		glm::vec3 pos;
 		glm::vec2 uv;
 		glm::vec4 color; //TODO mybe make it not 4 floats idk
+		float texId;
 	};
 
 	struct Quad {
