@@ -18,8 +18,10 @@ set(XENON_SRC
 	core/application.h
 	core/entryPoint.h
 	temporary/engDataStruct.hpp
-	"test/test.cpp"
-)
+	test/test.cpp
+	core/globalData.hpp
+	core/globalData.cpp
+ )
 
 include_directories(core)
 include_directories(devTools)

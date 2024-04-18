@@ -1,5 +1,6 @@
+#include <glad.h>
 #include "application.h"
-
+#include "globalData.hpp"
 #include "appData.h"
 #include "logger.hpp"
 #include "shader.h"
@@ -15,6 +16,9 @@ namespace Xenon
 		}
 		Core::AppData::init(800, 600, "ta rakieta");
 		Core::Shader::enableBlending();
+		int fragTextureSlots;
+		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &fragTextureSlots);
+		Core::Global::fragmentTextureSlots = fragTextureSlots;
 	}
 
 	Application::~Application() {

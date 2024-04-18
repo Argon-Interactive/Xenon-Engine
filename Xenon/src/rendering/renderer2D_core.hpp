@@ -68,8 +68,8 @@ namespace Core {
 
 		Xenon::ID createStaticLayer(Core::Quad quadList[], size_t quadListSize, std::shared_ptr<Core::Texture2D> textureList[], size_t textureListSize);
 		Xenon::ID createDynamicLayer();
-		void deleteStaticLayer(Xenon::ID layerID);
-		void deleteDynamicLayer(Xenon::ID layerID);
+		void deleteStaticLayer(Xenon::ID &layerID);
+		void deleteDynamicLayer(Xenon::ID &layerID);
 
 		void render(const Core::Camera& camera, Core::Shader& shader, Xenon::ID layerID);
 
@@ -81,7 +81,7 @@ namespace Core {
 		struct m_layerData { uint32_t VAO, VBO, EBO, size; };
 		std::deque<Xenon::ID> m_freeIDList;
 		std::vector<m_layerData> m_layers;
-		std::vector<std::shared_ptr<Core::Texture2D>> m_textures;
+		std::vector<std::shared_ptr<Core::Texture2D>> m_textures; //at some point maybe put this inside m_layerData
 	};
 
 	
