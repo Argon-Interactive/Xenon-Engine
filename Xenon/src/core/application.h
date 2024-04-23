@@ -3,7 +3,7 @@
 
 #include "../api.h"
 
-int main(int argc, char** argv);
+extern int main(int argc, char** argv);
 
 namespace Xenon
 {
