@@ -20,11 +20,11 @@ void Xenon::testRendering() {
 	
 	Core::Quad quads[2] = { q0, q1 };
 
-	Core::Shader testShader("testShader.glsl");
+	Core::Shader testShader("assets/testShader.glsl");
 
 	std::shared_ptr<Core::Texture2D> texList[2] = { 
-		std::make_shared<Core::Texture2D>("test.png", GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER), 
-		std::make_shared<Core::Texture2D>("sponge.png", GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER) };
+		std::make_shared<Core::Texture2D>("assets/test.png", GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER), 
+		std::make_shared<Core::Texture2D>("assets/sponge.png", GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER) };
 
 	Core::OrthographicCamera cam(-50.f, -100.f, 0.f, 200.f, 200.f);
 

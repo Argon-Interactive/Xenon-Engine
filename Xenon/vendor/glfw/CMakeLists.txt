@@ -138,6 +138,8 @@ if (DOXYGEN_FOUND AND GLFW_BUILD_DOCS)
     add_subdirectory(docs)
 endif()
 
+add_compile_options(-fPIC)
+
 #--------------------------------------------------------------------
 # Install files other than the library
 # The library is installed by src/CMakeLists.txt

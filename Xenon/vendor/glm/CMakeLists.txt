@@ -246,6 +246,8 @@ endif()
 
 add_subdirectory(glm)
 
+target_compile_options(glm PRIVATE -fPIC)
+
 if (GLM_BUILD_TESTS)
 	include(CTest)
 	add_subdirectory(test)

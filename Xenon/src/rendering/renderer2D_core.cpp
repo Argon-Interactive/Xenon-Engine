@@ -47,7 +47,7 @@ Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quad
 		if (textureList != nullptr) { memcpy(&m_textures[layerId * Core::Global::fragmentTextureSlots], textureList, textureListSize * sizeof(std::shared_ptr<Core::Texture2D>)); }
 	}
 	uint32_t* indices = new uint32_t[quadListSize * 6];
-	for (int i = 0; i < quadListSize; ++i) {
+	for (unsigned int i = 0; i < quadListSize; ++i) {
 		indices[0 + i * 6] = 0 + i * 4;
 		indices[1 + i * 6] = 1 + i * 4;
 		indices[2 + i * 6] = 2 + i * 4;
