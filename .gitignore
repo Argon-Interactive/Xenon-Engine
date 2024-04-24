@@ -43,5 +43,3 @@ CMakeUserPresets.json
 *~
 _ReSharper*
 *.log
-
-.clangd
