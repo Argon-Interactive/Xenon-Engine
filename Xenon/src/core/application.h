@@ -15,7 +15,10 @@ namespace Xenon
 		virtual ~Application();
 
 	private:
-		void run();
+		int run();
+		void handleEvents();
+		void render();
+		void update();
 
 		friend int ::main(int argc, char** argv);
 	};

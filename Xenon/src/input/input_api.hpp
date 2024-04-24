@@ -15,7 +15,7 @@ namespace Xenon {
 		up, down, left, right
 	};
 	
-	XAPI class Input {
+	class XAPI Input {
 		public:	
 			~Input() = default;
 			Input(const Input&) = delete;

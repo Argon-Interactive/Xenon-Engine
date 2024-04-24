@@ -7,6 +7,7 @@
 
 namespace Xenon
 {
+
 	Application::Application() {
 		XN_LOG_INF("app created");
 		if (glfwInit() == GLFW_FALSE)
@@ -26,11 +27,12 @@ namespace Xenon
 		glfwTerminate();
 	}
 
-	void Application::run() {
+	int Application::run() {
 		while (!Core::AppData::getWindow().closeCallBack()) {
-			// aplikacja dzia¿a
+			// aplikacja dziaua
 			Core::AppData::getWindow().FEP();
 		}
+		return 0;
 	}
 
 }
