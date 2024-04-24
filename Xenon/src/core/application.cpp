@@ -7,7 +7,6 @@
 
 namespace Xenon
 {
-
 	Application::Application() {
 		XN_LOG_INF("app created");
 		if (glfwInit() == GLFW_FALSE)
@@ -18,7 +17,7 @@ namespace Xenon
 		Core::Shader::enableBlending();
 		int fragTextureSlots;
 		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &fragTextureSlots);
-		Core::Global::fragmentTextureSlots = fragTextureSlots;
+		Core::Global::fragmentTextureSlots = static_cast<unsigned int>(fragTextureSlots);
 	}
 
 	Application::~Application() {
@@ -29,7 +28,7 @@ namespace Xenon
 
 	void Application::run() {
 		while (!Core::AppData::getWindow().closeCallBack()) {
-			// aplikacja dzia³¹
+			// aplikacja dzia¿a
 			Core::AppData::getWindow().FEP();
 		}
 	}

@@ -33,6 +33,16 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
 	add_compile_definitions(__RELEASE__)
 endif()
 
+if(${USE_COMPILER} STREQUAL "cl")
+	add_compile_definitions(__COMPILER_CL__)
+elseif(${USE_COMPILER} STREQUAL "clang-cl")
+	add_compile_definitions(__COMPILER_CLANG_CL__)
+elseif(${USE_COMPILER} STREQUAL "gcc")
+	add_compile_definitions(__COMPILER_GCC__)
+elseif(${USE_COMPILER} STREQUAL "clang")
+	add_compile_definitions(__COMPILER_CLANG__)
+endif()
+
 include_directories(Xenon/include)
 include_directories(Xenon/vendor/all)
 

@@ -1,3 +1,3 @@
 #include "globalData.hpp"
 
-int Core::Global::fragmentTextureSlots;
+uint32_t Core::Global::fragmentTextureSlots;

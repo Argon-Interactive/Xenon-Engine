@@ -1,5 +1,6 @@
 #define XENON
 #include"logger.hpp"
+#include<fstream>
 #include<chrono>
 
 Core::Logger Core::Logger::m_LogCore;

@@ -31,7 +31,7 @@ Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quad
 	Xenon::ID layerId = 0;
 	if (m_freeIDList.size() < 5) { //This 5 is there to make sure that freshly deleted layer wont have its id immediately reused 
 		m_layers.push_back({0, 0, 0});
-		layerId = m_layers.size() - 1;
+		layerId = static_cast<uint32_t>(m_layers.size()) - 1;
 
 		m_textures.reserve(Core::Global::fragmentTextureSlots);
 		//TODO Make sure this works bcoz im not 100% sure vector.reserve doesnt changes vector.size and vector.end

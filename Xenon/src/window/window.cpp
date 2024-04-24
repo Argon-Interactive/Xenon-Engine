@@ -4,7 +4,7 @@
 #include<numeric>
 #include"../devTools/logger.hpp"
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void framebuffer_size_callback([[maybe_unused]] GLFWwindow* window, int width, int height)
 { glViewport(0, 0, width, height); }
 
 Core::Window::Window(uint32_t width, uint32_t height, std::string title)
@@ -12,7 +12,7 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 {
 	m_monitor = glfwGetPrimaryMonitor();
 	glfwWindowHint(GLFW_SAMPLES, 4);
-	m_ID = glfwCreateWindow(width, height, m_title.c_str(), NULL, NULL);
+	m_ID = glfwCreateWindow(static_cast<int32_t>(width), static_cast<int32_t>(height), m_title.c_str(), NULL, NULL);
 	if (!m_ID)
 	{
 		XN_LOG_ERR("Error with creation of a window named \"{0}\".", m_title);
@@ -22,7 +22,7 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 	glfwMakeContextCurrent(m_ID);
 	// vsync on by default!
 	glfwSwapInterval(true);
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
 	{
 		XN_LOG_ERR("Failed to initialize GLAD.");
 		exit(EXIT_FAILURE);
@@ -81,10 +81,10 @@ void Core::Window::setVSync(bool vsync)
 }
 
 void Core::Window::setWindowSize(uint32_t width, uint32_t height)
-{ glfwSetWindowSize(m_ID, width, height); }
+{ glfwSetWindowSize(m_ID, static_cast<int32_t>(width), static_cast<int32_t>(height)); }
 
 void Core::Window::setWindowSize(std::pair<uint32_t, uint32_t> dims)
-{ glfwSetWindowSize(m_ID, dims.first, dims.second); }
+{ glfwSetWindowSize(m_ID, static_cast<int32_t>(dims.first), static_cast<int32_t>(dims.second)); }
 
 void Core::Window::setWindowPos(uint32_t x, uint32_t y)
 { glfwSetWindowPos(m_ID, static_cast<int>(x), static_cast<int>(y)); }
@@ -183,7 +183,7 @@ std::pair<uint32_t, uint32_t> Core::Window::getScreenResolution()
 std::pair<uint32_t, uint32_t> Core::Window::getScreenAspectRatio()
 {
 	auto Wsize = getWindowSize();
-	int gcd = std::gcd(Wsize.first, Wsize.second);
+	unsigned int gcd = std::gcd(Wsize.first, Wsize.second);
 	return { Wsize.first / gcd, Wsize.second / gcd };
 }
 

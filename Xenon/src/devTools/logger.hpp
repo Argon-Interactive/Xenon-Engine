@@ -9,10 +9,19 @@
 #include "../api.h"
 
 #if defined __DEBUG__ || __RELESE__
-	#define XN_LOG_ENT(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::ent, first, ## __VA_ARGS__)
-	#define XN_LOG_INF(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::inf, first, ## __VA_ARGS__)
-	#define XN_LOG_WAR(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::war, first, ## __VA_ARGS__)
-	#define XN_LOG_ERR(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::err, first, ## __VA_ARGS__)
+	#if defined __COMPILER_GCC__ || __COMPILER_CLANG__ || __COMPILER_CLANG_CL__
+		#define XN_LOG_ENT(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::ent, first __VA_OPT__(,) __VA_ARGS__)
+		#define XN_LOG_INF(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::inf, first __VA_OPT__(,) __VA_ARGS__)
+		#define XN_LOG_WAR(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::war, first __VA_OPT__(,) __VA_ARGS__)
+		#define XN_LOG_ERR(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::err, first __VA_OPT__(,) __VA_ARGS__)
+	#elif defined __COMPILER_CL__ 
+		#define XN_LOG_ENT(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::ent, first __VA_OPT__(,) __VA_ARGS__)
+		#define XN_LOG_INF(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::inf, first __VA_OPT__(,) __VA_ARGS__)
+		#define XN_LOG_WAR(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::war, first __VA_OPT__(,) __VA_ARGS__)
+		#define XN_LOG_ERR(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::err, first __VA_OPT__(,) __VA_ARGS__)
+	#else 
+		#error Compiler not supported
+	#endif
 	#define XN_LOG_BR Core::Logger::getInstanceCore().breakLine() 
 	#define XN_LOG_TO_FILE(path)
 #else
