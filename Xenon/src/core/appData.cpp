@@ -1,20 +1,30 @@
 #include "appData.h"
 #include "logger.hpp"
+#include "shader.h"
+#include "globalData.hpp"
+#include "GL/gl.h"
 
 namespace Core
 {
 
-	AppData& AppData::getInstance() {
-		static AppData instance;
-		return instance;
-	}
+	std::unique_ptr<AppData> AppData::s_appData;
+	bool AppData::s_exists = false;
 
-	void AppData::init(uint32_t width, uint32_t height, const std::string& title) {
+	void AppData::init() {
 		XN_LOG_BR;
 		XN_LOG_ENT("Application Systems initialization...");
 
-		getWindow().setWindowSize(width, height);
-		getWindow().setTitle(title);
+		if (glfwInit() == GLFW_FALSE) {
+			XN_LOG_ERR("Failed to initialize GLFW"); 
+			exit(EXIT_FAILURE);
+		}
+		s_appData = std::make_unique<AppData>(800, 600, "XENON APP");
+
+		Core::Shader::enableBlending();		// TODO: Find a better place for this
+
+		int fragTextureSlots;				// Wow this is super specific... does it have to be in global data like this?
+		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &fragTextureSlots);
+		Core::Global::fragmentTextureSlots = static_cast<unsigned int>(fragTextureSlots);
 
 		XN_LOG_INF("Application systems initialized successfully");
 		XN_LOG_BR;
@@ -23,16 +33,24 @@ namespace Core
 	void AppData::terminate() {
 		XN_LOG_BR;
 		XN_LOG_ENT("Application systems termination...");
+		
+		s_appData.reset();
+
 		glfwTerminate();
+
 		XN_LOG_INF("Application systems terminated successfully");
 		XN_LOG_BR;
 	}
 	
-	AppData::AppData()
-		:m_window(1, 1, "") {}
+	AppData::AppData(uint32_t width, uint32_t height, const std::string& title)
+		:m_window(width, height, title) {
+		if(s_exists) {
+			XN_LOG_ERR("Creating another instance of AppData! NO FUCKING CLUE HOW TO FORBID THIS");
+		}
+	}
 
 	Window& AppData::getWindow() {
-		return getInstance().m_window;
+		return s_appData->m_window;
 	}
 
 }

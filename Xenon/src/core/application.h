@@ -2,6 +2,8 @@
 #define _XENON_APPLICATION_H_
 
 #include "../api.h"
+#include "event/event.hpp"
+#include <queue>
 
 extern int main(int argc, char** argv);
 
@@ -19,6 +21,10 @@ namespace Xenon
 		void handleEvents();
 		void render();
 		void update();
+
+		std::queue<Core::Event> m_eventQueue;
+
+		bool m_running = true;
 
 		friend int ::main(int argc, char** argv);
 	};
