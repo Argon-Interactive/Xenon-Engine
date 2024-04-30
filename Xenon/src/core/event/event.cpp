@@ -1,6 +1,7 @@
 #include "event.hpp"
 
-namespace Core {
+namespace Core 
+{
 
 	Event::Event(Event::Type type)
 		:m_type(type) {}

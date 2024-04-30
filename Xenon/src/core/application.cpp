@@ -1,6 +1,5 @@
 #include <glad.h>
 #include "application.h"
-#include "globalData.hpp"
 #include "appData.h"
 #include "logger.hpp"
 

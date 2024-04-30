@@ -2,7 +2,6 @@
 #define _XENON_APPDATA_H_
 
 #include <memory>
-#include "../api.h"
 #include "window.h"
 
 namespace Core
