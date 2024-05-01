@@ -36,12 +36,6 @@ set(XENON_SRC
 add_library(XenonEngine SHARED ${XENON_SRC})
 
 target_include_directories(XenonEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(core)
-include_directories(devTools)
-include_directories(pch)
-include_directories(rendering)
-include_directories(window)
-include_directories(temporary)
 
 target_compile_definitions(XenonEngine PUBLIC XENON_DLL_BUILD)
 

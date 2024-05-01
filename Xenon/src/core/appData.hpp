@@ -1,8 +1,9 @@
-#ifndef _XENON_APPDATA_
-#define _XENON_APPDATA_
+#ifndef _XENON_APPDATA_H_
+#define _XENON_APPDATA_H_
 
+#include "event/event.hpp"
+#include "window/window.hpp"
 #include <memory>
-#include "window.hpp"
 
 namespace Core
 {
@@ -13,7 +14,7 @@ namespace Core
 	public:
 		AppData(uint32_t width, uint32_t height, const std::string& title);
 
-		static void init();
+		static void init(std::function<void(const Xenon::Event&)> eventDispatcher);
 		static void terminate();
 
 		static Core::Window& getWindow();
@@ -28,4 +29,4 @@ namespace Core
 
 }
 
-#endif // !_XENON_APPDATA_
+#endif // !_XENON_APPDATA_H_

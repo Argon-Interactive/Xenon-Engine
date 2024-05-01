@@ -1,7 +1,8 @@
+#include <functional>
 #include <glad.h>
 #include "appData.hpp"
-#include "logger.hpp"
-#include "shader.hpp"
+#include "devTools/logger.hpp"
+#include "rendering/shader.hpp"
 #include "globalData.hpp"
 
 namespace Core
@@ -10,7 +11,7 @@ namespace Core
 	std::unique_ptr<AppData> AppData::s_appData;
 	bool AppData::s_exists = false;
 
-	void AppData::init() {
+	void AppData::init(std::function<void(const Xenon::Event&)> eventDispatcher) {
 		XN_LOG_BR;
 		XN_LOG_ENT("Application Systems initialization...");
 
@@ -19,6 +20,7 @@ namespace Core
 			exit(EXIT_FAILURE);
 		}
 		s_appData = std::make_unique<AppData>(800, 600, "XENON APP");
+		s_appData->getWindow().setEventDispatcher(eventDispatcher);
 
 		Core::Shader::enableBlending();		// TODO: Find a better place for this
 

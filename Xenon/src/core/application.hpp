@@ -29,6 +29,7 @@ namespace Xenon
 		bool m_running = true;
 
 		Event popEvent();
+		bool emptyEventQueue() const;
 
 		std::queue<Event> m_eventQueue;
 		mutable std::mutex m_mutex;

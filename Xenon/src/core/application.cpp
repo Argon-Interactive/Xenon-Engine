@@ -1,12 +1,13 @@
 #include "application.hpp"
 #include "appData.hpp"
-#include "logger.hpp"
+#include "devTools/logger.hpp"
+#include <functional>
 
 namespace Xenon
 {
 
 	Application::Application() {
-		Core::AppData::init();
+		Core::AppData::init(std::bind(&Application::pushEvent, this, std::placeholders::_1));
 		XN_LOG_INF("Application: created");
 	}
 
@@ -16,11 +17,25 @@ namespace Xenon
 	}
 
 	int Application::run() {
-		while (!Core::AppData::getWindow().closeCallBack()) {
+		while (m_running) {
 			// aplikacja dziaua
+			handleEvents();
 			Core::AppData::getWindow().FEP();
 		}
 		return 0;
+	}
+
+	void Application::handleEvents() {
+		while(!emptyEventQueue()) {
+			Event e = popEvent();
+			switch (e.getType()) {
+				case Event::Type::WINDOW_CLOSE:
+					m_running = false;
+				break;
+				default:
+					XN_LOG_ERR("Unknown event: " + e.getName());
+			}
+		}
 	}
 
 	void Application::pushEvent(const Event& event) {
@@ -36,5 +51,10 @@ namespace Xenon
 		m_eventQueue.pop();
 		return e;
 	}
+
+	bool Application::emptyEventQueue() const {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        return m_eventQueue.empty();
+    }
 
 }
