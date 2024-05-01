@@ -1,8 +1,8 @@
+#include <glad.h>
 #include "appData.h"
 #include "logger.hpp"
 #include "shader.h"
 #include "globalData.hpp"
-#include "GL/gl.h"
 
 namespace Core
 {

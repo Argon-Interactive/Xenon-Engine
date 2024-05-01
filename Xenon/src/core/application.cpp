@@ -1,4 +1,3 @@
-#include <glad.h>
 #include "application.h"
 #include "appData.h"
 #include "logger.hpp"
