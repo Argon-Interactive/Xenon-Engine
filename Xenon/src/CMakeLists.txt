@@ -1,5 +1,16 @@
 set(XENON_SRC 
 	api.h
+
+	core/appData.cpp
+	core/appData.h
+	core/application.cpp
+	core/application.h
+	core/entryPoint.h
+	core/globalData.hpp
+	core/globalData.cpp
+	core/event/event.cpp
+	core/event/event.hpp
+
 	window/window.cpp
 	window/window.h
 	rendering/shader.cpp
@@ -12,15 +23,8 @@ set(XENON_SRC
 	devTools/logger.hpp
 	devTools/logger.cpp
 	devTools/xenonDevTools.cpp
-	core/appData.cpp
-	core/appData.h
-	core/application.cpp
-	core/application.h
-	core/entryPoint.h
 	temporary/engDataStruct.hpp
 	test/test.cpp
-	core/globalData.hpp
-	core/globalData.cpp
  )
 
 include_directories(core)

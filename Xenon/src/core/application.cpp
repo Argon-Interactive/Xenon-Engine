@@ -23,4 +23,18 @@ namespace Xenon
 		return 0;
 	}
 
+	void Application::pushEvent(const Event& event) {
+		std::lock_guard<std::mutex> lock(m_mutex);
+		m_queue.push(event);
+		m_cond.notify_one();
+	}
+
+	Event Application::popEvent() {
+		std::unique_lock<std::mutex> lock(m_mutex);
+		m_cond.wait(lock, [this] { return !m_queue.empty(); } );
+		Event e = m_queue.front();
+		m_queue.pop();
+		return e;
+	}
+
 }

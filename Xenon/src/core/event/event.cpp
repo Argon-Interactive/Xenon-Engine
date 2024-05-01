@@ -1,6 +1,6 @@
 #include "event.hpp"
 
-namespace Core 
+namespace Xenon
 {
 
 	Event::Event(Event::Type type)

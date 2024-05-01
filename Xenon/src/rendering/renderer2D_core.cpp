@@ -16,6 +16,7 @@ Core::Renderer2D Core::Renderer2D::s_instance;
 
 Core::Renderer2D::~Renderer2D()
 {
+	XN_LOG_WAR("Destroying Renderer2D");
 	for (auto a : m_layers)
 	{
 		glDeleteBuffers(2, &(a.VBO));

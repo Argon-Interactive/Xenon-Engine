@@ -36,6 +36,7 @@ namespace Core
 		
 		s_appData.reset();
 
+		XN_LOG_WAR("Calling glfw terminate");
 		glfwTerminate();
 
 		XN_LOG_INF("Application systems terminated successfully");
