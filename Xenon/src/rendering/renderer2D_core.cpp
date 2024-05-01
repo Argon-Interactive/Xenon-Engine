@@ -1,8 +1,7 @@
 #include "renderer2D_core.hpp"
-#include "logger.hpp"
-#include "globalData.hpp"
+#include "devTools/logger.hpp"
+#include "core/globalData.hpp"
 #include <glad/glad.h>
-#include<algorithm>
 
 
 glm::mat4 Core::Camera::getMatrix() const { return glm::mat4(); }

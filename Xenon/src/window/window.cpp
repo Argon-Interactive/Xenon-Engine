@@ -1,8 +1,8 @@
 #include<glad.h> //this must be included before window.h
-#include"window.h"
 #include<stb_image.h>
 #include<numeric>
-#include"../devTools/logger.hpp"
+#include"window.hpp"
+#include"devTools/logger.hpp"
 
 void framebuffer_size_callback([[maybe_unused]] GLFWwindow* window, int width, int height)
 { glViewport(0, 0, width, height); }

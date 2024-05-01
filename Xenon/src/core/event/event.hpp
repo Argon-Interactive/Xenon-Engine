@@ -1,7 +1,7 @@
 #ifndef _XENON_CORE_EVENT_
 #define _XENON_CORE_EVENT_
 
-#include "../../api.h"
+#include "api.h"
 #include <string>
 
 namespace Xenon

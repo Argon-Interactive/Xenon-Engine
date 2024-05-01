@@ -1,5 +1,5 @@
-#include "application.h"
-#include "appData.h"
+#include "application.hpp"
+#include "appData.hpp"
 #include "logger.hpp"
 
 namespace Xenon
@@ -25,15 +25,15 @@ namespace Xenon
 
 	void Application::pushEvent(const Event& event) {
 		std::lock_guard<std::mutex> lock(m_mutex);
-		m_queue.push(event);
+		m_eventQueue.push(event);
 		m_cond.notify_one();
 	}
 
 	Event Application::popEvent() {
 		std::unique_lock<std::mutex> lock(m_mutex);
-		m_cond.wait(lock, [this] { return !m_queue.empty(); } );
-		Event e = m_queue.front();
-		m_queue.pop();
+		m_cond.wait(lock, [this] { return !m_eventQueue.empty(); } );
+		Event e = m_eventQueue.front();
+		m_eventQueue.pop();
 		return e;
 	}
 

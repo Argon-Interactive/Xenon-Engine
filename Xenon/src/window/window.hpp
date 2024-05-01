@@ -1,4 +1,6 @@
-#pragma once 
+#ifndef _XENON_WINDOW_
+#define _XENON_WINDOW_
+
 #include<glfw3.h>
 #include<string>
 
@@ -46,3 +48,5 @@ namespace Core
 		GLFWmonitor* m_monitor;
 	};
 }
+
+#endif // !_XENON_WINDOW_

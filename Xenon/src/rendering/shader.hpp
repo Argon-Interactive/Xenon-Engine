@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _XENON_REDNERING_SHADER_
+#define _XENON_REDNERING_SHADER_
 
 #include<glm/glm.hpp>
 #include<glm/gtc/type_ptr.hpp>
@@ -65,3 +66,5 @@ namespace Core
 		static unsigned int CompileShader(unsigned int type, const std::string& src);
 	};
 }
+
+#endif // !_XENON_REDNERING_SHADER_

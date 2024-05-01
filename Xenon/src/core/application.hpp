@@ -1,7 +1,7 @@
-#ifndef _XENON_APPLICATION_H_
-#define _XENON_APPLICATION_H_
+#ifndef _XENON_APPLICATION_
+#define _XENON_APPLICATION_
 
-#include "../api.h"
+#include "api.h"
 #include "event/event.hpp"
 #include <queue>
 #include <mutex>
@@ -30,7 +30,7 @@ namespace Xenon
 
 		Event popEvent();
 
-		std::queue<Event> m_queue;
+		std::queue<Event> m_eventQueue;
 		mutable std::mutex m_mutex;
 		std::condition_variable m_cond;
 
@@ -41,4 +41,4 @@ namespace Xenon
 
 }
 
-#endif // !_XENON_APPLICATION_H_
+#endif // !_XENON_APPLICATION_

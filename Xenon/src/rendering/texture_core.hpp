@@ -1,7 +1,9 @@
-#pragma once
+#ifndef _XENON_RENDERING_TEXTURECORE_
+#define _XENON_RENDERING_TEXTURECORE_
+
 #include <cstdint>
 #include <string>
-#include"../api.h"
+#include "api.h"
 
 namespace Core {
 	class XAPI Texture2D {
@@ -39,3 +41,5 @@ namespace Core {
 	};
 
 }
+
+#endif // !_XENON_RENDERING_TEXTURECORE_

@@ -1,5 +1,5 @@
 #pragma once
-#include"../api.h"
+#include"api.h"
 
 namespace Xenon {
 	XAPI void testRendering();

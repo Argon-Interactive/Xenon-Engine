@@ -1,8 +1,8 @@
-#ifndef _XENON_APPDATA_H_
-#define _XENON_APPDATA_H_
+#ifndef _XENON_APPDATA_
+#define _XENON_APPDATA_
 
 #include <memory>
-#include "window.h"
+#include "window.hpp"
 
 namespace Core
 {
@@ -28,4 +28,4 @@ namespace Core
 
 }
 
-#endif // !_XENON_APPDATA_H_
+#endif // !_XENON_APPDATA_

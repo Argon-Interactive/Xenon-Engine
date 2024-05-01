@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _XENON_DEVTOOLS_LOGGER_
+#define _XENON_DEVTOOLS_LOGGER_
 
 #include<iostream>
 #include<sstream>
@@ -6,7 +7,7 @@
 #include<vector>
 #include<mutex>
 
-#include "../api.h"
+#include "api.h"
 
 #if defined __DEBUG__ || __RELESE__
 	#if defined __COMPILER_GCC__ || __COMPILER_CLANG__ || __COMPILER_CLANG_CL__
@@ -197,3 +198,5 @@ namespace Core {
 		}
 	};
 }
+
+#endif // !_XENON_DEVTOOLS_LOGGER_

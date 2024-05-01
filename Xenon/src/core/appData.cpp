@@ -1,7 +1,7 @@
 #include <glad.h>
-#include "appData.h"
+#include "appData.hpp"
 #include "logger.hpp"
-#include "shader.h"
+#include "shader.hpp"
 #include "globalData.hpp"
 
 namespace Core

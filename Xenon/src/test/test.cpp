@@ -1,9 +1,8 @@
 #include"test.hpp"
-#include"../api.h"
-#include"renderer2D_core.hpp"
 #include<glad.h>
-#include"appData.h"
-#include"logger.hpp"
+#include"renderer2D_core.hpp"
+#include"core/appData.hpp"
+#include"devTools/logger.hpp"
 
 void Xenon::testRendering() {
 	Core::Quad q0(
