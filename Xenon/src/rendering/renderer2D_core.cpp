@@ -11,9 +11,6 @@ Core::OrthographicCamera::OrthographicCamera() :pos(0.f, 0.f, 0.f), size(100.f, 
 Core::OrthographicCamera::OrthographicCamera(float x, float y, float z, float width, float height) :pos(x, y, z), size(width, height) {}
 glm::mat4 Core::OrthographicCamera::getMatrix() const { return glm::ortho(pos.x, pos.x + size.x, pos.y, pos.y + size.y, -10.f, 10.f); }
 
-
-Core::Renderer2D Core::Renderer2D::s_instance;
-
 Core::Renderer2D::~Renderer2D()
 {
 	for (auto a : m_layers)
@@ -22,8 +19,6 @@ Core::Renderer2D::~Renderer2D()
 		glDeleteVertexArrays(1, &(a.VAO));
 	}
 }
-
-Core::Renderer2D& Core::Renderer2D::getInstance() { return s_instance; }
 
 Xenon::ID Core::Renderer2D::createStaticLayer(Core::Quad quadList[], size_t quadListSize, std::shared_ptr<Core::Texture2D> textureList[], size_t textureListSize)
 {
