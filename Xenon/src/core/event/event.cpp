@@ -6,6 +6,9 @@ namespace Xenon
 	Event::Event(Event::Type type)
 		:m_type(type) {}
 
+	Event::Event(Event::Type type, int x, int y)
+		:data({x, y}), m_type(type) {}
+
 	Event::Type Event::getType() {
 		return m_type;
 	}
