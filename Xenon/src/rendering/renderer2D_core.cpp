@@ -112,15 +112,10 @@ void Core::Renderer2D::render(const Core::Camera& camera, Core::Shader& shader, 
 	shader.setUniformMatrix4("u_projMatrix", camera.getMatrix());
 
 	std::vector<int> samplerIDs;
-	
-	for (int i = 0; i < Core::Global::fragmentTextureSlots; ++i) {
-		auto texture = m_textures[(layerID - 1) * Core::Global::fragmentTextureSlots + i];
-		if (texture == nullptr) { break; }
-		texture->bind(i);
-		samplerIDs.push_back(i);
-	}
 
-	shader.setUniform1iv("u_Tex", samplerIDs.data(), samplerIDs.size());
+	m_textures[0]->bind(0);
+
+	shader.setUniform1i("u_Tex", 0);
 
 	glDrawElements(GL_TRIANGLES, buffer->size * 6, GL_UNSIGNED_INT, nullptr);
 }
