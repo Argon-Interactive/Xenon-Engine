@@ -1,11 +1,11 @@
 #include"test.hpp"
-#include"../api.h"
-#include"renderer2D_core.hpp"
 #include<glad.h>
-#include"appData.h"
-#include"logger.hpp"
+#include"rendering/renderer2D_core.hpp"
+#include"core/appData.hpp"
+#include"devTools/logger.hpp"
 
 void Xenon::testRendering() {
+	Core::Renderer2D ren;
 	Core::Quad q0(
 		{ {-50.f, 50.f, 1.f }, {0.f, 1.f}, {255.f, 0.f, 255.f, 255.f  }, 0.f },
 		{ {50.f, 50.f, 1.f  }, {1.f, 1.f}, {255.f, 255.f, 0.f, 255.f  }, 0.f },
@@ -28,10 +28,10 @@ void Xenon::testRendering() {
 
 	Core::OrthographicCamera cam(-50.f, -100.f, 0.f, 200.f, 200.f);
 
-	Xenon::ID testlayer = Core::Renderer2D::getInstance().createStaticLayer(quads, 2, texList, 2);
+	Xenon::ID testlayer = ren.createStaticLayer(quads, 2, texList, 2);
 
 	while (!Core::AppData::getWindow().closeCallBack()) {
-		Core::Renderer2D::getInstance().render(cam, testShader, testlayer);
+		ren.render(cam, testShader, testlayer);
 		Core::AppData::getWindow().FEP();
 	}
 }

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _XENON_DEVTOOLS_TIMER_
+#define _XENON_DEVTOOLS_TIMER_
+
 #include<chrono>
 
 #ifdef XENON
@@ -34,3 +36,5 @@ namespace Xenon {
 		std::chrono::high_resolution_clock::time_point m_start;
 	};
 }
+
+#endif // !_XENON_DEVTOOLS_TIMER_

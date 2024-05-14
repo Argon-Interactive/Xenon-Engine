@@ -1,12 +1,29 @@
-#pragma once
+#ifndef _XENON_CORE_EVENT_
+#define _XENON_CORE_EVENT_
 
-namespace Core
+#include "api.h"
+#include <string>
+
+namespace Xenon
 {
 
-	class Event {
+	class XAPI Event 
+	{
 	public:
-		
+		enum class Type {
+			EMPTY_EVENT,
+			WINDOW_CLOSE
+		};
 
+		Event(Type type = Event::Type::EMPTY_EVENT);
+
+		Type getType();
+		std::string getName();
+
+	private:
+		Type m_type;
 	};
 
 }
+
+#endif // !_XENON_CORE_EVENT_

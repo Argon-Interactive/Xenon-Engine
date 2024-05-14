@@ -1,6 +1,6 @@
-#ifndef INPUT
-#define INPUT
-#include "../api.h"
+#ifndef _XENON_INPUT_
+#define _XENON_INPUT_
+#include "api.h"
 #include <utility>
 
 namespace Xenon {
@@ -37,4 +37,4 @@ namespace Xenon {
 			const char shiftCharList[] = {};
 	};
 }
-#endif // !INPUT
+#endif // !_XENON_INPUT_

@@ -1,8 +1,10 @@
-#pragma once
-#include"engDataStruct.hpp"
+#ifndef _XENON_RENDERING_RENDERER2D_
+#define _XENON_RENDERING_RENDERER2D_
+
+#include"temporary/engDataStruct.hpp"
 #include"texture_core.hpp"
-#include"shader.h"
-#include<queue>
+#include"shader.hpp"
+#include<deque>
 #include<memory>
 #include<glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
@@ -82,3 +84,5 @@ namespace Core {
 
 	
 }
+
+#endif // !_XENON_RENDERING_RENDERER2D_

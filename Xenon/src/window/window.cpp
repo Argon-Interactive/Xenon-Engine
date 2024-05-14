@@ -1,8 +1,9 @@
 #include<glad.h> //this must be included before window.h
-#include"window.h"
 #include<stb_image.h>
 #include<numeric>
-#include"../devTools/logger.hpp"
+#include"window.hpp"
+#include"devTools/logger.hpp"
+#include "glfw3.h"
 
 void framebuffer_size_callback([[maybe_unused]] GLFWwindow* window, int width, int height)
 { glViewport(0, 0, width, height); }
@@ -28,6 +29,15 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 		exit(EXIT_FAILURE);
 	}
 	glfwSetFramebufferSizeCallback(m_ID, framebuffer_size_callback);
+
+	using Xenon::Event;
+	glfwSetWindowUserPointer(m_ID, &m_eventDispatcher);
+
+	glfwSetWindowCloseCallback(m_ID, [](GLFWwindow* window) {
+		auto fun = reinterpret_cast<std::function<void(const Xenon::Event&)>*>(glfwGetWindowUserPointer(window));
+		Event e(Event::Type::WINDOW_CLOSE);
+		(*fun)(e);
+	});
 }
 
 Core::Window::~Window()
@@ -41,6 +51,10 @@ bool Core::Window::closeCallBack() const
 
 void Core::Window::close() const
 { if (m_ID == nullptr) { return; } glfwSetWindowShouldClose(m_ID, GLFW_TRUE); }
+
+void Core::Window::setEventDispatcher(std::function<void(const Xenon::Event&)> dispatch) {
+	m_eventDispatcher = dispatch;
+}
 
 void Core::Window::setFullscreen(bool fullscreen)
 {

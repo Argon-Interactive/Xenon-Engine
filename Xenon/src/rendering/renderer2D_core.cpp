@@ -1,8 +1,7 @@
 #include "renderer2D_core.hpp"
-#include "logger.hpp"
-#include "globalData.hpp"
+#include "devTools/logger.hpp"
+#include "core/globalData.hpp"
 #include <glad/glad.h>
-#include<algorithm>
 
 
 glm::mat4 Core::Camera::getMatrix() const { return glm::mat4(); }
@@ -13,6 +12,7 @@ glm::mat4 Core::OrthographicCamera::getMatrix() const { return glm::ortho(pos.x,
 
 Core::Renderer2D::~Renderer2D()
 {
+	XN_LOG_WAR("Destroying Renderer2D");
 	for (auto a : m_layers)
 	{
 		glDeleteBuffers(2, &(a.VBO));

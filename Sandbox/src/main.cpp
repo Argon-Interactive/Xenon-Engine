@@ -1,7 +1,6 @@
 #include <chrono>
 
 #include "xenon.h"
-#include "test.h"
 #include "xenonDevTools.h"
 
 class Sandbox : public Xenon::Application

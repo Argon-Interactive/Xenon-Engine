@@ -1,5 +1,9 @@
-#pragma once 
+#ifndef _XENON_WINDOW_
+#define _XENON_WINDOW_
+
+#include"core/event/event.hpp"
 #include<glfw3.h>
+#include<functional>
 #include<string>
 
 namespace Core
@@ -12,6 +16,7 @@ namespace Core
 		~Window();
 		bool closeCallBack() const;
 		void close() const;
+		void setEventDispatcher(std::function<void(const Xenon::Event&)> dispatch);
 		void setFullscreen(bool fullscreen);
 		//Not fully working as indended WIP
 		void setBorderless(bool borderless);
@@ -41,8 +46,11 @@ namespace Core
 	private:
 		bool m_isVSync;
 		bool m_isBorderless;
-		GLFWwindow* m_ID;
 		std::string m_title;
 		GLFWmonitor* m_monitor;
+		GLFWwindow* m_ID;
+		std::function<void(const Xenon::Event&)> m_eventDispatcher;
 	};
 }
+
+#endif // !_XENON_WINDOW_
