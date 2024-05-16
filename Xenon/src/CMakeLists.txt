@@ -28,9 +28,6 @@ set(XENON_SRC
 
 	temporary/engDataStruct.hpp
 
-	test/test.cpp
-	test/test.hpp
-
  )
 
 add_library(XenonEngine SHARED ${XENON_SRC})
