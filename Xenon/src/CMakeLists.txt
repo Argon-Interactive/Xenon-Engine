@@ -22,9 +22,11 @@ set(XENON_SRC
 	rendering/texture_core.hpp
 
 	devTools/timer.hpp
-	devTools/logger.cpp
-	devTools/logger.hpp
-	devTools/xenonDevTools.cpp
+	devTools/logger/logger.cpp
+	devTools/logger/logger.hpp
+	devTools/logger/logger_core.hpp
+	devTools/logger/logger_client.hpp
+	
 
 	temporary/engDataStruct.hpp
 

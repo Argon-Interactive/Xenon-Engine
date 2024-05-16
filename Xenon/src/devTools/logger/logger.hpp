@@ -6,75 +6,49 @@
 #include<fstream>
 #include<vector>
 #include<mutex>
-
 #include "api.h"
 
-#if defined __DEBUG__ || __RELESE__
-	#if defined __COMPILER_GCC__ || __COMPILER_CLANG__ || __COMPILER_CLANG_CL__
-		#define XN_LOG_ENT(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::ent, first __VA_OPT__(,) __VA_ARGS__)
-		#define XN_LOG_INF(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::inf, first __VA_OPT__(,) __VA_ARGS__)
-		#define XN_LOG_WAR(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::war, first __VA_OPT__(,) __VA_ARGS__)
-		#define XN_LOG_ERR(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::err, first __VA_OPT__(,) __VA_ARGS__)
-	#elif defined __COMPILER_CL__ 
-		#define XN_LOG_ENT(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::ent, first, ## __VA_ARGS__)
-		#define XN_LOG_INF(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::inf, first, ## __VA_ARGS__)
-		#define XN_LOG_WAR(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::war, first, ## __VA_ARGS__)
-		#define XN_LOG_ERR(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::err, first, ## __VA_ARGS__)
-	#else 
-		#error Compiler not supported
-	#endif
-	#define XN_LOG_BR Core::Logger::getInstanceCore().breakLine() 
-	#define XN_LOG_TO_FILE(path)
+#ifdef _LOGGER_CLIENT_
+	#define LOG_ORIGIN 1
 #else
-	#define XN_LOG_ENT(...)
-	#define XN_LOG_INF(...)
-	#define XN_LOG_WAR(...)
-	#define XN_LOG_BR
-	#define XN_LOG_ERR(first, ...) Core::Logger::getInstanceCore().log(Core::Logger::logMode::err, first, ## __VA_ARGS__)
-	#define XN_LOG_TO_FILE(path) Core::Logger::getInstanceCore().setFilePath(path)
+	#define LOG_ORIGIN 0
 #endif
 
-#define XN_LOG_CORE Core::Logger::getInstanceCore()
-#define XN_LOG_CLIENT Core::Logger::getInstanceClient()
+#define XN_LOG Xenon::Logger::getInstance()
 
-#define XN_LOG_BLACK			"\033[0;30m"
-#define XN_LOG_DARK_GRAY		"\033[1;30m"
-#define XN_LOG_BLUE				"\033[0;34m"
-#define XN_LOG_LIGHT_BLUE		"\033[1;34m"
-#define XN_LOG_GREEN			"\033[0;32m"
-#define XN_LOG_LIGHT_GREEN		"\033[1;32m"
-#define XN_LOG_CYAN				"\033[0;36m"
-#define XN_LOG_LIGHT_CYAN		"\033[1;36m"
-#define XN_LOG_RED				"\033[0;31m"
-#define XN_LOG_LIGHT_RED		"\033[1;31m"
-#define XN_LOG_PURPLE			"\033[0;35m"
-#define XN_LOG_LIGHT_PURPLE		"\033[1;35m"
-#define XN_LOG_BROWN			"\033[0;33m"
-#define XN_LOG_YELLOW			"\033[1;33m"
-#define XN_LOG_LIGHT_GRAY		"\033[0;37m"
-#define XN_LOG_WHITE			"\033[1;37m"
-#define XN_LOG_DEFAULT			"\0"
-
-#define XN_LOG_MODE_ENT	Core::Logger::logMode::ent
-#define XN_LOG_MODE_INF	Core::Logger::logMode::inf
-#define XN_LOG_MODE_WAR	Core::Logger::logMode::war
-#define XN_LOG_MODE_ERR	Core::Logger::logMode::err
+#define XN_LOG_BLACK		"\033[0;30m"
+#define XN_LOG_DARK_GRAY	"\033[1;30m"
+#define XN_LOG_BLUE			"\033[0;34m"
+#define XN_LOG_LIGHT_BLUE	"\033[1;34m"
+#define XN_LOG_GREEN		"\033[0;32m"
+#define XN_LOG_LIGHT_GREEN	"\033[1;32m"
+#define XN_LOG_CYAN			"\033[0;36m"
+#define XN_LOG_LIGHT_CYAN	"\033[1;36m"
+#define XN_LOG_RED			"\033[0;31m"
+#define XN_LOG_LIGHT_RED	"\033[1;31m"
+#define XN_LOG_PURPLE		"\033[0;35m"
+#define XN_LOG_LIGHT_PURPLE	"\033[1;35m"
+#define XN_LOG_BROWN		"\033[0;33m"
+#define XN_LOG_YELLOW		"\033[1;33m"
+#define XN_LOG_LIGHT_GRAY	"\033[0;37m"
+#define XN_LOG_WHITE		"\033[1;37m"
+#define XN_LOG_DEFAULT		"\0"
 
 typedef std::string XN_COLOR;
 
-namespace Core {
+namespace Xenon {
 	class Logger
 	{
 	public:
 		~Logger();
 		Logger(const Logger&) = delete;
 		Logger& operator = (const Logger&) = delete;
-		static Logger& getInstanceCore();
-		XAPI static Logger& getInstanceClient();
-		enum struct logMode {ent, inf, war, err};
+		enum struct logMode { degub, trace, entry, info, warning, error};
 		//===============================================================================
 		// logging
 		//===============================================================================
+
+		static XAPI Logger& getInstance(int DO_NOT_SPECIFY = LOG_ORIGIN);
 
 		template<typename T, typename ...Types>
 		void log(logMode mode, T first, Types&& ... args)
@@ -82,44 +56,35 @@ namespace Core {
 			const std::lock_guard<std::mutex> lg(m_mutex);
 			if (!m_toFile) m_msg << m_colors[static_cast<int>(mode)];
 			m_msg << getTime();
-			switch (mode) {
-			case logMode::ent:
-				m_msg << "[ENT] "; break;
-			case logMode::inf:
-				m_msg << "[INF] "; break;
-			case logMode::war:
-				m_msg << "[WAR] "; break;
-			case logMode::err:
-				m_msg << "[ERR] "; break;
-			}
+			std::string source[] = { "[ENGINE]", "[CLIENT]" };
+			std::string labels[] = { "[DEB]", "[TRC]", "[ENT]", "[INF]", "[WAR]", "[ERR]" };
+			m_msg << source[LOG_ORIGIN] << labels[static_cast<int>(mode)] << " ";
 			output(first, args...);
 			m_msg << '\n';
 			if (!m_toFile) { 
 				m_msg << "\033[0m";
-				if (mode != logMode::err) std::cout << m_msg.str(); 
+				if (mode != logMode::error) std::cout << m_msg.str(); 
 				else std::cerr << m_msg.str();
 				m_msg = std::stringstream();
 			}
 		}
-		void XAPI breakLine(XN_COLOR color = XN_LOG_WHITE);
-		void XAPI breakLine(logMode mode);
+		void XAPI breakLine(logMode mode = logMode::entry);
 		//===============================================================================
 		// settings
 		//===============================================================================
 
-		void XAPI setColors(XN_COLOR entryColor, XN_COLOR infoColor, XN_COLOR warningColor, XN_COLOR errorColor);
+		void XAPI setColors(XN_COLOR entryColor, XN_COLOR infoColor, XN_COLOR warningColor, XN_COLOR errorColor, XN_COLOR debugColor, XN_COLOR traceColor);
 		void XAPI setFilePath(const std::string& filePath);
-		void XAPI setFilePath(const char* filePath);
 	private:
 		Logger() :m_timeStart(std::chrono::steady_clock::now()), m_toFile(false), m_colors{ XN_LOG_WHITE, XN_LOG_GREEN, XN_LOG_YELLOW, XN_LOG_RED} {}
 		const std::chrono::steady_clock::time_point m_timeStart;
 		bool m_toFile;
-		std::string m_colors[4];
+		std::string m_colors[6];
 		std::string m_filepath;
 		std::stringstream m_msg;
 		std::mutex m_mutex;
-		XAPI static Logger m_LogCore;
-		XAPI static Logger m_LogClient;
+		static Logger s_LogCore;
+		XAPI static Logger s_LogClient;
 		//===============================================================================
 		// helper funcions
 		//===============================================================================

@@ -2,7 +2,7 @@
 #include<stb_image.h>
 #include<numeric>
 #include"window.hpp"
-#include"devTools/logger.hpp"
+#include"devTools/logger/logger_core.hpp"
 #include "glfw3.h"
 
 void framebuffer_size_callback([[maybe_unused]] GLFWwindow* window, int width, int height)

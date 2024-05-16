@@ -1,6 +1,6 @@
 #include "application.hpp"
 #include "appData.hpp"
-#include "devTools/logger.hpp"
+#include "devTools/logger/logger_core.hpp"
 #include <functional>
 
 namespace Xenon

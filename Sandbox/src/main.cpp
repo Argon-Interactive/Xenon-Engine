@@ -1,18 +1,16 @@
 #include <chrono>
 
 #include "xenon.h"
-#include "xenonDevTools.h"
 
 class Sandbox : public Xenon::Application
 {
 public:
 	Sandbox() {
-		Xenon::LogInf("Hello from sandbox");
-		Xenon::LogBR(XN_LOG_MODE_INF);
-		Xenon::testRendering();
+		XN_LOG_ENT("Hello from sandbox");
+		XN_LOG_BR(Xenon::Logger::logMode::info);
 	}
 	~Sandbox() override {
-		Xenon::LogInf("Bye from sandbox");
+		XN_LOG_ENT("Bye from sandbox");
 	}
 };
 

@@ -1,5 +1,5 @@
 #include "renderer2D_core.hpp"
-#include "devTools/logger.hpp"
+#include "devTools/logger/logger_core.hpp"
 #include "core/globalData.hpp"
 #include <glad/glad.h>
 

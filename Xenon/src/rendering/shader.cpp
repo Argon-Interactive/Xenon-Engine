@@ -1,5 +1,5 @@
 #include"shader.hpp"
-#include"devTools/logger.hpp"
+#include"devTools/logger/logger_core.hpp"
 #include<glad.h>
 #include<glfw3.h>
 

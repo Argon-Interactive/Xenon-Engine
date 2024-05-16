@@ -1,7 +1,7 @@
 #include <functional>
 #include <glad.h>
 #include "appData.hpp"
-#include "devTools/logger.hpp"
+#include "devTools/logger/logger_core.hpp"
 #include "rendering/shader.hpp"
 #include "globalData.hpp"
 
@@ -12,7 +12,7 @@ namespace Core
 	bool AppData::s_exists = false;
 
 	void AppData::init(std::function<void(const Xenon::Event&)> eventDispatcher) {
-		XN_LOG_BR;
+		XN_LOG_BR();
 		XN_LOG_ENT("Application Systems initialization...");
 
 		if (glfwInit() == GLFW_FALSE) {
@@ -29,11 +29,11 @@ namespace Core
 		Core::Global::fragmentTextureSlots = static_cast<unsigned int>(fragTextureSlots);
 
 		XN_LOG_INF("Application systems initialized successfully");
-		XN_LOG_BR;
+		XN_LOG_BR();
 	}
 
 	void AppData::terminate() {
-		XN_LOG_BR;
+		XN_LOG_BR();
 		XN_LOG_ENT("Application systems termination...");
 		
 		s_appData.reset();
@@ -42,7 +42,7 @@ namespace Core
 		glfwTerminate();
 
 		XN_LOG_INF("Application systems terminated successfully");
-		XN_LOG_BR;
+		XN_LOG_BR();
 	}
 	
 	AppData::AppData(uint32_t width, uint32_t height, const std::string& title)
