@@ -2,6 +2,7 @@
 #include"devTools/logger/logger_core.hpp"
 #include<glad.h>
 #include<glfw3.h>
+#include<fstream>
 
 unsigned int Core::Shader::sm_currBind = 0;
 

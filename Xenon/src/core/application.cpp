@@ -7,13 +7,14 @@ namespace Xenon
 {
 
 	Application::Application() {
+		XN_LOG_TO_FILE("Xenon-log");
 		Core::AppData::init(std::bind(&Application::pushEvent, this, std::placeholders::_1));
-		XN_LOG_INF("Application: created");
+		XN_LOG_TRC("Application: created");
 	}
 
 	Application::~Application() {
 		Core::AppData::terminate();
-		XN_LOG_INF("Application: destroyed");
+		XN_LOG_TRC("Application: destroyed");
 	}
 
 	int Application::run() {

@@ -4,11 +4,13 @@
 #define _LOGGER_CLIENT_
 #include"logger.hpp"
 
+namespace Xenon {
+	Logger& getLogger();
+}
+
 #ifdef DISABLE_BR
-	#define XN_LOG_BR 
 	#define XN_LOG_BR(color)
 #else
-	#define XN_LOG_BR Xenon::Logger::getInstance().breakLine()
 	#define XN_LOG_BR(color) Xenon::Logger::getInstance().breakLine(color)
 #endif
 

@@ -1,17 +1,17 @@
-#include"logger.hpp"
-#include<fstream>
-#include<chrono>
-#include<iomanip>
-#include<filesystem>
+#include "logger.hpp"
 
-Xenon::Logger Xenon::Logger::s_LogCore;
-Xenon::Logger Xenon::Logger::s_LogClient;
+#include <cmath>
+#include <fstream>
+#include <chrono>
+#include <filesystem>
+#include <sstream>
+#include <string>
 
-Xenon::Logger& Xenon::Logger::getInstance(int DO_NOT_SPECIFY) {
-	if (DO_NOT_SPECIFY) return s_LogClient;
-	return s_LogCore;
-}
+Xenon::Logger Xenon::Logger::s_LogCore(true);
+Xenon::Logger Xenon::Logger::s_LogClient(false);
 
+Xenon::Logger& Xenon::Logger::getInstance() { return s_LogClient; }
+Xenon::Logger& Xenon::Logger::getInstanceCore() { return s_LogCore; }
 
 void Xenon::Logger::setColors(XN_COLOR entryColor, XN_COLOR infoColor, XN_COLOR warningColor, XN_COLOR errorColor, XN_COLOR debugColor, XN_COLOR traceColor)
 {
@@ -30,8 +30,8 @@ std::string Xenon::Logger::getTime()
 {
 	int time = static_cast<int>(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - m_timeStart).count());
 	int hours = time / 3600;
-	int minutes = (time - hours*3600) / 60;
-	int seconds = time - hours *3600 - minutes * 60;
+	int minutes = (time - hours * 3600) / 60;
+	int seconds = time - hours * 3600 - minutes * 60;
 	std::stringstream result;
 	result << "[" << ((hours < 10) ? "0" : "") << std::to_string(hours) << ":" << ((minutes < 10) ? "0" : "") << 
 		std::to_string(minutes) << ":" << ((seconds < 10) ? "0" : "") << std::to_string(seconds) << "]";
@@ -60,22 +60,21 @@ void Xenon::Logger::proccesToken(char token, const char* arg)
 
 Xenon::Logger::~Logger() {
 	if (m_toFile && !m_msg.str().empty()) {
-	const auto now = std::chrono::system_clock::now();
-	const auto in_time_t = std::chrono::system_clock::to_time_t(now);
-	std::stringstream output_stream;
-	struct tm time_info;
-	const auto errno_value = localtime_s(&time_info, &in_time_t);
-	output_stream << std::put_time(&time_info, "%Y-%m-%d");
+		const auto lTime = std::chrono::zoned_time{std::chrono::current_zone(), std::chrono::system_clock::now()}.get_local_time();
+		const auto ld = floor<std::chrono::days>(lTime);
+		std::chrono::year_month_day ymd{ld};
 
-	m_filepath = m_filepath + output_stream.str() + "-";
+		std::stringstream ss;
+		ss << ymd << "-";
+		m_filepath += ss.str();
 
-	for (int i = 1; true; ++i) {
-		if (std::filesystem::exists(m_filepath + std::to_string(i)) && std::filesystem::is_regular_file(m_filepath + std::to_string(i))) {
-			continue;
+		for (int i = 1; true; ++i) {
+			if (std::filesystem::exists(m_filepath + std::to_string(i)) && std::filesystem::is_regular_file(m_filepath + std::to_string(i)))	{
+				continue;
+			}
+			m_filepath += std::to_string(i) + ".txt";
+			break;
 		}
-		m_filepath += std::to_string(i) + ".txt";
-		break;
-	}
 
 		std::ofstream out(m_filepath ,std::ios::out);
 		out << m_msg.str(); out.close();

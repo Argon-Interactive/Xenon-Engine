@@ -13,7 +13,7 @@ namespace Core
 
 	void AppData::init(std::function<void(const Xenon::Event&)> eventDispatcher) {
 		XN_LOG_BR();
-		XN_LOG_ENT("Application Systems initialization...");
+		XN_LOG_TRC("Application Systems initialization...");
 
 		if (glfwInit() == GLFW_FALSE) {
 			XN_LOG_ERR("Failed to initialize GLFW"); 
@@ -34,7 +34,7 @@ namespace Core
 
 	void AppData::terminate() {
 		XN_LOG_BR();
-		XN_LOG_ENT("Application systems termination...");
+		XN_LOG_TRC("Application systems termination...");
 		
 		s_appData.reset();
 

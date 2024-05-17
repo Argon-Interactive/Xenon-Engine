@@ -3,18 +3,9 @@
 
 #include<iostream>
 #include<sstream>
-#include<fstream>
 #include<vector>
 #include<mutex>
 #include "api.h"
-
-#ifdef _LOGGER_CLIENT_
-	#define LOG_ORIGIN 1
-#else
-	#define LOG_ORIGIN 0
-#endif
-
-#define XN_LOG Xenon::Logger::getInstance()
 
 #define XN_LOG_BLACK		"\033[0;30m"
 #define XN_LOG_DARK_GRAY	"\033[1;30m"
@@ -48,17 +39,18 @@ namespace Xenon {
 		// logging
 		//===============================================================================
 
-		static XAPI Logger& getInstance(int DO_NOT_SPECIFY = LOG_ORIGIN);
-
+		static XAPI Logger& getInstance();
+		static Logger& getInstanceCore();
+		
 		template<typename T, typename ...Types>
 		void log(logMode mode, T first, Types&& ... args)
 		{
 			const std::lock_guard<std::mutex> lg(m_mutex);
 			if (!m_toFile) m_msg << m_colors[static_cast<int>(mode)];
 			m_msg << getTime();
-			std::string source[] = { "[ENGINE]", "[CLIENT]" };
+			std::string source[] = {  "[CLIENT]", "[ENGINE]" };
 			std::string labels[] = { "[DEB]", "[TRC]", "[ENT]", "[INF]", "[WAR]", "[ERR]" };
-			m_msg << source[LOG_ORIGIN] << labels[static_cast<int>(mode)] << " ";
+			m_msg << source[m_isCore] << labels[static_cast<int>(mode)] << " ";
 			output(first, args...);
 			m_msg << '\n';
 			if (!m_toFile) { 
@@ -76,9 +68,11 @@ namespace Xenon {
 		void XAPI setColors(XN_COLOR entryColor, XN_COLOR infoColor, XN_COLOR warningColor, XN_COLOR errorColor, XN_COLOR debugColor, XN_COLOR traceColor);
 		void XAPI setFilePath(const std::string& filePath);
 	private:
-		Logger() :m_timeStart(std::chrono::steady_clock::now()), m_toFile(false), m_colors{ XN_LOG_WHITE, XN_LOG_GREEN, XN_LOG_YELLOW, XN_LOG_RED} {}
+		Logger(bool isCore) :m_timeStart(std::chrono::steady_clock::now()), m_toFile(false), m_isCore(isCore),
+		m_colors{ XN_LOG_CYAN, XN_LOG_LIGHT_GRAY,	XN_LOG_WHITE, XN_LOG_GREEN, XN_LOG_YELLOW, XN_LOG_RED} {}
 		const std::chrono::steady_clock::time_point m_timeStart;
 		bool m_toFile;
+		bool m_isCore;
 		std::string m_colors[6];
 		std::string m_filepath;
 		std::stringstream m_msg;
