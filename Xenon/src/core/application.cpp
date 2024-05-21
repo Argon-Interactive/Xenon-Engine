@@ -31,8 +31,12 @@ namespace Xenon
 			Event e = popEvent();
 			switch (e.getType()) {
 				case Event::Type::WINDOW_CLOSE:
+					XN_LOG_INF("Window close");
 					m_running = false;
-				break;
+					break;
+				case Event::Type::WINDOW_RESIZE:
+					XN_LOG_INF("Window resize: (width = {0}, height = {0})", e.getArg().uint0, e.getArg().uint1);
+					break;
 				default:
 					XN_LOG_ERR("Unknown event: " + e.getName());
 			}

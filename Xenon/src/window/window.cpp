@@ -26,11 +26,16 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 		XN_LOG_ERR("Failed to initialize GLAD.");
 		exit(EXIT_FAILURE);
 	}
-	glfwSetFramebufferSizeCallback(m_ID, []([[maybe_unused]] GLFWwindow* window, int width, int height) {
-		glViewport(0, 0, width, height);
-	});
 
 	using Xenon::Event;
+	glfwSetFramebufferSizeCallback(m_ID, [](GLFWwindow* window, int width, int height) {
+		glViewport(0, 0, width, height);
+		auto fun = reinterpret_cast<std::function<void(const Xenon::Event&)>*>(glfwGetWindowUserPointer(window));
+		//int0 = width int1 = height
+		Event e(Event::Type::WINDOW_RESIZE, width, height);
+		(*fun)(e);
+	});
+
 	glfwSetWindowUserPointer(m_ID, &m_eventDispatcher);
 
 	glfwSetWindowCloseCallback(m_ID, [](GLFWwindow* window) {
