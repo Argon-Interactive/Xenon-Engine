@@ -122,6 +122,9 @@ const static std::unordered_map<int, Xenon::Input::Key> c_GLFWKeyToXenonKey = {
 	{GLFW_KEY_KP_ADD, Xenon::Input::Key::Np_Add},
 	{GLFW_KEY_KP_ENTER, Xenon::Input::Key::Np_Enter},
 	{GLFW_KEY_KP_DECIMAL, Xenon::Input::Key::Np_Decimal},
+	{GLFW_KEY_SCROLL_LOCK, Xenon::Input::Key::Scroll_lock},
+	{GLFW_KEY_NUM_LOCK, Xenon::Input::Key::Num_lock},
+	{GLFW_KEY_BACKSPACE, Xenon::Input::Key::Backspace},
 };
 
 
@@ -131,8 +134,8 @@ bool Xenon::Input::s_singletonCheck = false;
 Xenon::Input::Input() {
 	if(s_singletonCheck) throw std::runtime_error("Xenon::Input is a singleton and was created twice");
 	s_singletonCheck = true;
-	std::fill_n(m_pressedMap, 121, false);
-	std::fill_n(m_relesedMap, 121, false);
-	std::fill_n(m_heldMap, 121, false);
+	std::fill_n(m_pressedMap, s_keyAmmount, false);
+	std::fill_n(m_relesedMap, s_keyAmmount, false);
+	std::fill_n(m_heldMap, s_keyAmmount, false);
 }
 
