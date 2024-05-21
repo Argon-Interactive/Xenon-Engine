@@ -2,8 +2,6 @@
 #include <glad.h>
 #include "appData.hpp"
 #include "devTools/logger/logger_core.hpp"
-#include "rendering/shader.hpp"
-#include "globalData.hpp"
 
 namespace Core
 {
@@ -21,12 +19,6 @@ namespace Core
 		}
 		s_appData = std::make_unique<AppData>(800, 600, "XENON APP");
 		s_appData->getWindow().setEventDispatcher(eventDispatcher);
-
-		Core::Shader::enableBlending();		// TODO: Find a better place for this
-
-		int fragTextureSlots;				// Wow this is super specific... does it have to be in global data like this?
-		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &fragTextureSlots);
-		Core::Global::fragmentTextureSlots = static_cast<unsigned int>(fragTextureSlots);
 
 		XN_LOG_INF("Application systems initialized successfully");
 		XN_LOG_BR();

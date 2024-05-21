@@ -6,20 +6,11 @@ set(XENON_SRC
 	core/application.hpp
 	core/appData.cpp
 	core/appData.hpp
-	core/globalData.cpp
-	core/globalData.hpp
 	core/event/event.cpp
 	core/event/event.hpp
 
 	window/window.cpp
 	window/window.hpp
-
-	rendering/shader.cpp
-	rendering/shader.hpp
-	rendering/renderer2D_core.cpp
-	rendering/renderer2D_core.hpp
-	rendering/texture_core.cpp
-	rendering/texture_core.hpp
 
 	devTools/timer.hpp
 	devTools/logger/logger.cpp
@@ -27,9 +18,6 @@ set(XENON_SRC
 	devTools/logger/logger_core.hpp
 	devTools/logger/logger_client.hpp
 	
-
-	temporary/engDataStruct.hpp
-
  )
 
 add_library(XenonEngine SHARED ${XENON_SRC})
