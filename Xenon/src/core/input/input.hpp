@@ -14,7 +14,7 @@ public:
 	Input& operator=(const Input&&) = delete;
 
 	/* DO NOT TOUCH. IT WAS METICULOUSLY CRAFTED BY HAND */
-	enum Key {
+	enum class Key {
 		Np1, Np2, Np3, Np4, Np5, Np6, Np7, Np8, Np9, Np0,
 		Enter, Shift, Control, Alt, Caps_Lock, Tab, Esc, Windows, Command, Super, Alt_Gr, Right_Control, Right_Shift,
 		Up, Down, Left, Right,
@@ -26,7 +26,7 @@ public:
 		Np_Devide, Np_Multiply, Np_Minus, Np_Add, Np_Enter,
 		Back_Quote, F14, F15, F16, F17, F18, F19, F20, F21, F22, F23, F24, F25, Print_Screen, Np_Decimal, Scroll_lock, Num_lock, Backspace
 	};
-	// 
+	// These keys are not implemented bcoz i dont think we will need them
 	// world 1
 	// world 2
 	// right super
@@ -41,6 +41,9 @@ private:
 	bool m_pressedMap[s_keyAmmount];
 	bool m_relesedMap[s_keyAmmount];
 	bool m_heldMap[s_keyAmmount];
+
+	void proccesEvents();
+
 };
 }
 
