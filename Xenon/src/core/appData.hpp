@@ -1,6 +1,7 @@
 #ifndef _XENON_APPDATA_H_
 #define _XENON_APPDATA_H_
 
+#include "core/input/input.hpp"
 #include "event/event.hpp"
 #include "window/window.hpp"
 #include <memory>
