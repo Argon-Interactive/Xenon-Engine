@@ -90,7 +90,7 @@ Xenon::ID Core::Renderer2D::createDynamicLayer()
 void Core::Renderer2D::deleteStaticLayer(Xenon::ID &layerID)
 {
 	if (!layerID) { XN_LOG_ERR("Attempting to delete a deleted layer"); return; }
-	if (std::find(m_freeIDList.begin(), m_freeIDList.end(), layerID - 1) == std::end(m_freeIDList)) { XN_LOG_ERR("Static layer with the id: {0} was already deleted", layerID - 1); return; }
+	//if (std::find(m_freeIDList.begin(), m_freeIDList.end(), layerID - 1) == std::end(m_freeIDList)) { XN_LOG_ERR("Static layer with the id: {0} was already deleted", layerID - 1); return; }
 	glDeleteBuffers(2, &(m_layers[layerID - 1].VBO));
 	glDeleteVertexArrays(1, &(m_layers[layerID - 1].VAO));
 	m_layers[layerID - 1] = { 0, 0, 0 };
