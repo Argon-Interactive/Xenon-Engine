@@ -8,6 +8,8 @@ set(XENON_SRC
 	core/appData.hpp
 	core/event/event.cpp
 	core/event/event.hpp
+	core/input/input.hpp
+	core/input/input.cpp
 
 	window/window.cpp
 	window/window.hpp

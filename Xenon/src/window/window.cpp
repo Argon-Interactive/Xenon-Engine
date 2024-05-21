@@ -5,11 +5,9 @@
 #include"devTools/logger/logger_core.hpp"
 #include "glfw3.h"
 
-void framebuffer_size_callback([[maybe_unused]] GLFWwindow* window, int width, int height)
-{ glViewport(0, 0, width, height); }
 
 Core::Window::Window(uint32_t width, uint32_t height, std::string title)
-	:m_isVSync(true), m_isBorderless(false), m_ID(nullptr), m_title(title), m_monitor(nullptr)
+	:m_ID(nullptr), m_isVSync(true), m_isBorderless(false), m_title(title), m_monitor(nullptr)
 {
 	m_monitor = glfwGetPrimaryMonitor();
 	glfwWindowHint(GLFW_SAMPLES, 4);
@@ -28,7 +26,9 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 		XN_LOG_ERR("Failed to initialize GLAD.");
 		exit(EXIT_FAILURE);
 	}
-	glfwSetFramebufferSizeCallback(m_ID, framebuffer_size_callback);
+	glfwSetFramebufferSizeCallback(m_ID, []([[maybe_unused]] GLFWwindow* window, int width, int height) {
+		glViewport(0, 0, width, height);
+	});
 
 	using Xenon::Event;
 	glfwSetWindowUserPointer(m_ID, &m_eventDispatcher);
@@ -37,6 +37,10 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 		auto fun = reinterpret_cast<std::function<void(const Xenon::Event&)>*>(glfwGetWindowUserPointer(window));
 		Event e(Event::Type::WINDOW_CLOSE);
 		(*fun)(e);
+	});
+
+	glfwSetKeyCallback(m_ID, []([[maybe_unused]] GLFWwindow* window, int key,[[maybe_unused]] int scancode, int action,[[maybe_unused]] int mods) {
+		if(action == GLFW_PRESS) XN_LOG_DEB(key);
 	});
 }
 
@@ -170,6 +174,9 @@ bool Core::Window::isBorderless() const
 
 bool Core::Window::isFullscreen() const
 { return (m_ID == nullptr) ? false : glfwGetWindowMonitor(m_ID) != nullptr; }
+
+bool Core::Window::isFocused() const 
+{ return glfwGetWindowAttrib(m_ID, GLFW_FOCUSED) == GLFW_TRUE; }
 
 std::string Core::Window::getTitle()
 { return m_title; }

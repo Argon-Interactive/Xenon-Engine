@@ -35,6 +35,7 @@ namespace Core
 		void setResizable(bool resizable) const;
 		bool isBorderless() const;
 		bool isFullscreen() const;
+		bool isFocused() const;
 		std::string getTitle();
 		std::pair<uint32_t, uint32_t> getWindowSize();
 		std::pair<int, int> getWindowPos();
@@ -44,11 +45,11 @@ namespace Core
 		void FEP() const;
 		GLFWwindow* passPointer() const;
 	private:
+		GLFWwindow* m_ID;
 		bool m_isVSync;
 		bool m_isBorderless;
 		std::string m_title;
 		GLFWmonitor* m_monitor;
-		GLFWwindow* m_ID;
 		std::function<void(const Xenon::Event&)> m_eventDispatcher;
 	};
 }
