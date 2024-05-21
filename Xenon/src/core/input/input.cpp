@@ -5,21 +5,7 @@
 #include "glfw3.h"
 #include "devTools/logger/logger_core.hpp"
 
-/*
 
-	enum Key {
-		A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, R, S, T, U, W, Y, Z,
-		Nr1, Nr2, Nr3, Nr4, Nr5, Nr6, Nr7, Nr8, Nr9, Nr0,
-		Np1, Np2, Np3, Np4, Np5, Np6, Np7, Np8, Np9, Np0,
-		F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, F16, F17, F18, F19, F20, F21, F22, F23, F24, F25,
-		Space, Enter, Shift, Control, Alt, Caps_Lock, Tab, Esc, Fn, Windows, Alt_Gr, Right_Control, Right_Shift,
-		Left_Braket, Right_Braket, Semicolon, Apostrophe, Backslash, Comma, Period, Slash, Dash, Equals, Back_Quote,
-		Up, Down, Left, Right,
-		Print_Screen, Insert, Delete, Home, End, PageUp, PageDown, Pause,
-		Np_Devide, Np_Multiply, Np_Minus, Np_Add, Np_Enter, 
-	};
-
-*/
 
 const static std::unordered_map<int, Xenon::Input::Key> c_GLFWKeyToXenonKey = {
 	{GLFW_KEY_A, Xenon::Input::Key::A},
@@ -38,11 +24,14 @@ const static std::unordered_map<int, Xenon::Input::Key> c_GLFWKeyToXenonKey = {
 	{GLFW_KEY_N, Xenon::Input::Key::N},
 	{GLFW_KEY_O, Xenon::Input::Key::O},
 	{GLFW_KEY_P, Xenon::Input::Key::P},
+	{GLFW_KEY_Q, Xenon::Input::Key::Q},
 	{GLFW_KEY_R, Xenon::Input::Key::R},
 	{GLFW_KEY_S, Xenon::Input::Key::S},
 	{GLFW_KEY_T, Xenon::Input::Key::T},
 	{GLFW_KEY_U, Xenon::Input::Key::U},
+	{GLFW_KEY_V, Xenon::Input::Key::V},
 	{GLFW_KEY_W, Xenon::Input::Key::W},
+	{GLFW_KEY_X, Xenon::Input::Key::X},
 	{GLFW_KEY_Y, Xenon::Input::Key::Y},
 	{GLFW_KEY_Z, Xenon::Input::Key::Z},
 	{GLFW_KEY_0, Xenon::Input::Key::Nr0},
@@ -90,14 +79,50 @@ const static std::unordered_map<int, Xenon::Input::Key> c_GLFWKeyToXenonKey = {
 	{GLFW_KEY_F23, Xenon::Input::Key::F23},
 	{GLFW_KEY_F24, Xenon::Input::Key::F24},
 	{GLFW_KEY_F25, Xenon::Input::Key::F25},
-
-
+	{GLFW_KEY_SPACE, Xenon::Input::Key::Space},
+	{GLFW_KEY_ENTER, Xenon::Input::Key::Enter},
+	{GLFW_KEY_LEFT_SHIFT, Xenon::Input::Key::Shift},
+	{GLFW_KEY_RIGHT_SHIFT, Xenon::Input::Key::Right_Shift},
+	{GLFW_KEY_LEFT_CONTROL, Xenon::Input::Key::Control},
+	{GLFW_KEY_RIGHT_CONTROL, Xenon::Input::Key::Right_Control},
+	{GLFW_KEY_LEFT_ALT, Xenon::Input::Key::Alt},
+	{GLFW_KEY_RIGHT_ALT, Xenon::Input::Key::Alt_Gr},
+	{GLFW_KEY_CAPS_LOCK, Xenon::Input::Key::Caps_Lock},
+	{GLFW_KEY_TAB, Xenon::Input::Key::Tab},
+	{GLFW_KEY_ESCAPE, Xenon::Input::Key::Esc},
+	{GLFW_KEY_LEFT_SUPER, Xenon::Input::Key::Windows},
+	{GLFW_KEY_LEFT_SUPER, Xenon::Input::Key::Command},
+	{GLFW_KEY_LEFT_SUPER, Xenon::Input::Key::Super},
+	{GLFW_KEY_LEFT_BRACKET, Xenon::Input::Key::Left_Braket},
+	{GLFW_KEY_RIGHT_BRACKET, Xenon::Input::Key::Right_Braket},
+	{GLFW_KEY_SEMICOLON, Xenon::Input::Key::Semicolon},
+	{GLFW_KEY_APOSTROPHE, Xenon::Input::Key::Apostrophe},
+	{GLFW_KEY_BACKSLASH, Xenon::Input::Key::Backslash},
+	{GLFW_KEY_COMMA, Xenon::Input::Key::Comma},
+	{GLFW_KEY_PERIOD, Xenon::Input::Key::Period},
+	{GLFW_KEY_SLASH, Xenon::Input::Key::Slash},
+	{GLFW_KEY_MINUS, Xenon::Input::Key::Dash},
+	{GLFW_KEY_EQUAL, Xenon::Input::Key::Equals},
+	{GLFW_KEY_GRAVE_ACCENT, Xenon::Input::Key::Back_Quote},
+	{GLFW_KEY_UP, Xenon::Input::Key::Up},
+	{GLFW_KEY_DOWN, Xenon::Input::Key::Down},
+	{GLFW_KEY_LEFT, Xenon::Input::Key::Left},
+	{GLFW_KEY_RIGHT, Xenon::Input::Key::Right},
+	{GLFW_KEY_PRINT_SCREEN, Xenon::Input::Key::Print_Screen},
+	{GLFW_KEY_INSERT, Xenon::Input::Key::Insert},
+	{GLFW_KEY_DELETE, Xenon::Input::Key::Delete},
+	{GLFW_KEY_HOME, Xenon::Input::Key::Home},
+	{GLFW_KEY_END, Xenon::Input::Key::End},
+	{GLFW_KEY_PAGE_UP, Xenon::Input::Key::PageUp},
+	{GLFW_KEY_PAGE_DOWN, Xenon::Input::Key::PageDown},
+	{GLFW_KEY_PAUSE, Xenon::Input::Key::Pause},
+	{GLFW_KEY_KP_DIVIDE, Xenon::Input::Key::Np_Devide},
+	{GLFW_KEY_KP_MULTIPLY, Xenon::Input::Key::Np_Multiply},
+	{GLFW_KEY_KP_SUBTRACT, Xenon::Input::Key::Np_Minus},
+	{GLFW_KEY_KP_ADD, Xenon::Input::Key::Np_Add},
+	{GLFW_KEY_KP_ENTER, Xenon::Input::Key::Np_Enter},
+	{GLFW_KEY_KP_DECIMAL, Xenon::Input::Key::Np_Decimal},
 };
-
-
-
-
-
 
 
 

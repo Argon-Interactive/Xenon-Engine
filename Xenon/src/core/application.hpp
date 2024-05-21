@@ -11,7 +11,6 @@ extern int main(int argc, char** argv);
 
 namespace Xenon
 {
-
 	class XAPI Application
 	{
 	public:

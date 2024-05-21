@@ -45,8 +45,7 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 	});
 
 	glfwSetKeyCallback(m_ID, [](GLFWwindow* window, int key,[[maybe_unused]] int scancode, int action,[[maybe_unused]] int mods) {
-		if(action == GL_REPEAT) return;
-
+		if(action == GLFW_PRESS) XN_LOG_DEB(key);
 	});
 }
 
