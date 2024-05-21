@@ -9,7 +9,7 @@ void framebuffer_size_callback([[maybe_unused]] GLFWwindow* window, int width, i
 { glViewport(0, 0, width, height); }
 
 Core::Window::Window(uint32_t width, uint32_t height, std::string title)
-	:m_isVSync(true), m_isBorderless(false), m_ID(nullptr), m_title(title), m_monitor(nullptr)
+	: m_ID(nullptr), m_isVSync(true), m_isBorderless(false), m_title(title), m_monitor(nullptr)
 {
 	m_monitor = glfwGetPrimaryMonitor();
 	glfwWindowHint(GLFW_SAMPLES, 4);

@@ -44,11 +44,11 @@ namespace Core
 		void FEP() const;
 		GLFWwindow* passPointer() const;
 	private:
+		GLFWwindow* m_ID;
 		bool m_isVSync;
 		bool m_isBorderless;
 		std::string m_title;
 		GLFWmonitor* m_monitor;
-		GLFWwindow* m_ID;
 		std::function<void(const Xenon::Event&)> m_eventDispatcher;
 	};
 }
