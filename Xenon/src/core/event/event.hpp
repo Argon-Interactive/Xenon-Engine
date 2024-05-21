@@ -23,9 +23,6 @@ namespace Xenon
 		Event(Type type, float arg0, float arg1);
 		Event(Type type, uint64_t arg);
 
-		Type getType();
-		std::string getName();
-
 		union Argument {
 			uint64_t ullong;
 			struct { uint32_t uint0, uint1; }; //NOLINT
@@ -34,6 +31,10 @@ namespace Xenon
 			Argument(uint32_t arg0, uint32_t arg1) : uint0(arg0), uint1(arg1) {}
 			Argument(float arg0, float arg1) : float0(arg0), float1(arg1) {}
 		};
+
+		[[nodiscard]] Type getType() const;
+		[[nodiscard]] std::string getName() const;
+		[[nodiscard]] Argument getArg() const;
 		
 
 	private:

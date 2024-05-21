@@ -5,9 +5,6 @@
 #include"devTools/logger/logger_core.hpp"
 #include "glfw3.h"
 
-void framebuffer_size_callback([[maybe_unused]] GLFWwindow* window, int width, int height)
-{ glViewport(0, 0, width, height); }
-
 Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 	: m_ID(nullptr), m_isVSync(true), m_isBorderless(false), m_title(title), m_monitor(nullptr)
 {
@@ -28,20 +25,21 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 		XN_LOG_ERR("Failed to initialize GLAD.");
 		exit(EXIT_FAILURE);
 	}
-	glfwSetFramebufferSizeCallback(m_ID, framebuffer_size_callback);
 
 	using Xenon::Event;
+	glfwSetFramebufferSizeCallback(m_ID, [](GLFWwindow* window, int width, int height) {
+		glViewport(0, 0, width, height);
+		auto fun = reinterpret_cast<std::function<void(const Xenon::Event&)>*>(glfwGetWindowUserPointer(window));
+		//int0 = width int1 = height
+		Event e(Event::Type::WINDOW_RESIZE, width, height);
+		(*fun)(e);
+	});
+
 	glfwSetWindowUserPointer(m_ID, &m_eventDispatcher);
 
 	glfwSetWindowCloseCallback(m_ID, [](GLFWwindow* window) {
 		auto fun = reinterpret_cast<std::function<void(const Xenon::Event&)>*>(glfwGetWindowUserPointer(window));
 		Event e(Event::Type::WINDOW_CLOSE);
-		(*fun)(e);
-	});
-
-	glfwSetWindowSizeCallback(m_ID, [](GLFWwindow* window, int x, int y) {
-		auto fun = reinterpret_cast<std::function<void(const Xenon::Event&)>*>(glfwGetWindowUserPointer(window));
-		Event e(Event::Type::WINDOW_RESIZE, x, y);
 		(*fun)(e);
 	});
 

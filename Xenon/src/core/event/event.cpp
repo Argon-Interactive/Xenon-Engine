@@ -18,11 +18,11 @@ namespace Xenon
 	Event::Event(Event::Type type, float arg0, float arg1)
 		:m_arg({arg0, arg1}), m_type(type) {}
 
-	Event::Type Event::getType() {
-		return m_type;
-	}
+	Event::Type Event::getType() const { return m_type; }
 
-	std::string Event::getName() {
+	Event::Argument Event::getArg() const { return m_arg; }
+
+	std::string Event::getName() const {
 		switch (m_type) {
 			case Type::WINDOW_CLOSE:
 				return "Window close event";
