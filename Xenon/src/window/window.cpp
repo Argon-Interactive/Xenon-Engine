@@ -38,6 +38,13 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 		Event e(Event::Type::WINDOW_CLOSE);
 		(*fun)(e);
 	});
+
+	glfwSetWindowSizeCallback(m_ID, [](GLFWwindow* window, int x, int y) {
+		auto fun = reinterpret_cast<std::function<void(const Xenon::Event&)>*>(glfwGetWindowUserPointer(window));
+		Event e(Event::Type::WINDOW_RESIZE, x, y);
+		(*fun)(e);
+	});
+
 }
 
 Core::Window::~Window()
