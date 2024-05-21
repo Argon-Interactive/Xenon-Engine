@@ -1,10 +1,10 @@
+#include <functional>
 #include<glad.h> //this must be included before window.h
 #include<stb_image.h>
 #include<numeric>
 #include"window.hpp"
 #include"devTools/logger/logger_core.hpp"
 #include "glfw3.h"
-
 
 Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 	:m_ID(nullptr), m_isVSync(true), m_isBorderless(false), m_title(title), m_monitor(nullptr)
@@ -39,8 +39,8 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 		(*fun)(e);
 	});
 
-	glfwSetKeyCallback(m_ID, []([[maybe_unused]] GLFWwindow* window, int key,[[maybe_unused]] int scancode, int action,[[maybe_unused]] int mods) {
-		if(action == GLFW_PRESS) XN_LOG_DEB(key);
+	glfwSetKeyCallback(m_ID, [](GLFWwindow* window, int key,[[maybe_unused]] int scancode, int action,[[maybe_unused]] int mods) {
+		if(action == GL_REPEAT) return;
 	});
 }
 
