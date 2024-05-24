@@ -5,8 +5,6 @@
 #include "glfw3.h"
 #include "devTools/logger/logger_core.hpp"
 
-
-
 const static std::unordered_map<int, Xenon::Input::Key> c_GLFWKeyToXenonKey = {
 	{GLFW_KEY_A, Xenon::Input::Key::A},
 	{GLFW_KEY_B, Xenon::Input::Key::B},
@@ -130,12 +128,23 @@ const static std::unordered_map<int, Xenon::Input::Key> c_GLFWKeyToXenonKey = {
 
 
 bool Xenon::Input::s_singletonCheck = false;
+bool Xenon::Input::s_pressedMap[s_keyAmmount];
+bool Xenon::Input::s_relesedMap[s_keyAmmount];
+bool Xenon::Input::s_heldMap[s_keyAmmount];
 
-Xenon::Input::Input() {
+
+void Xenon::Input::init() {
 	if(s_singletonCheck) throw std::runtime_error("Xenon::Input is a singleton and was created twice");
 	s_singletonCheck = true;
-	std::fill_n(m_pressedMap, s_keyAmmount, false);
-	std::fill_n(m_relesedMap, s_keyAmmount, false);
-	std::fill_n(m_heldMap, s_keyAmmount, false);
+	std::fill_n(s_pressedMap, s_keyAmmount, false);
+	std::fill_n(s_relesedMap, s_keyAmmount, false);
+	std::fill_n(s_heldMap, s_keyAmmount, false);
 }
+
+void Xenon::Input::proccesEvents(Xenon::Input::Action act, int GLFWKeyCode) {
+	int temp = static_cast<int>(c_GLFWKeyToXenonKey.at(GLFWKeyCode));
+	XN_LOG_DEB(temp);
+}
+
+
 

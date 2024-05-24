@@ -6,7 +6,6 @@
 namespace Xenon {
 class Input {
 public:
-	Input();
 	~Input() = default;
 	Input(const Input&) = delete;
 	Input(Input&&) = delete;
@@ -36,14 +35,19 @@ public:
 	bool XAPI getKeyRelesed();
 	bool XAPI getKeyHeld();
 private:
+	Input();
 	constexpr static int s_keyAmmount = 117;
 	static bool s_singletonCheck;
-	bool m_pressedMap[s_keyAmmount];
-	bool m_relesedMap[s_keyAmmount];
-	bool m_heldMap[s_keyAmmount];
+	static bool s_pressedMap[s_keyAmmount];
+	static bool s_relesedMap[s_keyAmmount];
+	static bool s_heldMap[s_keyAmmount];
+	
+	static void init();
 
-	void proccesEvents();
+	enum class Action { Press, Relese };
+	static void proccesEvents(Action act, int GLFWKeyCode);
 
+	friend class Application;
 };
 }
 

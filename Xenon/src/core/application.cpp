@@ -1,6 +1,7 @@
 #include "application.hpp"
 #include "appData.hpp"
 #include "devTools/logger/logger_core.hpp"
+#include "input/input.hpp"
 #include <functional>
 
 namespace Xenon
@@ -9,6 +10,7 @@ namespace Xenon
 	Application::Application() {
 		XN_LOG_TO_FILE("Xenon-log");
 		Core::AppData::init(std::bind(&Application::pushEvent, this, std::placeholders::_1));
+		Xenon::Input::init();
 		XN_LOG_TRC("Application: created");
 	}
 
@@ -38,6 +40,10 @@ namespace Xenon
 					XN_LOG_INF("Window resize: (width = {0}, height = {0})", e.getArg().uint0, e.getArg().uint1);
 					break;
 				case Event::Type::KEY_PRESSED:
+					Xenon::Input::proccesEvents(Xenon::Input::Action::Press, static_cast<int>(e.getArg().ullong));
+					break;
+				case Event::Type::KEY_RELESED:
+					Xenon::Input::proccesEvents(Xenon::Input::Action::Relese, static_cast<int>(e.getArg().ullong));
 					break;
 				default:
 					XN_LOG_ERR("Unknown event: " + e.getName());

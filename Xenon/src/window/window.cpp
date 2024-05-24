@@ -1,5 +1,6 @@
 #include <functional>
 #include<glad.h> //this must be included before window.h
+#include <iterator>
 #include<stb_image.h>
 #include<numeric>
 #include"window.hpp"
@@ -45,7 +46,16 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 	});
 
 	glfwSetKeyCallback(m_ID, [](GLFWwindow* window, int key,[[maybe_unused]] int scancode, int action,[[maybe_unused]] int mods) {
-		if(action == GLFW_PRESS) XN_LOG_DEB(key);
+		auto fun = reinterpret_cast<std::function<void(const Xenon::Event&)>*>(glfwGetWindowUserPointer(window));
+		if(action == GLFW_REPEAT) return;
+		else if(action == GLFW_PRESS) {
+			Event e(Event::Type::KEY_PRESSED, static_cast<uint64_t>(key));
+			(*fun)(e);
+		}
+		else {
+			Event e(Event::Type::KEY_RELESED, static_cast<uint64_t>(key));
+			(*fun)(e);
+		}
 	});
 }
 
