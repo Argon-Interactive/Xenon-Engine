@@ -6,7 +6,7 @@
 
 Xenon::Application* Xenon::create();
 
-int main(int argc, char** argv) {
+int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 	std::unique_ptr<Xenon::Application> game(Xenon::create());
 	int res = game->run();
 	return res;

@@ -2,6 +2,7 @@
 #define CORE_INPUT_HPP
 
 #include "api.h"
+#include <cstdint>
 
 namespace Xenon {
 class Input {
@@ -31,19 +32,19 @@ public:
 	// right super
 	// last
 
-	bool XAPI getKeyPress();
-	bool XAPI getKeyRelesed();
-	bool XAPI getKeyHeld();
+	[[nodiscard]] static bool XAPI getKeyPress(Key key);
+	[[nodiscard]] static bool XAPI getKeyRelesed(Key key);
+	[[nodiscard]] static bool XAPI getKeyHeld(Key key);
 private:
 	Input();
 	constexpr static int s_keyAmmount = 117;
 	static bool s_singletonCheck;
-	static bool s_pressedMap[s_keyAmmount];
-	static bool s_relesedMap[s_keyAmmount];
-	static bool s_heldMap[s_keyAmmount];
+	// 0th bit - press, 1st bit - relese, 2nd bit - hold, 3rd bit - resetPress, 4th bit - resetRelese 
+	static XAPI int8_t s_keyStateMap[s_keyAmmount];
 	
 	static void init();
-
+	//If a key state was not read for two frames it is reset
+	static void resetStickyKeys();
 	enum class Action { Press, Relese };
 	static void proccesEvents(Action act, int GLFWKeyCode);
 

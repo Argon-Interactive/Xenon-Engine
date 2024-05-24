@@ -128,22 +128,56 @@ const static std::unordered_map<int, Xenon::Input::Key> c_GLFWKeyToXenonKey = {
 
 
 bool Xenon::Input::s_singletonCheck = false;
-bool Xenon::Input::s_pressedMap[s_keyAmmount];
-bool Xenon::Input::s_relesedMap[s_keyAmmount];
-bool Xenon::Input::s_heldMap[s_keyAmmount];
+int8_t Xenon::Input::s_keyStateMap[s_keyAmmount];
+
+Xenon::Input::Input() {
+	throw std::runtime_error("Xenon::Input is a static class and there shouldn't exist an instance of it");
+}
+
+bool Xenon::Input::getKeyPress(Key key) {
+	int res = s_keyStateMap[static_cast<int>(key)] & 1;
+	s_keyStateMap[static_cast<int>(key)] &= ~1;
+	return res;
+}
+
+bool Xenon::Input::getKeyRelesed(Key key) {
+	int res = s_keyStateMap[static_cast<int>(key)] & 2;
+	s_keyStateMap[static_cast<int>(key)] &= ~2;
+	return res >> 1;
+}
+
+bool Xenon::Input::getKeyHeld(Key key) {
+	return (s_keyStateMap[static_cast<int>(key)] & 4) >> 2;
+}
 
 
 void Xenon::Input::init() {
-	if(s_singletonCheck) throw std::runtime_error("Xenon::Input is a singleton and was created twice");
+	if(s_singletonCheck) throw std::runtime_error("Xenon::Input was initialized twice");
 	s_singletonCheck = true;
-	std::fill_n(s_pressedMap, s_keyAmmount, false);
-	std::fill_n(s_relesedMap, s_keyAmmount, false);
-	std::fill_n(s_heldMap, s_keyAmmount, false);
+	std::fill_n(s_keyStateMap, s_keyAmmount, 0);
+}
+
+void Xenon::Input::resetStickyKeys() {
+	int8_t resetPressFlag = 0;
+	int8_t resetReleseFlag = 0;
+	for(int i = 0; i < s_keyAmmount; ++i) {
+		resetPressFlag = s_keyStateMap[i] & 8;
+		resetReleseFlag = s_keyStateMap[i] & 16;
+		s_keyStateMap[i] &= ~(resetPressFlag >> 3);
+		s_keyStateMap[i] &= ~(resetReleseFlag >> 3);
+		s_keyStateMap[i] &= ~24;
+		s_keyStateMap[i] |= (s_keyStateMap[i] & 1) << 3;
+		s_keyStateMap[i] |= (s_keyStateMap[i] & 2) << 3;
+	}	
 }
 
 void Xenon::Input::proccesEvents(Xenon::Input::Action act, int GLFWKeyCode) {
-	int temp = static_cast<int>(c_GLFWKeyToXenonKey.at(GLFWKeyCode));
-	XN_LOG_DEB(temp);
+	int inx = static_cast<int>(c_GLFWKeyToXenonKey.at(GLFWKeyCode));
+	int actInt = static_cast<int>(act);
+	int val = (1 << (actInt + 1)) >> 1;
+	s_keyStateMap[inx] |= val;
+	s_keyStateMap[inx] &= ~4;
+	s_keyStateMap[inx] |= (!actInt << 2);
 }
 
 

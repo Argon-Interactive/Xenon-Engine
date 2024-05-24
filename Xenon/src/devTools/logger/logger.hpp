@@ -2,9 +2,11 @@
 #define _XENON_DEVTOOLS_LOGGER_
 
 #include<iostream>
+#include<iomanip>
 #include<sstream>
 #include<vector>
 #include<mutex>
+#include<format>
 #include "api.h"
 
 #define XN_LOG_BLACK		"\033[0;30m"
@@ -127,6 +129,8 @@ namespace Xenon {
 				m_msg << std::scientific << arg;
 			else if (token == 'x')
 				m_msg << std::uppercase << std::hex << arg << std::dec << std::nouppercase;
+			else if (token == 'b')
+				m_msg << std::setfill('0') << std::setw(sizeof(T) * 8) << std::format("{:b}", arg);
 			else
 				m_msg << '{' << token << '}';
 		}
