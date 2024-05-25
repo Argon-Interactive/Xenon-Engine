@@ -5,7 +5,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 project(
     XenonEngine
-    VERSION 0.0.1
+    VERSION 0.1.0
     DESCRIPTION "The Xenon Game Engine"
     # HOMEPAGE_URL "jebacdziekana.pl"
     LANGUAGES CXX C
