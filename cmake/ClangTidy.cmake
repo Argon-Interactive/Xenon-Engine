@@ -23,6 +23,7 @@ macro(xenon_enable_clang_tidy target WARNINGS_AS_ERRORS)
 		endif()
 
 		set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_OPTIONS})
+		message(${WARNING_MESSAGE} "clang-tidy set up")
 	else()
 		message(${WARNING_MESSAGE} "clang-tidy requested but executable not found")
 	endif()

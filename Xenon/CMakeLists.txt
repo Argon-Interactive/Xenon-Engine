@@ -1,8 +1,3 @@
-add_subdirectory(vendor/glad)
-add_subdirectory(vendor/glfw)
-add_subdirectory(vendor/glm)
-add_subdirectory(vendor/stb)
-
 include_directories(vendor/glad/include/glad)
 include_directories(vendor/glad/include/KHR)
 include_directories(vendor/glad/include)

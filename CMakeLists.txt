@@ -14,12 +14,6 @@ project(
 include(cmake/PreventInSourceBuild.cmake)
 
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ProjectOptions.cmake)
-include(ProjectOptions.cmake)
-xenon_options_setup()
-xenon_apply_options()
-
-target_compile_features(xenon_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
 
 set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Test")
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Test")
@@ -43,8 +37,19 @@ elseif(${USE_COMPILER} STREQUAL "clang")
 	add_compile_definitions(__COMPILER_CLANG__)
 endif()
 
+add_compile_definitions(GLM_FORCE_CXX11)
+add_compile_definitions(GLM_FORCE_SILENT_WARNINGS)
+
 include_directories(Xenon/include)
 include_directories(Xenon/vendor/all)
+
+add_subdirectory(Xenon/vendor)
+
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ProjectOptions.cmake)
+include(ProjectOptions.cmake)
+xenon_options_setup()
+xenon_apply_options()
+target_compile_features(xenon_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
 
 add_subdirectory(Xenon)
 add_subdirectory(Sandbox)
