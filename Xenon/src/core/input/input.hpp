@@ -33,8 +33,8 @@ public:
 	// last
 
 	[[nodiscard]] static bool XAPI getKeyPress(Key key);
-	[[nodiscard]] static bool XAPI getKeyRelesed(Key key);
-	[[nodiscard]] static bool XAPI getKeyHeld(Key key);
+	[[nodiscard]] static bool XAPI getKeyRelese(Key key);
+	[[nodiscard]] static bool XAPI getKeyHold(Key key);
 private:
 	Input();
 	constexpr static int s_keyAmmount = 117;

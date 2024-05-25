@@ -48,14 +48,8 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 	glfwSetKeyCallback(m_ID, [](GLFWwindow* window, int key,[[maybe_unused]] int scancode, int action,[[maybe_unused]] int mods) {
 		auto fun = reinterpret_cast<std::function<void(const Xenon::Event&)>*>(glfwGetWindowUserPointer(window));
 		if(action == GLFW_REPEAT) return;
-		else if(action == GLFW_PRESS) {
-			Event e(Event::Type::KEY_PRESSED, static_cast<uint64_t>(key));
-			(*fun)(e);
-		}
-		else {
-			Event e(Event::Type::KEY_RELESED, static_cast<uint64_t>(key));
-			(*fun)(e);
-		}
+		Event e(static_cast<Xenon::Event::Type>(action), static_cast<uint64_t>(key));
+		(*fun)(e);
 	});
 }
 

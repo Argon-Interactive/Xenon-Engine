@@ -140,13 +140,13 @@ bool Xenon::Input::getKeyPress(Key key) {
 	return res;
 }
 
-bool Xenon::Input::getKeyRelesed(Key key) {
+bool Xenon::Input::getKeyRelese(Key key) {
 	int res = s_keyStateMap[static_cast<int>(key)] & 2;
 	s_keyStateMap[static_cast<int>(key)] &= ~2;
 	return res >> 1;
 }
 
-bool Xenon::Input::getKeyHeld(Key key) {
+bool Xenon::Input::getKeyHold(Key key) {
 	return (s_keyStateMap[static_cast<int>(key)] & 4) >> 2;
 }
 
@@ -174,10 +174,10 @@ void Xenon::Input::resetStickyKeys() {
 void Xenon::Input::proccesEvents(Xenon::Input::Action act, int GLFWKeyCode) {
 	int inx = static_cast<int>(c_GLFWKeyToXenonKey.at(GLFWKeyCode));
 	int actInt = static_cast<int>(act);
-	int val = (1 << (actInt + 1)) >> 1;
+	int val = actInt + 1;
 	s_keyStateMap[inx] |= val;
 	s_keyStateMap[inx] &= ~4;
-	s_keyStateMap[inx] |= (!actInt << 2);
+	s_keyStateMap[inx] |= (!actInt << 2); //NOLINT
 }
 
 

@@ -12,11 +12,11 @@ namespace Xenon
 	{
 	public:
 		enum class Type {
+			KEY_RELESED,
+			KEY_PRESSED,
 			EMPTY_EVENT,
 			WINDOW_CLOSE,
-			WINDOW_RESIZE,
-			KEY_PRESSED,
-			KEY_RELESED
+			WINDOW_RESIZE
 		};
 		Event(Type type = Event::Type::EMPTY_EVENT);
 		Event(Type type, uint32_t arg0, uint32_t arg1);

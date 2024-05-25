@@ -2,7 +2,6 @@
 #include "appData.hpp"
 #include "devTools/logger/logger_core.hpp"
 #include "input/input.hpp"
-#include <X11/Xlib.h>
 #include <functional>
 
 namespace Xenon
@@ -23,6 +22,7 @@ namespace Xenon
 	int Application::run() {
 		while (m_running) {
 			// aplikacja dziaua
+
 			handleEvents();
 			Xenon::Input::resetStickyKeys();
 			Core::AppData::getWindow().FEP();
