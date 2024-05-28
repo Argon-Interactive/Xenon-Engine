@@ -9,7 +9,7 @@ namespace Core
 	std::unique_ptr<AppData> AppData::s_appData;
 	bool AppData::s_exists = false;
 
-	void AppData::init(std::function<void(const Xenon::Event&)> eventDispatcher) {
+	void AppData::init(std::function<void(const Event&)> eventDispatcher) {
 		XN_LOG_BR();
 		XN_LOG_TRC("Application Systems initialization...");
 

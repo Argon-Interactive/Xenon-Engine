@@ -15,7 +15,7 @@ namespace Core
 	public:
 		AppData(uint32_t width, uint32_t height, const std::string& title);
 
-		static void init(std::function<void(const Xenon::Event&)> eventDispatcher);
+		static void init(std::function<void(const Event&)> eventDispatcher);
 		static void terminate();
 
 		static Core::Window& getWindow();

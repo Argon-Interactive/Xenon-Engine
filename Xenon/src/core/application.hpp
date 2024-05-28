@@ -2,6 +2,7 @@
 #define _XENON_APPLICATION_
 
 #include "api.h"
+#include "core/input/input.hpp"
 #include "event/event.hpp"
 #include <queue>
 #include <mutex>
@@ -16,8 +17,12 @@ namespace Xenon
 	public:
 		Application();
 		virtual ~Application();
+		Application(const Application&); //TODO implement or delete
+		Application(Application&&) noexcept; //TODO implement or delete
+		Application& operator=(const Application&); //TODO implement or delete
+		Application& operator=(Application&&) noexcept; //TODO implement or delete
 
-		void pushEvent(const Event& event);
+		void pushEvent(const Core::Event& event);
 
 	private:
 		int run();
@@ -27,10 +32,10 @@ namespace Xenon
 
 		bool m_running = true;
 
-		Event popEvent();
+		Core::Event popEvent();
 		bool emptyEventQueue() const;
 
-		std::queue<Event> m_eventQueue;
+		std::queue<Core::Event> m_eventQueue;
 		mutable std::mutex m_mutex;
 		std::condition_variable m_cond;
 

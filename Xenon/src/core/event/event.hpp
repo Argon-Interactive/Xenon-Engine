@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <string>
 
-namespace Xenon
+namespace Core
 {
 
 	class XAPI Event 
@@ -14,11 +14,12 @@ namespace Xenon
 		enum class Type {
 			KEY_RELESED,
 			KEY_PRESSED,
+			MOUSE_MOVED,
 			EMPTY_EVENT,
 			WINDOW_CLOSE,
 			WINDOW_RESIZE
 		};
-		Event(Type type = Event::Type::EMPTY_EVENT);
+		explicit Event(Type type = Event::Type::EMPTY_EVENT);
 		Event(Type type, uint32_t arg0, uint32_t arg1);
 		Event(Type type, int32_t arg0, int32_t arg1);
 		Event(Type type, float arg0, float arg1);
@@ -26,9 +27,9 @@ namespace Xenon
 
 		union Argument {
 			uint64_t ullong;
-			struct { uint32_t uint0, uint1; }; //NOLINT
-			struct { float float0, float1; }; //NOLINT
-			Argument(uint64_t arg) : ullong(arg) {}
+			struct { uint32_t uint0, uint1; }; //NOLINT - stupid warning
+			struct { float float0, float1; }; //NOLINT - stupid warning
+			explicit Argument(uint64_t arg) : ullong(arg) {}
 			Argument(uint32_t arg0, uint32_t arg1) : uint0(arg0), uint1(arg1) {}
 			Argument(float arg0, float arg1) : float0(arg0), float1(arg1) {}
 		};
