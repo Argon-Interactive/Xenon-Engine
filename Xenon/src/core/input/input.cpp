@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <unordered_map>
-#include "glfw3.h"
+#include <glfw3.h>
 #include "devTools/logger/logger_core.hpp"
 
 const static std::unordered_map<int, Xenon::Input::Key> c_GLFWKeyToXenonKey = {
@@ -123,12 +123,22 @@ const static std::unordered_map<int, Xenon::Input::Key> c_GLFWKeyToXenonKey = {
 	{GLFW_KEY_SCROLL_LOCK, Xenon::Input::Key::Scroll_lock},
 	{GLFW_KEY_NUM_LOCK, Xenon::Input::Key::Num_lock},
 	{GLFW_KEY_BACKSPACE, Xenon::Input::Key::Backspace},
+	{GLFW_MOUSE_BUTTON_1, Xenon::Input::Key::Left_Mouse_Button},
+	{GLFW_MOUSE_BUTTON_2, Xenon::Input::Key::Right_Mouse_Button},
+	{GLFW_MOUSE_BUTTON_3, Xenon::Input::Key::Middle_Mouse_Button},
+	{GLFW_MOUSE_BUTTON_4, Xenon::Input::Key::Mouse_Button_4},
+	{GLFW_MOUSE_BUTTON_5, Xenon::Input::Key::Mouse_Button_5},
+	{GLFW_MOUSE_BUTTON_6, Xenon::Input::Key::Mouse_Button_6},
+	{GLFW_MOUSE_BUTTON_7, Xenon::Input::Key::Mouse_Button_7},
+	{GLFW_MOUSE_BUTTON_8, Xenon::Input::Key::Mouse_Button_8}
 };
 
 
-
 bool Xenon::Input::s_singletonCheck = false;
-int8_t Xenon::Input::s_keyStateMap[s_keyAmmount];
+uint8_t Xenon::Input::s_keyStateMap[s_keyAmmount];
+void* Xenon::Input::s_window = nullptr;
+float Xenon::Input::s_xMousePosition = 0.0f;
+float Xenon::Input::s_yMousePosition = 0.0f;
 
 Xenon::Input::Input() {
 	throw std::runtime_error("Xenon::Input is a static class and there shouldn't exist an instance of it");
@@ -150,11 +160,18 @@ bool Xenon::Input::getKeyHold(Key key) {
 	return (s_keyStateMap[static_cast<int>(key)] & 4) >> 2;
 }
 
+void Xenon::Input::enableCursor() { glfwSetInputMode(static_cast<GLFWwindow*>(s_window), GLFW_CURSOR, GLFW_CURSOR_NORMAL); }
+void Xenon::Input::disableCursor() { glfwSetInputMode(static_cast<GLFWwindow*>(s_window), GLFW_CURSOR, GLFW_CURSOR_DISABLED); }
 
-void Xenon::Input::init() {
+std::pair<float, float> Xenon::Input::getMouseScreenPosition() {
+	return {s_xMousePosition, s_yMousePosition};
+}
+
+void Xenon::Input::init(void* window) {
 	if(s_singletonCheck) throw std::runtime_error("Xenon::Input was initialized twice");
 	s_singletonCheck = true;
 	std::fill_n(s_keyStateMap, s_keyAmmount, 0);
+	s_window = window;
 }
 
 void Xenon::Input::resetStickyKeys() {
@@ -179,6 +196,8 @@ void Xenon::Input::proccesEvents(Xenon::Input::Action act, int GLFWKeyCode) {
 	s_keyStateMap[inx] &= ~4;
 	s_keyStateMap[inx] |= (!actInt << 2); //NOLINT
 }
+
+void Xenon::Input::proccesEvents(float xpos, float ypos) { s_xMousePosition = xpos; s_yMousePosition = ypos; }
 
 
 

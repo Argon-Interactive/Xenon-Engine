@@ -14,9 +14,9 @@ namespace Core
 		Window(const Window&) = delete;
 		Window(uint32_t width, uint32_t height, std::string title);
 		~Window();
-		bool closeCallBack() const;
+		[[nodiscard]] bool closeCallBack() const;
 		void close() const;
-		void setEventDispatcher(std::function<void(const Xenon::Event&)> dispatch);
+		void setEventDispatcher(std::function<void(const Core::Event&)> dispatch);
 		void setFullscreen(bool fullscreen);
 		//Not fully working as indended WIP
 		void setBorderless(bool borderless);
@@ -33,24 +33,24 @@ namespace Core
 		void setIcon() const;
 		void maximizeWindow(bool maximize) const;
 		void setResizable(bool resizable) const;
-		bool isBorderless() const;
-		bool isFullscreen() const;
-		bool isFocused() const;
+		[[nodiscard]] bool isBorderless() const;
+		[[nodiscard]] bool isFullscreen() const;
+		[[nodiscard]] bool isFocused() const;
 		std::string getTitle();
 		std::pair<uint32_t, uint32_t> getWindowSize();
 		std::pair<int, int> getWindowPos();
 		std::pair<uint32_t, uint32_t> getScreenResolution();
 		std::pair<uint32_t, uint32_t> getScreenAspectRatio();
-		bool getVSync() const;
+		[[nodiscard]] bool getVSync() const;
 		void FEP() const;
-		GLFWwindow* passPointer() const;
+		[[nodiscard]] GLFWwindow* passPointer() const;
 	private:
 		GLFWwindow* m_ID;
 		bool m_isVSync;
 		bool m_isBorderless;
 		std::string m_title;
 		GLFWmonitor* m_monitor;
-		std::function<void(const Xenon::Event&)> m_eventDispatcher;
+		std::function<void(const Core::Event&)> m_eventDispatcher;
 	};
 }
 

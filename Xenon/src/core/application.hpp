@@ -17,7 +17,7 @@ namespace Xenon
 		Application();
 		virtual ~Application();
 
-		void pushEvent(const Event& event);
+		void pushEvent(const Core::Event& event);
 
 	private:
 		int run();
@@ -27,10 +27,10 @@ namespace Xenon
 
 		bool m_running = true;
 
-		Event popEvent();
+		Core::Event popEvent();
 		bool emptyEventQueue() const;
 
-		std::queue<Event> m_eventQueue;
+		std::queue<Core::Event> m_eventQueue;
 		mutable std::mutex m_mutex;
 		std::condition_variable m_cond;
 

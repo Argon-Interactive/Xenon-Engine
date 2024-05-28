@@ -3,6 +3,7 @@
 
 #include "api.h"
 #include <cstdint>
+#include <utility>
 
 namespace Xenon {
 class Input {
@@ -24,7 +25,8 @@ public:
 		F13, Equals, PageUp, PageDown, Pause, 
 		A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, Left_Braket, Backslash, Right_Braket,
 		Np_Devide, Np_Multiply, Np_Minus, Np_Add, Np_Enter,
-		Back_Quote, F14, F15, F16, F17, F18, F19, F20, F21, F22, F23, F24, F25, Print_Screen, Np_Decimal, Scroll_lock, Num_lock, Backspace
+		Back_Quote, F14, F15, F16, F17, F18, F19, F20, F21, F22, F23, F24, F25, Print_Screen, Np_Decimal, Scroll_lock, Num_lock, Backspace, 
+		Left_Mouse_Button, Right_Mouse_Button, Middle_Mouse_Button, Mouse_Button_4, Mouse_Button_5, Mouse_Button_6, Mouse_Button_7, Mouse_Button_8
 	};
 	// These keys are not implemented bcoz i dont think we will need them
 	// world 1
@@ -35,18 +37,27 @@ public:
 	[[nodiscard]] static bool XAPI getKeyPress(Key key);
 	[[nodiscard]] static bool XAPI getKeyRelese(Key key);
 	[[nodiscard]] static bool XAPI getKeyHold(Key key);
+	static void XAPI disableCursor();
+	static void XAPI enableCursor();
+	[[nodiscard]] static std::pair<float, float> XAPI getMouseScreenPosition(); //Consider changeing std::pair to some Vector (Engine struct)
+
 private:
 	Input();
-	constexpr static int s_keyAmmount = 117;
+	constexpr static int s_keyAmmount = 125;
 	static bool s_singletonCheck;
 	// 0th bit - press, 1st bit - relese, 2nd bit - hold, 3rd bit - resetPress, 4th bit - resetRelese 
-	static XAPI int8_t s_keyStateMap[s_keyAmmount];
+	static XAPI uint8_t s_keyStateMap[];
+	static void* s_window;
+	static float s_xMousePosition;
+	static float s_yMousePosition;
 	
-	static void init();
+	static void init(void* window);
 	//If a key state was not read for two frames it is reset
 	static void resetStickyKeys();
 	enum class Action { Press, Relese };
 	static void proccesEvents(Action act, int GLFWKeyCode);
+	static void proccesEvents(float xpos, float ypos);
+	
 
 	friend class Application;
 };

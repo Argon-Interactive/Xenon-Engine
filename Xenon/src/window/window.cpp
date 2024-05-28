@@ -1,6 +1,5 @@
 #include <functional>
 #include<glad.h> //this must be included before window.h
-#include <iterator>
 #include<stb_image.h>
 #include<numeric>
 #include"window.hpp"
@@ -8,12 +7,11 @@
 #include "glfw3.h"
 
 Core::Window::Window(uint32_t width, uint32_t height, std::string title)
-	:m_ID(nullptr), m_isVSync(true), m_isBorderless(false), m_title(title), m_monitor(nullptr)
+	:m_ID(nullptr), m_isVSync(true), m_isBorderless(false), m_title(title), m_monitor(glfwGetPrimaryMonitor())
 {
-	m_monitor = glfwGetPrimaryMonitor();
 	glfwWindowHint(GLFW_SAMPLES, 4);
-	m_ID = glfwCreateWindow(static_cast<int32_t>(width), static_cast<int32_t>(height), m_title.c_str(), NULL, NULL);
-	if (!m_ID)
+	m_ID = glfwCreateWindow(static_cast<int32_t>(width), static_cast<int32_t>(height), m_title.c_str(), nullptr, nullptr);
+	if (m_ID == nullptr)
 	{
 		XN_LOG_ERR("Error with creation of a window named \"{0}\".", m_title);
 		glfwTerminate();
@@ -21,17 +19,17 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 	}
 	glfwMakeContextCurrent(m_ID);
 	// vsync on by default!
-	glfwSwapInterval(true);
-	if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
+	glfwSwapInterval(1);
+	if (gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)) == 0)
 	{
 		XN_LOG_ERR("Failed to initialize GLAD.");
 		exit(EXIT_FAILURE);
 	}
 
-	using Xenon::Event;
+	using Core::Event;
 	glfwSetFramebufferSizeCallback(m_ID, [](GLFWwindow* window, int width, int height) {
 		glViewport(0, 0, width, height);
-		auto fun = reinterpret_cast<std::function<void(const Xenon::Event&)>*>(glfwGetWindowUserPointer(window));
+		auto *fun = reinterpret_cast<std::function<void(const Event&)>*>(glfwGetWindowUserPointer(window));
 		//int0 = width int1 = height
 		Event e(Event::Type::WINDOW_RESIZE, width, height);
 		(*fun)(e);
@@ -40,15 +38,27 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 	glfwSetWindowUserPointer(m_ID, &m_eventDispatcher);
 
 	glfwSetWindowCloseCallback(m_ID, [](GLFWwindow* window) {
-		auto fun = reinterpret_cast<std::function<void(const Xenon::Event&)>*>(glfwGetWindowUserPointer(window));
+		auto *fun = reinterpret_cast<std::function<void(const Event&)>*>(glfwGetWindowUserPointer(window));
 		Event e(Event::Type::WINDOW_CLOSE);
 		(*fun)(e);
 	});
 
 	glfwSetKeyCallback(m_ID, [](GLFWwindow* window, int key,[[maybe_unused]] int scancode, int action,[[maybe_unused]] int mods) {
-		auto fun = reinterpret_cast<std::function<void(const Xenon::Event&)>*>(glfwGetWindowUserPointer(window));
+		auto *fun = reinterpret_cast<std::function<void(const Event&)>*>(glfwGetWindowUserPointer(window));
 		if(action == GLFW_REPEAT) return;
-		Event e(static_cast<Xenon::Event::Type>(action), static_cast<uint64_t>(key));
+		Event e(static_cast<Event::Type>(action), static_cast<uint64_t>(key));
+		(*fun)(e);
+	});
+
+	glfwSetMouseButtonCallback(m_ID, [](GLFWwindow* window, int button, int action,[[maybe_unused]] int mods) {
+		auto *fun = reinterpret_cast<std::function<void(const Event&)>*>(glfwGetWindowUserPointer(window));
+		Event e(static_cast<Event::Type>(action), static_cast<uint64_t>(button));
+		(*fun)(e);
+	});
+
+	glfwSetCursorPosCallback(m_ID, [](GLFWwindow* window, double xpos, double ypos){
+		auto *fun = reinterpret_cast<std::function<void(const Event&)>*>(glfwGetWindowUserPointer(window));
+		Event e(Event::Type::MOUSE_MOVED, static_cast<float>(xpos), static_cast<float>(ypos));
 		(*fun)(e);
 	});
 }
@@ -58,14 +68,14 @@ Core::Window::~Window()
 
 bool Core::Window::closeCallBack() const
 {
-	if (!m_ID) return false;
+	if (m_ID == nullptr) return false;
 	return glfwWindowShouldClose(m_ID);
 }
 
 void Core::Window::close() const
 { if (m_ID == nullptr) { return; } glfwSetWindowShouldClose(m_ID, GLFW_TRUE); }
 
-void Core::Window::setEventDispatcher(std::function<void(const Xenon::Event&)> dispatch) {
+void Core::Window::setEventDispatcher(std::function<void(const Core::Event&)> dispatch) {
 	m_eventDispatcher = dispatch;
 }
 
