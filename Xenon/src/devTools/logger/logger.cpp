@@ -4,14 +4,19 @@
 #include <fstream>
 #include <chrono>
 #include <filesystem>
+#include <iostream>
 #include <sstream>
 #include <string>
 
-Xenon::Logger Xenon::Logger::s_LogCore(true);
-Xenon::Logger Xenon::Logger::s_LogClient(false);
+Xenon::Logger& Xenon::Logger::getInstance() { 
+	static Logger logger(false);
+	return logger; 
+}
 
-Xenon::Logger& Xenon::Logger::getInstance() { return s_LogClient; }
-Xenon::Logger& Xenon::Logger::getInstanceCore() { return s_LogCore; }
+Xenon::Logger& Xenon::Logger::getInstanceCore() { 
+	static Logger logger(true);
+	return logger; 
+}
 
 void Xenon::Logger::setColors(XN_COLOR entryColor, XN_COLOR infoColor, XN_COLOR warningColor, XN_COLOR errorColor, XN_COLOR debugColor, XN_COLOR traceColor)
 {
@@ -37,7 +42,8 @@ std::string Xenon::Logger::getTime()
 		std::to_string(minutes) << ":" << ((seconds < 10) ? "0" : "") << std::to_string(seconds) << "]";
 	return result.str();
 }
-size_t Xenon::Logger::findToken(const char* string) const
+
+size_t Xenon::Logger::findToken(const char* string)
 {
 	if (string[0] == '\0') { return std::string::npos; }
 	if (string[1] == '\0') { return std::string::npos; }

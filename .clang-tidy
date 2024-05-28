@@ -25,6 +25,7 @@ Checks: '-*,
   google-runtime-operator,
   hicpp-*,
   -hicpp-uppercase-literal-suffix,
+  -hicpp-braces-around-statements,
   -hicpp-vararg,
   misc-*,
   modernize-*,
@@ -34,7 +35,9 @@ Checks: '-*,
   -readability-identifier-length,
   -readability-uppercase-literal-suffix,
   -readability-convert-member-functions-to-static,
-  -readability-magic-numbers'
+  -readability-magic-numbers,
+  -readability-braces-around-statements,
+  -misc-include-cleaner'
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
 FormatStyle:     none

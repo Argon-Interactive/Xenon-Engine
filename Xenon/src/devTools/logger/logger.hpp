@@ -7,7 +7,7 @@
 #include<vector>
 #include<mutex>
 #include<format>
-#include "api.h"
+#include"api.h"
 
 #define XN_LOG_BLACK		"\033[0;30m"
 #define XN_LOG_DARK_GRAY	"\033[1;30m"
@@ -27,16 +27,19 @@
 #define XN_LOG_WHITE		"\033[1;37m"
 #define XN_LOG_DEFAULT		"\0"
 
-typedef std::string XN_COLOR;
+using XN_COLOR = std::string;
 
 namespace Xenon {
 	class Logger
 	{
 	public:
 		~Logger() noexcept;
-		Logger(const Logger&) = delete;
+		Logger(Logger &&) = delete;
+		Logger &operator=(Logger &&) = delete;
+		Logger(const Logger &) = delete;
 		Logger& operator = (const Logger&) = delete;
-		enum struct logMode { degub, trace, entry, info, warning, error};
+
+		enum logMode { degub, trace, entry, info, warning, error};
 		//===============================================================================
 		// logging
 		//===============================================================================
@@ -48,11 +51,9 @@ namespace Xenon {
 		void log(logMode mode, T first, Types&& ... args)
 		{
 			const std::lock_guard<std::mutex> lg(m_mutex);
-			if (!m_toFile) m_msg << m_colors[static_cast<int>(mode)];
+			if (!m_toFile) m_msg << m_colors[mode];
 			m_msg << getTime();
-			std::string source[] = {  "[CLIENT]", "[ENGINE]" };
-			std::string labels[] = { "[DEB]", "[TRC]", "[ENT]", "[INF]", "[WAR]", "[ERR]" };
-			m_msg << source[m_isCore] << labels[static_cast<int>(mode)] << " ";
+			m_msg << s_labels[m_isCore] << s_labels[mode] << " ";
 			output(first, args...);
 			m_msg << '\n';
 			if (!m_toFile) { 
@@ -62,6 +63,7 @@ namespace Xenon {
 				m_msg = std::stringstream();
 			}
 		}
+
 		void XAPI breakLine(logMode mode = logMode::entry);
 		//===============================================================================
 		// settings
@@ -70,23 +72,22 @@ namespace Xenon {
 		void XAPI setColors(XN_COLOR entryColor, XN_COLOR infoColor, XN_COLOR warningColor, XN_COLOR errorColor, XN_COLOR debugColor, XN_COLOR traceColor);
 		void XAPI setFilePath(const std::string& filePath);
 	private:
-		Logger(bool isCore) :m_timeStart(std::chrono::steady_clock::now()), m_toFile(false), m_isCore(isCore),
-		m_colors{ XN_LOG_CYAN, XN_LOG_LIGHT_GRAY,	XN_LOG_WHITE, XN_LOG_GREEN, XN_LOG_YELLOW, XN_LOG_RED} {}
+		explicit Logger(bool isCore) :m_timeStart(std::chrono::steady_clock::now()), m_isCore(isCore) {}
 		const std::chrono::steady_clock::time_point m_timeStart;
-		bool m_toFile;
+		bool m_toFile = false;
 		bool m_isCore;
-		std::string m_colors[6];
+		static constexpr std::string s_source[2] = { "[CLIENT]", "[ENGINE]" };
+		static constexpr std::string s_labels[6] = { "[DEB]", "[TRC]", "[ENT]", "[INF]", "[WAR]", "[ERR]" };
+		std::string m_colors[6] = { XN_LOG_CYAN, XN_LOG_LIGHT_GRAY,	XN_LOG_WHITE, XN_LOG_GREEN, XN_LOG_YELLOW, XN_LOG_RED};
 		std::string m_filepath;
 		std::stringstream m_msg;
 		std::mutex m_mutex;
-		static Logger s_LogCore;
-		XAPI static Logger s_LogClient;
 		//===============================================================================
 		// helper funcions
 		//===============================================================================
 
 		std::string XAPI getTime();
-		size_t XAPI findToken(const char* string) const;
+		static size_t XAPI findToken(const char* string);
 		//===============================================================================
 		// recursive output
 		//===============================================================================
