@@ -26,23 +26,21 @@ namespace Core
 		Event(Type type, uint64_t arg);
 
 		union Argument {
-			uint64_t ullong;
-			struct { uint32_t uint0, uint1; }; //NOLINT - stupid warning
-			struct { float float0, float1; }; //NOLINT - stupid warning
-			explicit Argument(uint64_t arg) : ullong(arg) {}
-			Argument(uint32_t arg0, uint32_t arg1) : uint0(arg0), uint1(arg1) {}
-			Argument(float arg0, float arg1) : float0(arg0), float1(arg1) {}
+			uint64_t argUllong;
+			std::pair<uint32_t, uint32_t> argInt;
+			std::pair<float, float> argFloat;
+			explicit Argument(uint64_t arg) : argUllong(arg) {}
+			Argument(uint32_t arg0, uint32_t arg1) : argInt(arg0, arg1) {}
+			Argument(float arg0, float arg1) : argFloat(arg0, arg1) {}
 		};
 
 		[[nodiscard]] Type getType() const;
 		[[nodiscard]] std::string getName() const;
 		[[nodiscard]] Argument getArg() const;
-		
 
 	private:
 		Argument m_arg;
 		Type m_type;
-		
 
 	};
 

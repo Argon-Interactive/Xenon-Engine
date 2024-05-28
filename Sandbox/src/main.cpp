@@ -10,9 +10,14 @@ public:
 		XN_LOG_ENT("Hello from sandbox");
 		XN_LOG_BR(Xenon::Logger::logMode::info);
 	}
-	~Sandbox() override {
-		XN_LOG_ENT("Bye from sandbox");
+	~Sandbox() override { 
+		XN_LOG_ENT("Bye from sandbox"); 
 	}
+
+	Sandbox(const Sandbox &) = default;
+	Sandbox(Sandbox &&) = delete;
+	Sandbox &operator=(const Sandbox &) = default;
+	Sandbox &operator=(Sandbox &&) = delete;
 };
 
 Xenon::Application* Xenon::create() {

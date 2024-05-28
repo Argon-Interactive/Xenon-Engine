@@ -9,7 +9,7 @@ namespace Xenon
 
 	Application::Application() {
 		XN_LOG_TO_FILE("Xenon-log");
-		Core::AppData::init(std::bind(&Application::pushEvent, this, std::placeholders::_1));
+		Core::AppData::init([this](auto && a) { pushEvent(std::forward<decltype(a)>(a)); });
 		Xenon::Input::init(Core::AppData::getWindow().passPointer());
 		XN_LOG_TRC("Application: created");
 	}
@@ -32,23 +32,23 @@ namespace Xenon
 
 	void Application::handleEvents() {
 		while(!emptyEventQueue()) {
-			Core::Event e = popEvent();
+			const Core::Event e = popEvent();
 			switch (e.getType()) {
 				case Core::Event::Type::WINDOW_CLOSE:
 					XN_LOG_INF("Window close");
 					m_running = false;
 					break;
 				case Core::Event::Type::WINDOW_RESIZE:
-					XN_LOG_INF("Window resize: (width = {0}, height = {0})", e.getArg().uint0, e.getArg().uint1);
+					XN_LOG_INF("Window resize: (width = {0}, height = {0})", e.getArg().argInt.first, e.getArg().argInt.second);
 					break;
 				case Core::Event::Type::KEY_PRESSED:
-					Xenon::Input::proccesEvents(Xenon::Input::Action::Press, static_cast<int>(e.getArg().ullong));
+					Xenon::Input::proccesEvents(Xenon::Input::Action::Press, static_cast<int>(e.getArg().argUllong));
 					break;
 				case Core::Event::Type::KEY_RELESED:
-					Xenon::Input::proccesEvents(Xenon::Input::Action::Relese, static_cast<int>(e.getArg().ullong));
+					Xenon::Input::proccesEvents(Xenon::Input::Action::Relese, static_cast<int>(e.getArg().argUllong));
 					break;
 				case Core::Event::Type::MOUSE_MOVED:
-					Xenon::Input::proccesEvents(e.getArg().float0, e.getArg().float1);
+					Xenon::Input::proccesEvents(e.getArg().argFloat.first, e.getArg().argFloat.second);
 					break;
 				default:
 					XN_LOG_ERR("Unknown event: " + e.getName());
@@ -57,7 +57,7 @@ namespace Xenon
 	}
 
 	void Application::pushEvent(const Core::Event& event) {
-		std::lock_guard<std::mutex> lock(m_mutex);
+		const std::lock_guard<std::mutex> lock(m_mutex);
 		m_eventQueue.push(event);
 		m_cond.notify_one();
 	}
@@ -71,7 +71,7 @@ namespace Xenon
 	}
 
 	bool Application::emptyEventQueue() const {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        const std::lock_guard<std::mutex> lock(m_mutex);
         return m_eventQueue.empty();
     }
 
