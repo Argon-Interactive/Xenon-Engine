@@ -2,10 +2,11 @@
 #define CORE_INPUT_HPP
 
 #include "api.h"
+#include <array>
 #include <cstdint>
 #include <utility>
 
-namespace Xenon {
+namespace XAPI Xenon {
 class Input {
 public:
 	~Input() = default;
@@ -34,19 +35,18 @@ public:
 	// right super
 	// last
 
-	[[nodiscard]] static bool XAPI getKeyPress(Key key);
-	[[nodiscard]] static bool XAPI getKeyRelese(Key key);
-	[[nodiscard]] static bool XAPI getKeyHold(Key key);
-	static void XAPI disableCursor();
-	static void XAPI enableCursor();
-	[[nodiscard]] static std::pair<float, float> XAPI getMouseScreenPosition(); //Consider changeing std::pair to some Vector (Engine struct)
+	[[nodiscard]] static bool getKeyPress(Key key);
+	[[nodiscard]] static bool getKeyRelese(Key key);
+	[[nodiscard]] static bool getKeyHold(Key key);
+	static void disableCursor();
+	static void enableCursor();
+	[[nodiscard]] static std::pair<float, float> getMouseScreenPosition(); //Consider changeing std::pair to some Vector (Engine struct)
 
 private:
 	Input();
-	constexpr static int s_keyAmmount = 125;
 	static bool s_singletonCheck;
 	// 0th bit - press, 1st bit - relese, 2nd bit - hold, 3rd bit - resetPress, 4th bit - resetRelese 
-	static XAPI uint8_t s_keyStateMap[];
+	static std::array<uint8_t, 125> s_keyStateMap; //changeing the size of whis array, change it also in cpp
 	static void* s_window;
 	static float s_xMousePosition;
 	static float s_yMousePosition;

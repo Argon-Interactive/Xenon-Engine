@@ -23,9 +23,6 @@ namespace Xenon
 		while (m_running) {
 			// aplikacja dziaua
 
-			auto pos = Xenon::Input::getMouseScreenPosition();
-			XN_LOG_DEB(pos.first, pos.second);
-
 			handleEvents();
 			Xenon::Input::resetStickyKeys();
 			Core::AppData::getWindow().FEP();

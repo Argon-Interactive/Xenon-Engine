@@ -1,9 +1,10 @@
 #include "input.hpp"
-#include <algorithm>
 #include <stdexcept>
 #include <unordered_map>
 #include <glfw3.h>
 #include "devTools/logger/logger_core.hpp"
+
+#define UINT8(int) static_cast<uint8_t>(int)
 
 const static std::unordered_map<int, Xenon::Input::Key> c_GLFWKeyToXenonKey = {
 	{GLFW_KEY_A, Xenon::Input::Key::A},
@@ -135,7 +136,7 @@ const static std::unordered_map<int, Xenon::Input::Key> c_GLFWKeyToXenonKey = {
 
 
 bool Xenon::Input::s_singletonCheck = false;
-uint8_t Xenon::Input::s_keyStateMap[s_keyAmmount];
+std::array<uint8_t, 125> Xenon::Input::s_keyStateMap;
 void* Xenon::Input::s_window = nullptr;
 float Xenon::Input::s_xMousePosition = 0.0f;
 float Xenon::Input::s_yMousePosition = 0.0f;
@@ -145,19 +146,19 @@ Xenon::Input::Input() {
 }
 
 bool Xenon::Input::getKeyPress(Key key) {
-	int res = s_keyStateMap[static_cast<int>(key)] & 1;
-	s_keyStateMap[static_cast<int>(key)] &= ~1;
-	return res;
+	int res = s_keyStateMap.at(static_cast<size_t>(key)) & UINT8(1);
+	s_keyStateMap.at(static_cast<size_t>(key)) &= UINT8(~UINT8(1));
+	return res != 0;
 }
 
 bool Xenon::Input::getKeyRelese(Key key) {
-	int res = s_keyStateMap[static_cast<int>(key)] & 2;
-	s_keyStateMap[static_cast<int>(key)] &= ~2;
-	return res >> 1;
+	int res = s_keyStateMap.at(static_cast<size_t>(key)) & UINT8(2);
+	s_keyStateMap.at(static_cast<size_t>(key)) &= UINT8(~UINT8(2));
+	return res != 0;
 }
 
 bool Xenon::Input::getKeyHold(Key key) {
-	return (s_keyStateMap[static_cast<int>(key)] & 4) >> 2;
+	return (s_keyStateMap.at(static_cast<size_t>(key)) & UINT8(4)) != 0;
 }
 
 void Xenon::Input::enableCursor() { glfwSetInputMode(static_cast<GLFWwindow*>(s_window), GLFW_CURSOR, GLFW_CURSOR_NORMAL); }
@@ -168,33 +169,33 @@ std::pair<float, float> Xenon::Input::getMouseScreenPosition() {
 }
 
 void Xenon::Input::init(void* window) {
-	if(s_singletonCheck) throw std::runtime_error("Xenon::Input was initialized twice");
+	if(s_singletonCheck) throw std::runtime_error("Xenon::Input was initialized twice"); //NOLINT - stuid warning
 	s_singletonCheck = true;
-	std::fill_n(s_keyStateMap, s_keyAmmount, 0);
+	s_keyStateMap.fill(0);
 	s_window = window;
 }
 
 void Xenon::Input::resetStickyKeys() {
-	int8_t resetPressFlag = 0;
-	int8_t resetReleseFlag = 0;
-	for(int i = 0; i < s_keyAmmount; ++i) {
-		resetPressFlag = s_keyStateMap[i] & 8;
-		resetReleseFlag = s_keyStateMap[i] & 16;
-		s_keyStateMap[i] &= ~(resetPressFlag >> 3);
-		s_keyStateMap[i] &= ~(resetReleseFlag >> 3);
-		s_keyStateMap[i] &= ~24;
-		s_keyStateMap[i] |= (s_keyStateMap[i] & 1) << 3;
-		s_keyStateMap[i] |= (s_keyStateMap[i] & 2) << 3;
+	uint8_t resetPressFlag = 0;
+	uint8_t resetReleseFlag = 0;
+	for(auto& val : s_keyStateMap) {
+		resetPressFlag = val & UINT8(8);
+		resetReleseFlag = val & UINT8(16);
+		val &= UINT8(~UINT8(resetPressFlag >> 3u));
+		val &= UINT8(~UINT8(resetReleseFlag >> 3u));
+		val &= UINT8(~UINT8(24));
+		val |= UINT8(UINT8(val & UINT8(1)) << 3u);
+		val |= UINT8(UINT8(val & UINT8(2)) << 3u);
 	}	
+	//I know this look like shit but there is no way to do this bcos clangtidy is stupid and annoying
 }
 
 void Xenon::Input::proccesEvents(Xenon::Input::Action act, int GLFWKeyCode) {
-	int inx = static_cast<int>(c_GLFWKeyToXenonKey.at(GLFWKeyCode));
-	int actInt = static_cast<int>(act);
-	int val = actInt + 1;
-	s_keyStateMap[inx] |= val;
-	s_keyStateMap[inx] &= ~4;
-	s_keyStateMap[inx] |= (!actInt << 2); //NOLINT
+	size_t inx = static_cast<size_t>(c_GLFWKeyToXenonKey.at(GLFWKeyCode)); //NOLINT - stupid warning
+	uint8_t actInt = static_cast<uint8_t>(act); //NOLINT - stupid warning
+	s_keyStateMap.at(inx) |= UINT8(actInt + 1);
+	s_keyStateMap.at(inx) &= UINT8(~UINT8(4));
+	s_keyStateMap.at(inx) |= UINT8(UINT8(static_cast<int>(actInt == 0u)) << 2u); 
 }
 
 void Xenon::Input::proccesEvents(float xpos, float ypos) { s_xMousePosition = xpos; s_yMousePosition = ypos; }
