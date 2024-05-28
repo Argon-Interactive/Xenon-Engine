@@ -2,6 +2,7 @@
 #define _XENON_APPLICATION_
 
 #include "api.h"
+#include "core/input/input.hpp"
 #include "event/event.hpp"
 #include <queue>
 #include <mutex>
@@ -16,6 +17,10 @@ namespace Xenon
 	public:
 		Application();
 		virtual ~Application();
+		Application(const Application&); //TODO implement or delete
+		Application(Application&&) noexcept; //TODO implement or delete
+		Application& operator=(const Application&); //TODO implement or delete
+		Application& operator=(Application&&) noexcept; //TODO implement or delete
 
 		void pushEvent(const Core::Event& event);
 

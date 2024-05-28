@@ -27,8 +27,8 @@ namespace Core
 
 		union Argument {
 			uint64_t ullong;
-			struct { uint32_t uint0, uint1; }; //NOLINT
-			struct { float float0, float1; }; //NOLINT
+			struct { uint32_t uint0, uint1; }; //NOLINT - stupid warning
+			struct { float float0, float1; }; //NOLINT - stupid warning
 			explicit Argument(uint64_t arg) : ullong(arg) {}
 			Argument(uint32_t arg0, uint32_t arg1) : uint0(arg0), uint1(arg1) {}
 			Argument(float arg0, float arg1) : float0(arg0), float1(arg1) {}
