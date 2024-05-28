@@ -2,12 +2,13 @@
 #include<glad.h> //this must be included before window.h
 #include<stb_image.h>
 #include<numeric>
+#include <utility>
 #include"window.hpp"
 #include"devTools/logger/logger_core.hpp"
 #include "glfw3.h"
 
 Core::Window::Window(uint32_t width, uint32_t height, std::string title)
-	:m_ID(nullptr), m_isVSync(true), m_isBorderless(false), m_title(title), m_monitor(glfwGetPrimaryMonitor())
+	:m_ID(nullptr), m_isVSync(true), m_isBorderless(false), m_title(std::move(title)), m_monitor(glfwGetPrimaryMonitor())
 {
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	m_ID = glfwCreateWindow(static_cast<int32_t>(width), static_cast<int32_t>(height), m_title.c_str(), nullptr, nullptr);
@@ -25,6 +26,8 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 		XN_LOG_ERR("Failed to initialize GLAD.");
 		exit(EXIT_FAILURE);
 	}
+	glfwSetInputMode(m_ID, GLFW_STICKY_KEYS, GLFW_TRUE);
+	glfwSetInputMode(m_ID, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
 
 	using Core::Event;
 	glfwSetFramebufferSizeCallback(m_ID, [](GLFWwindow* window, int width, int height) {
@@ -45,7 +48,7 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 
 	glfwSetKeyCallback(m_ID, [](GLFWwindow* window, int key,[[maybe_unused]] int scancode, int action,[[maybe_unused]] int mods) {
 		auto *fun = reinterpret_cast<std::function<void(const Event&)>*>(glfwGetWindowUserPointer(window));
-		if(action == GLFW_REPEAT) return;
+		if(action == GLFW_REPEAT) return; //NOLINT - stupid warning
 		Event e(static_cast<Event::Type>(action), static_cast<uint64_t>(key));
 		(*fun)(e);
 	});
@@ -68,8 +71,8 @@ Core::Window::~Window()
 
 bool Core::Window::closeCallBack() const
 {
-	if (m_ID == nullptr) return false;
-	return glfwWindowShouldClose(m_ID);
+	if (m_ID == nullptr) return false; //NOLINT - stupid warning
+	return glfwWindowShouldClose(m_ID) != 0;
 }
 
 void Core::Window::close() const
@@ -81,8 +84,8 @@ void Core::Window::setEventDispatcher(std::function<void(const Core::Event&)> di
 
 void Core::Window::setFullscreen(bool fullscreen)
 {
-	if (isFullscreen() == fullscreen) return;
-	int posx = 0, posy = 0, sizew = 0, sizeh = 0;
+	if (isFullscreen() == fullscreen) return; //NOLINT - stupid warning
+	int posx = 0, posy = 0, sizew = 0, sizeh = 0; //NOLINT - stupid warning
 	if (fullscreen)
 	{
 		glfwGetWindowPos(m_ID, &posx, &posy);
@@ -100,7 +103,7 @@ void Core::Window::setFullscreen(bool fullscreen)
 
 void Core::Window::setBorderless(bool borderless)
 {
-	if (isBorderless() == borderless) return;
+	if (isBorderless() == borderless) return; //NOLINT - stupid warning
 	if (borderless)
 	{ glfwSetWindowAttrib(m_ID, GLFW_DECORATED, GLFW_FALSE); maximizeWindow(true); }
 	else
@@ -110,7 +113,7 @@ void Core::Window::setBorderless(bool borderless)
 
 void Core::Window::setVSync(bool vsync)
 { 
-	glfwSwapInterval(vsync); 
+	glfwSwapInterval(static_cast<int>(vsync)); 
 	if (isFullscreen()) {
 		const GLFWvidmode* mode = glfwGetVideoMode(m_monitor);
 		glfwSetWindowMonitor(m_ID, m_monitor, 0, 0, mode->width, mode->height, vsync ? mode->refreshRate : 0);
@@ -149,14 +152,14 @@ void Core::Window::FEP() const
 void Core::Window::setIcon(std::string icon, std::string icon_small)
 {
 	stbi_set_flip_vertically_on_load(0);
-	GLFWimage iconImage[2];
-	iconImage[0].pixels = stbi_load(icon.c_str(), &iconImage[0].width, &iconImage[0].height, 0, 4);
-	iconImage[1].pixels = stbi_load(icon_small.c_str(), &iconImage[1].width, &iconImage[1].height, 0, 4);
+	GLFWimage iconImage[2]; //NOLINT - stupid warning
+	iconImage[0].pixels = stbi_load(icon.c_str(), &iconImage[0].width, &iconImage[0].height, nullptr, 4);
+	iconImage[1].pixels = stbi_load(icon_small.c_str(), &iconImage[1].width, &iconImage[1].height, nullptr, 4);
 
 	if (iconImage[0].pixels == nullptr || iconImage[1].pixels == nullptr)
 	{ XN_LOG_ERR("Failed to load window icon."); return; }
 
-	glfwSetWindowIcon(m_ID, 2, iconImage);
+	glfwSetWindowIcon(m_ID, 2, iconImage); //NOLINT - stupid warning
 	stbi_image_free(iconImage[0].pixels);
 	stbi_image_free(iconImage[1].pixels);
 	stbi_set_flip_vertically_on_load(1);
@@ -166,7 +169,7 @@ void Core::Window::setIcon(std::string icon)
 {
 	stbi_set_flip_vertically_on_load(0);
 	GLFWimage iconImage;
-	iconImage.pixels = stbi_load(icon.c_str(), &iconImage.width, &iconImage.height, 0, 4);
+	iconImage.pixels = stbi_load(icon.c_str(), &iconImage.width, &iconImage.height, nullptr, 4);
 
 	if (iconImage.pixels == nullptr)
 	{ XN_LOG_ERR("Failed to load window icon."); return; }
@@ -177,16 +180,16 @@ void Core::Window::setIcon(std::string icon)
 }
 
 void Core::Window::setIcon() const
-{ glfwSetWindowIcon(m_ID, 0, NULL); }
+{ glfwSetWindowIcon(m_ID, 0, nullptr); }
 
 void Core::Window::maximizeWindow(bool maximize) const
 {
-	if (maximize) glfwMaximizeWindow(m_ID);
-	else glfwRestoreWindow(m_ID);
+	if (maximize) glfwMaximizeWindow(m_ID); //NOLINT - stupid warning
+	else glfwRestoreWindow(m_ID); //NOLINT - stupid warning
 }
 
 void Core::Window::setResizable(bool resizable) const
-{ glfwSetWindowAttrib(m_ID, GLFW_RESIZABLE, resizable); }
+{ glfwSetWindowAttrib(m_ID, GLFW_RESIZABLE, static_cast<int>(resizable)); }
 
 bool Core::Window::isBorderless() const
 { return m_isBorderless; }
@@ -202,14 +205,14 @@ std::string Core::Window::getTitle()
 
 std::pair<uint32_t, uint32_t> Core::Window::getWindowSize()
 {
-	int w, h;
+	int w = 0, h = 0; //NOLINT - stupid warning
 	glfwGetWindowSize(m_ID, &w, &h);
 	return { static_cast<uint32_t>(w), static_cast<uint32_t>(h) };
 }
 
 std::pair<int, int> Core::Window::getWindowPos()
 {
-	int x, y;
+	int x = 0, y = 0; //NOLINT - stupid warning
 	glfwGetWindowSize(m_ID, &x, &y);
 	return { x, y };
 }
