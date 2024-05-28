@@ -26,6 +26,14 @@ namespace Core
 		switch (m_type) {
 			case Type::WINDOW_CLOSE:
 				return "Window close event";
+			case Type::WINDOW_RESIZE:
+				return "Window resize event";	
+			case Type::KEY_PRESSED:
+				return "Key pressed event";
+			case Type::KEY_RELESED:
+				return "Key relesed event";
+			case Type::MOUSE_MOVED:
+				return "Mouse new position event";
 			default:
 				return "Unknown event";
 		}
