@@ -10,7 +10,7 @@ A Game Engine
 ## Features
 
 - Okienko 
-<img src=ReadmeAssets/okienko.png width=250>
+<img src=ReadmeAssets/okienko.png width=400>
 
 ## Used 3rd party resources 
 
@@ -29,8 +29,8 @@ A Game Engine
 - [Oskar Meler](https://github.com/frogrammer9)
 - [Maciej Zgierski](https://github.com/GoscZnickiem)
 
-## [License](LICENSE)
-
 ## Notes
 Right now we are not interested in collaboration since at the beginning  we want a lot of control in the direction in which this project will go. 
 If you encounter any sort of problem, or you want to leave a suggestion, feel free to open an issue and we will try to address it as soon as possible.
+
+### [License](LICENSE)
