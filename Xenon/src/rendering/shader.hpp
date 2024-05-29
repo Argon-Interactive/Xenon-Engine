@@ -58,7 +58,7 @@ namespace Core
 		void setUniformMatrix4(const std::string& varName, glm::mat4 v0);
 	private:
 		unsigned int m_ID;
-		static unsigned int sm_currBind;
+		static unsigned int s_currBind;
 		std::unordered_map<std::string, int> uniformLocs;
 		enum shaderType
 		{ vertex, fragment, geometry, none };

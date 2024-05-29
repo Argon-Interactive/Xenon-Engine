@@ -134,8 +134,8 @@
 #define XN_KEY_MB7 Xenon::Input::Key::Mouse_Button_7
 #define XN_KEY_MB8 Xenon::Input::Key::Mouse_Button_8
 
-namespace XAPI Xenon {
-class Input {
+namespace Xenon {
+class XAPI Input {
 public:
 	~Input() = default;
 	Input(const Input&) = delete;

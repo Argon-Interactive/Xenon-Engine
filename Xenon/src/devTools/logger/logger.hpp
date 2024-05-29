@@ -77,8 +77,8 @@ namespace Xenon {
 		const std::chrono::steady_clock::time_point m_timeStart;
 		bool m_toFile = false;
 		bool m_isCore;
-		static constexpr std::string s_source[2] = { "[CLIENT]", "[ENGINE]" };
-		static constexpr std::string s_labels[6] = { "[DEB]", "[TRC]", "[ENT]", "[INF]", "[WAR]", "[ERR]" };
+		static constexpr const char* s_source[2] = { "[CLIENT]", "[ENGINE]" };
+		static constexpr const char* s_labels[6] = { "[DEB]", "[TRC]", "[ENT]", "[INF]", "[WAR]", "[ERR]" };
 		std::string m_colors[6] = { XN_LOG_CYAN, XN_LOG_LIGHT_GRAY,	XN_LOG_WHITE, XN_LOG_GREEN, XN_LOG_YELLOW, XN_LOG_RED};
 		std::string m_filepath;
 		std::stringstream m_msg;
