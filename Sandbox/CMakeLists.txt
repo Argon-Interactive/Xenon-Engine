@@ -1,3 +1,7 @@
+project(Sandbox)
+
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Application")
+
 add_subdirectory(src)
 
 add_custom_target(copy_assets ALL
