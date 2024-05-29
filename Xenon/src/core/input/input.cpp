@@ -139,13 +139,13 @@ Xenon::Input::Input() {
 
 bool Xenon::Input::getKeyPress(Key key) {
 	const uint8_t res = s_keyStateMap.at(key) & 1u;
-	s_keyStateMap.at(key) &= ~1u;
+	s_keyStateMap.at(key) &= UINT8(~1u);
 	return res != 0;
 }
 
 bool Xenon::Input::getKeyRelese(Key key) {
 	const uint8_t res = s_keyStateMap.at(key) & 2u;
-	s_keyStateMap.at(key) &= ~2u;
+	s_keyStateMap.at(key) &= UINT8(~2u);
 	return res != 0;
 }
 
@@ -174,7 +174,7 @@ void Xenon::Input::resetStickyKeys() {
 		const uint8_t resetReleseFlag = val & 16u;
 		val &= UINT8(~UINT8(resetPressFlag >> 3u));
 		val &= UINT8(~UINT8(resetReleseFlag >> 3u));
-		val &= ~24u;
+		val &= UINT8(~24u);
 		val |= UINT8(UINT8(val & 1u) << 3u);
 		val |= UINT8(UINT8(val & 2u) << 3u);
 	}	
