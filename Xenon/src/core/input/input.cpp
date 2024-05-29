@@ -133,12 +133,6 @@ const static std::unordered_map<int, Xenon::Input::Key> c_GLFWKeyToXenonKey = {
 	{GLFW_MOUSE_BUTTON_8, Xenon::Input::Key::Mouse_Button_8}
 };
 
-bool Xenon::Input::s_singletonCheck = false;
-std::array<uint8_t, 125> Xenon::Input::s_keyStateMap;
-void* Xenon::Input::s_window = nullptr;
-float Xenon::Input::s_xMousePosition = 0.0f;
-float Xenon::Input::s_yMousePosition = 0.0f;
-
 Xenon::Input::Input() {
 	throw std::runtime_error("Xenon::Input is a static class and there shouldn't exist an instance of it");
 }
@@ -150,7 +144,7 @@ bool Xenon::Input::getKeyPress(Key key) {
 }
 
 bool Xenon::Input::getKeyRelese(Key key) {
-	int res = s_keyStateMap.at(key) & UINT8(2);
+	const int res = s_keyStateMap.at(key) & UINT8(2);
 	s_keyStateMap.at(key) &= UINT8(~UINT8(2));
 	return res != 0;
 }
@@ -167,8 +161,9 @@ std::pair<float, float> Xenon::Input::getMouseScreenPosition() {
 }
 
 void Xenon::Input::init(void* window) {
-	if(s_singletonCheck) throw std::runtime_error("Xenon::Input was initialized twice"); //NOLINT - stuid warning
-	s_singletonCheck = true;
+	static bool singletonCheck = false;
+	if(singletonCheck) throw std::runtime_error("Xenon::Input was initialized twice");
+	singletonCheck = true;
 	s_keyStateMap.fill(0);
 	s_window = window;
 }

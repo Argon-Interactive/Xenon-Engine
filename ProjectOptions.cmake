@@ -16,7 +16,7 @@ endmacro()
 
 macro(xenon_options_setup)
     option(xenon_BUILD_TESTS "Build tests" OFF)
-	option(xenon_WARNINGS_AS_ERRORS "Treat Warnings As Errors" OFF)
+	option(xenon_WARNINGS_AS_ERRORS "Treat Warnings As Errors" ON)
 	option(xenon_ENABLE_CLANG_TIDY "Enable clang-tidy" ON)
     option(xenon_ENABLE_CPPCHECK "Enable cpp-check analysis" ON)
     #TODO:

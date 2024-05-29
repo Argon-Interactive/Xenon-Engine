@@ -30,11 +30,11 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 	glfwSetInputMode(m_ID, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
 
 	using Core::Event;
-	glfwSetFramebufferSizeCallback(m_ID, [](GLFWwindow* window, int width, int height) {
-		glViewport(0, 0, width, height);
+	glfwSetFramebufferSizeCallback(m_ID, [](GLFWwindow* window, int w, int h) {
+		glViewport(0, 0, w, h);
 		auto *fun = reinterpret_cast<std::function<void(const Event&)>*>(glfwGetWindowUserPointer(window));
 		//int0 = width int1 = height
-		const Event e(Event::Type::WINDOW_RESIZE, width, height);
+		const Event e(Event::Type::WINDOW_RESIZE, w, h);
 		(*fun)(e);
 	});
 
@@ -48,7 +48,7 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 
 	glfwSetKeyCallback(m_ID, [](GLFWwindow* window, int key,[[maybe_unused]] int scancode, int action,[[maybe_unused]] int mods) {
 		auto *fun = reinterpret_cast<std::function<void(const Event&)>*>(glfwGetWindowUserPointer(window));
-		if(action == GLFW_REPEAT) return; //NOLINT - stupid warning
+		if(action == GLFW_REPEAT) return;
 		const Event e(static_cast<Event::Type>(action), static_cast<uint64_t>(key));
 		(*fun)(e);
 	});
@@ -71,7 +71,7 @@ Core::Window::~Window()
 
 bool Core::Window::closeCallBack() const
 {
-	if (m_ID == nullptr) return false; //NOLINT - stupid warning
+	if (m_ID == nullptr) return false;
 	return glfwWindowShouldClose(m_ID) != 0;
 }
 
@@ -84,8 +84,8 @@ void Core::Window::setEventDispatcher(std::function<void(const Core::Event&)> di
 
 void Core::Window::setFullscreen(bool fullscreen)
 {
-	if (isFullscreen() == fullscreen) return; //NOLINT - stupid warning
-	int posx = 0, posy = 0, sizew = 0, sizeh = 0; //NOLINT - stupid warning
+	if (isFullscreen() == fullscreen) return;
+	int posx = 0; int posy = 0; int sizew = 0; int sizeh = 0;
 	if (fullscreen)
 	{
 		glfwGetWindowPos(m_ID, &posx, &posy);
@@ -103,7 +103,7 @@ void Core::Window::setFullscreen(bool fullscreen)
 
 void Core::Window::setBorderless(bool borderless)
 {
-	if (isBorderless() == borderless) return; //NOLINT - stupid warning
+	if (isBorderless() == borderless) return;
 	if (borderless)
 	{ glfwSetWindowAttrib(m_ID, GLFW_DECORATED, GLFW_FALSE); maximizeWindow(true); }
 	else
@@ -184,8 +184,8 @@ void Core::Window::setIcon() const
 
 void Core::Window::maximizeWindow(bool maximize) const
 {
-	if (maximize) glfwMaximizeWindow(m_ID); //NOLINT - stupid warning
-	else glfwRestoreWindow(m_ID); //NOLINT - stupid warning
+	if (maximize) glfwMaximizeWindow(m_ID);
+	else glfwRestoreWindow(m_ID);
 }
 
 void Core::Window::setResizable(bool resizable) const
@@ -205,14 +205,14 @@ std::string Core::Window::getTitle()
 
 std::pair<uint32_t, uint32_t> Core::Window::getWindowSize()
 {
-	int w = 0, h = 0; //NOLINT - stupid warning
+	int w = 0; int h = 0;
 	glfwGetWindowSize(m_ID, &w, &h);
 	return { static_cast<uint32_t>(w), static_cast<uint32_t>(h) };
 }
 
 std::pair<int, int> Core::Window::getWindowPos()
 {
-	int x = 0, y = 0; //NOLINT - stupid warning
+	int x = 0; int y = 0;
 	glfwGetWindowSize(m_ID, &x, &y);
 	return { x, y };
 }

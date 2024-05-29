@@ -10,9 +10,11 @@ namespace Core
 
 	class AppData
 	{
+	private:
+		struct ConstructorToken {};
 
 	public:
-		AppData(uint32_t width, uint32_t height, const std::string& title);
+		AppData(ConstructorToken t, uint32_t width, uint32_t height, const std::string& title);
 
 		static void init(std::function<void(const Event&)> eventDispatcher);
 		static void terminate();
@@ -21,8 +23,8 @@ namespace Core
 
 	private:
 
-		static std::unique_ptr<AppData> s_appData;
-		static bool s_exists;	// XD
+		inline static std::unique_ptr<AppData> s_appData;
+		inline static bool s_exists;	// XD
 
 		Core::Window m_window;
 	};

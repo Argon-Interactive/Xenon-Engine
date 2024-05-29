@@ -11,14 +11,17 @@ namespace Core
 	class Window
 	{
 	public:
-		Window(const Window&) = delete;
-		Window(uint32_t width, uint32_t height, std::string title);
+		Window(Window &&) = delete;
 		~Window();
+		Window &operator=(const Window &) = delete;
+		Window &operator=(Window &&) = delete;
+		Window(const Window &) = delete;
+		Window(uint32_t width, uint32_t height, std::string title);
 		[[nodiscard]] bool closeCallBack() const;
 		void close() const;
-		void setEventDispatcher(std::function<void(const Core::Event&)> dispatch);
+		void setEventDispatcher(std::function<void(const Core::Event &)> dispatch);
 		void setFullscreen(bool fullscreen);
-		//Not fully working as indended WIP
+		// Not fully working as indended WIP
 		void setBorderless(bool borderless);
 		void setVSync(bool vsync);
 		void setWindowSize(uint32_t width, uint32_t height);
@@ -43,7 +46,7 @@ namespace Core
 		std::pair<uint32_t, uint32_t> getScreenAspectRatio();
 		[[nodiscard]] bool getVSync() const;
 		void FEP() const;
-		[[nodiscard]] GLFWwindow* passPointer() const;
+		[[nodiscard]] GLFWwindow *passPointer() const;
 	private:
 		GLFWwindow* m_ID;
 		bool m_isVSync;
