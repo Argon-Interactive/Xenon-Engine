@@ -144,7 +144,7 @@ public:
 	Input& operator=(const Input&&) = delete;
 
 	/* DO NOT TOUCH. IT WAS METICULOUSLY CRAFTED BY HAND */
-	enum class Key {
+	enum Key {
 		Np1, Np2, Np3, Np4, Np5, Np6, Np7, Np8, Np9, Np0,
 		Enter, Shift, Control, Alt, Caps_Lock, Tab, Esc, Windows, Command, Super, Alt_Gr, Right_Control, Right_Shift,
 		Up, Down, Left, Right,
@@ -182,7 +182,7 @@ private:
 	static void init(void* window);
 	//If a key state was not read for two frames it is reset
 	static void resetStickyKeys();
-	enum class Action { Press, Relese };
+	enum Action { Press, Relese };
 	static void proccesEvents(Action act, int GLFWKeyCode);
 	static void proccesEvents(float xpos, float ypos);
 	

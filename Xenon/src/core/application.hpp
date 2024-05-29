@@ -42,8 +42,6 @@ namespace Xenon
 		friend int ::main(int argc, char** argv);
 	};
 
-	Application* create();
-
 }
 
 #endif // !_XENON_APPLICATION_

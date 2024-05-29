@@ -20,6 +20,6 @@ public:
 	Sandbox &operator=(Sandbox &&) = delete;
 };
 
-Xenon::Application* Xenon::create() {
-	return new Sandbox();
+std::unique_ptr<Xenon::Application> create() {
+	return std::make_unique<Sandbox>();
 }

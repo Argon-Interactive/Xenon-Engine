@@ -34,7 +34,7 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 		glViewport(0, 0, width, height);
 		auto *fun = reinterpret_cast<std::function<void(const Event&)>*>(glfwGetWindowUserPointer(window));
 		//int0 = width int1 = height
-		Event e(Event::Type::WINDOW_RESIZE, width, height);
+		const Event e(Event::Type::WINDOW_RESIZE, width, height);
 		(*fun)(e);
 	});
 
@@ -42,26 +42,26 @@ Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 
 	glfwSetWindowCloseCallback(m_ID, [](GLFWwindow* window) {
 		auto *fun = reinterpret_cast<std::function<void(const Event&)>*>(glfwGetWindowUserPointer(window));
-		Event e(Event::Type::WINDOW_CLOSE);
+		const Event e(Event::Type::WINDOW_CLOSE);
 		(*fun)(e);
 	});
 
 	glfwSetKeyCallback(m_ID, [](GLFWwindow* window, int key,[[maybe_unused]] int scancode, int action,[[maybe_unused]] int mods) {
 		auto *fun = reinterpret_cast<std::function<void(const Event&)>*>(glfwGetWindowUserPointer(window));
 		if(action == GLFW_REPEAT) return; //NOLINT - stupid warning
-		Event e(static_cast<Event::Type>(action), static_cast<uint64_t>(key));
+		const Event e(static_cast<Event::Type>(action), static_cast<uint64_t>(key));
 		(*fun)(e);
 	});
 
 	glfwSetMouseButtonCallback(m_ID, [](GLFWwindow* window, int button, int action,[[maybe_unused]] int mods) {
 		auto *fun = reinterpret_cast<std::function<void(const Event&)>*>(glfwGetWindowUserPointer(window));
-		Event e(static_cast<Event::Type>(action), static_cast<uint64_t>(button));
+		const Event e(static_cast<Event::Type>(action), static_cast<uint64_t>(button));
 		(*fun)(e);
 	});
 
 	glfwSetCursorPosCallback(m_ID, [](GLFWwindow* window, double xpos, double ypos){
 		auto *fun = reinterpret_cast<std::function<void(const Event&)>*>(glfwGetWindowUserPointer(window));
-		Event e(Event::Type::MOUSE_MOVED, static_cast<float>(xpos), static_cast<float>(ypos));
+		const Event e(Event::Type::MOUSE_MOVED, static_cast<float>(xpos), static_cast<float>(ypos));
 		(*fun)(e);
 	});
 }
@@ -226,7 +226,7 @@ std::pair<uint32_t, uint32_t> Core::Window::getScreenResolution()
 std::pair<uint32_t, uint32_t> Core::Window::getScreenAspectRatio()
 {
 	auto Wsize = getWindowSize();
-	unsigned int gcd = std::gcd(Wsize.first, Wsize.second);
+	const unsigned int gcd = std::gcd(Wsize.first, Wsize.second);
 	return { Wsize.first / gcd, Wsize.second / gcd };
 }
 

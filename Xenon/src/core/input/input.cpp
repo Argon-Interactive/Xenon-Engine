@@ -2,7 +2,6 @@
 #include <stdexcept>
 #include <unordered_map>
 #include <glfw3.h>
-#include "devTools/logger/logger_core.hpp"
 
 #define UINT8(int) static_cast<uint8_t>(int)
 
@@ -134,7 +133,6 @@ const static std::unordered_map<int, Xenon::Input::Key> c_GLFWKeyToXenonKey = {
 	{GLFW_MOUSE_BUTTON_8, Xenon::Input::Key::Mouse_Button_8}
 };
 
-
 bool Xenon::Input::s_singletonCheck = false;
 std::array<uint8_t, 125> Xenon::Input::s_keyStateMap;
 void* Xenon::Input::s_window = nullptr;
@@ -146,19 +144,19 @@ Xenon::Input::Input() {
 }
 
 bool Xenon::Input::getKeyPress(Key key) {
-	int res = s_keyStateMap.at(static_cast<size_t>(key)) & UINT8(1);
-	s_keyStateMap.at(static_cast<size_t>(key)) &= UINT8(~UINT8(1));
+	const int res = s_keyStateMap.at(key) & UINT8(1);
+	s_keyStateMap.at(key) &= UINT8(~UINT8(1));
 	return res != 0;
 }
 
 bool Xenon::Input::getKeyRelese(Key key) {
-	int res = s_keyStateMap.at(static_cast<size_t>(key)) & UINT8(2);
-	s_keyStateMap.at(static_cast<size_t>(key)) &= UINT8(~UINT8(2));
+	int res = s_keyStateMap.at(key) & UINT8(2);
+	s_keyStateMap.at(key) &= UINT8(~UINT8(2));
 	return res != 0;
 }
 
 bool Xenon::Input::getKeyHold(Key key) {
-	return (s_keyStateMap.at(static_cast<size_t>(key)) & UINT8(4)) != 0;
+	return (s_keyStateMap.at(key) & UINT8(4)) != 0;
 }
 
 void Xenon::Input::enableCursor() { glfwSetInputMode(static_cast<GLFWwindow*>(s_window), GLFW_CURSOR, GLFW_CURSOR_NORMAL); }
@@ -176,11 +174,9 @@ void Xenon::Input::init(void* window) {
 }
 
 void Xenon::Input::resetStickyKeys() {
-	uint8_t resetPressFlag = 0;
-	uint8_t resetReleseFlag = 0;
 	for(auto& val : s_keyStateMap) {
-		resetPressFlag = val & UINT8(8);
-		resetReleseFlag = val & UINT8(16);
+		const uint8_t resetPressFlag = val & UINT8(8);
+		const uint8_t resetReleseFlag = val & UINT8(16);
 		val &= UINT8(~UINT8(resetPressFlag >> 3u));
 		val &= UINT8(~UINT8(resetReleseFlag >> 3u));
 		val &= UINT8(~UINT8(24));
@@ -191,8 +187,8 @@ void Xenon::Input::resetStickyKeys() {
 }
 
 void Xenon::Input::proccesEvents(Xenon::Input::Action act, int GLFWKeyCode) {
-	size_t inx = static_cast<size_t>(c_GLFWKeyToXenonKey.at(GLFWKeyCode)); //NOLINT - stupid warning
-	uint8_t actInt = static_cast<uint8_t>(act); //NOLINT - stupid warning
+	auto inx = static_cast<size_t>(c_GLFWKeyToXenonKey.at(GLFWKeyCode));
+	auto actInt = act;
 	s_keyStateMap.at(inx) |= UINT8(actInt + 1);
 	s_keyStateMap.at(inx) &= UINT8(~UINT8(4));
 	s_keyStateMap.at(inx) |= UINT8(UINT8(static_cast<int>(actInt == 0u)) << 2u); 
