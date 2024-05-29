@@ -138,19 +138,19 @@ Xenon::Input::Input() {
 }
 
 bool Xenon::Input::getKeyPress(Key key) {
-	const int res = s_keyStateMap.at(key) & UINT8(1);
-	s_keyStateMap.at(key) &= UINT8(~UINT8(1));
+	const uint8_t res = s_keyStateMap.at(key) & 1u;
+	s_keyStateMap.at(key) &= ~1u;
 	return res != 0;
 }
 
 bool Xenon::Input::getKeyRelese(Key key) {
-	const int res = s_keyStateMap.at(key) & UINT8(2);
-	s_keyStateMap.at(key) &= UINT8(~UINT8(2));
+	const uint8_t res = s_keyStateMap.at(key) & 2u;
+	s_keyStateMap.at(key) &= ~2u;
 	return res != 0;
 }
 
 bool Xenon::Input::getKeyHold(Key key) {
-	return (s_keyStateMap.at(key) & UINT8(4)) != 0;
+	return (s_keyStateMap.at(key) & 4u) != 0;
 }
 
 void Xenon::Input::enableCursor() { glfwSetInputMode(static_cast<GLFWwindow*>(s_window), GLFW_CURSOR, GLFW_CURSOR_NORMAL); }
@@ -170,13 +170,13 @@ void Xenon::Input::init(void* window) {
 
 void Xenon::Input::resetStickyKeys() {
 	for(auto& val : s_keyStateMap) {
-		const uint8_t resetPressFlag = val & UINT8(8);
-		const uint8_t resetReleseFlag = val & UINT8(16);
+		const uint8_t resetPressFlag = val & 8u;
+		const uint8_t resetReleseFlag = val & 16u;
 		val &= UINT8(~UINT8(resetPressFlag >> 3u));
 		val &= UINT8(~UINT8(resetReleseFlag >> 3u));
-		val &= UINT8(~UINT8(24));
-		val |= UINT8(UINT8(val & UINT8(1)) << 3u);
-		val |= UINT8(UINT8(val & UINT8(2)) << 3u);
+		val &= ~24u;
+		val |= UINT8(UINT8(val & 1u) << 3u);
+		val |= UINT8(UINT8(val & 2u) << 3u);
 	}	
 	//I know this look like shit but there is no way to do this bcos clangtidy is stupid and annoying
 }
@@ -189,7 +189,10 @@ void Xenon::Input::proccesEvents(Xenon::Input::Action act, int GLFWKeyCode) {
 	s_keyStateMap.at(inx) |= UINT8(UINT8(static_cast<int>(actInt == 0u)) << 2u); 
 }
 
-void Xenon::Input::proccesEvents(float xpos, float ypos) { s_xMousePosition = xpos; s_yMousePosition = ypos; }
+void Xenon::Input::proccesEvents(float xpos, float ypos) { 
+	s_xMousePosition = xpos; 
+	s_yMousePosition = ypos; 
+}
 
 
 

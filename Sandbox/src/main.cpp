@@ -14,9 +14,9 @@ public:
 		XN_LOG_ENT("Bye from sandbox"); 
 	}
 
-	Sandbox(const Sandbox &) = default;
+	Sandbox(const Sandbox &) = delete;
 	Sandbox(Sandbox &&) = delete;
-	Sandbox &operator=(const Sandbox &) = default;
+	Sandbox &operator=(const Sandbox &) = delete;
 	Sandbox &operator=(Sandbox &&) = delete;
 };
 

@@ -17,12 +17,12 @@ namespace Xenon
 	public:
 		Application();
 		virtual ~Application();
-		Application(const Application&); //TODO implement or delete
-		Application(Application&&) noexcept; //TODO implement or delete
-		Application& operator=(const Application&); //TODO implement or delete
-		Application& operator=(Application&&) noexcept; //TODO implement or delete
+		Application(const Application&) = delete;
+		Application(Application&&) noexcept = delete;
+		Application& operator=(const Application&) = delete;
+		Application& operator=(Application&&) = delete;
 
-		void pushEvent(const Core::Event& event);
+		void pushEvent(const Core::Event& event) noexcept;
 
 	private:
 		int run();
@@ -32,8 +32,8 @@ namespace Xenon
 
 		bool m_running = true;
 
-		Core::Event popEvent();
-		bool emptyEventQueue() const;
+		Core::Event popEvent() noexcept;
+		bool emptyEventQueue() const noexcept;
 
 		std::queue<Core::Event> m_eventQueue;
 		mutable std::mutex m_mutex;

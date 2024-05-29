@@ -19,7 +19,7 @@ namespace Core
 		static void init(std::function<void(const Event&)> eventDispatcher);
 		static void terminate();
 
-		static Core::Window& getWindow();
+		[[nodiscard]] static Core::Window& getWindow();
 
 	private:
 

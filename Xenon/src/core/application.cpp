@@ -20,14 +20,27 @@ namespace Xenon
 	}
 
 	int Application::run() {
-		while (m_running) {
-			// aplikacja dziaua
-
-			handleEvents();
-			Xenon::Input::resetStickyKeys();
-			Core::AppData::getWindow().FEP();
+		try {
+			while (m_running) {
+				update();
+				render();
+				handleEvents();
+				Xenon::Input::resetStickyKeys();
+				Core::AppData::getWindow().FEP();
+			}
+		} catch (std::exception& e) {
+			XN_LOG_ERR("Exception in main application loop: {0}", e.what());
+			return 1;
 		}
 		return 0;
+	}
+
+	void Application::render() {
+
+	}
+
+	void Application::update() {
+
 	}
 
 	void Application::handleEvents() {
@@ -56,13 +69,13 @@ namespace Xenon
 		}
 	}
 
-	void Application::pushEvent(const Core::Event& event) {
+	void Application::pushEvent(const Core::Event& event) noexcept {
 		const std::lock_guard<std::mutex> lock(m_mutex);
 		m_eventQueue.push(event);
 		m_cond.notify_one();
 	}
 
-	Core::Event Application::popEvent() {
+	Core::Event Application::popEvent() noexcept {
 		std::unique_lock<std::mutex> lock(m_mutex);
 		m_cond.wait(lock, [this] { return !m_eventQueue.empty(); } );
 		Core::Event e = m_eventQueue.front();
@@ -70,7 +83,7 @@ namespace Xenon
 		return e;
 	}
 
-	bool Application::emptyEventQueue() const {
+	bool Application::emptyEventQueue() const noexcept {
         const std::lock_guard<std::mutex> lock(m_mutex);
         return m_eventQueue.empty();
     }

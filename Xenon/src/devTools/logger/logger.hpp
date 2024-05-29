@@ -104,7 +104,7 @@ namespace Xenon {
 		{
 			const size_t tlc = findToken(text);
 			if (tlc == std::string::npos) { m_msg << text; return; }
-			m_msg.write(text, static_cast<long>(tlc));	
+			m_msg.write(text, static_cast<int64_t>(tlc));	
 			proccesToken(text[tlc + 1], arg);
 			output(&text[tlc+3], args...);
 		}
