@@ -7,8 +7,7 @@ Open the folder with the cloned repository using Visual Studio, select the confi
 ### (2)
 
 Copy `build/<configuration>/Xenon/src/XenonEngine.dll` to `build/<configuration>/Application`     
-(This will be adressed in future versions)   
- 
-##
+(This will be adressed in future versions)    
+
 
 The executable can be found at `build/<configuration>/Application/*.exe`

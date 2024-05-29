@@ -8,7 +8,7 @@
 - xorg-dev
 
 ### (1)
-Run: `cmake . --preset <configuration>`
+Run: `cmake . --preset <configuration>`   
 
 With avalible configuraions being:
 - unixlike-gcc-release
@@ -17,8 +17,6 @@ With avalible configuraions being:
 - unixlike-clang-debug
 
 ### (2)
-Go into the `build/<configuraion>` directory and run: `ninja`
-
-##
+Go into the `build/<configuraion>` directory and run: `ninja`   
 
 The executable file can be found inside `build/<configuraion>/Application` directory
