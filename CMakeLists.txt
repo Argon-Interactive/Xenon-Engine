@@ -7,7 +7,7 @@ project(
     XenonEngine
     VERSION 0.1.0
     DESCRIPTION "The Xenon Game Engine"
-    # HOMEPAGE_URL "jebacdziekana.pl"
+    # HOMEPAGE_URL ""
     LANGUAGES CXX C
 )
 

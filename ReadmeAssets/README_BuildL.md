@@ -19,6 +19,6 @@ With avalible configuraions being:
 ### (2)
 Go into the `build/<configuraion>` directory and run: `ninja`
 
-### (3)
+##
 
-The executable file can be found inside `build/<configuraion>/Test` directory
+The executable file can be found inside `build/<configuraion>/Application` directory
