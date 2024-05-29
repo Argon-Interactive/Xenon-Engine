@@ -19,6 +19,7 @@ macro(xenon_options_setup)
 	option(xenon_WARNINGS_AS_ERRORS "Treat Warnings As Errors" OFF)
 	option(xenon_ENABLE_CLANG_TIDY "Enable clang-tidy" ON)
     option(xenon_ENABLE_CPPCHECK "Enable cpp-check analysis" ON)
+	option(xenon_ENABLE_PCH "Enable precompiled headers" OFF)
     #TODO:
     option(xenon_ENABLE_IPO "Enable IPO/LTO" OFF)
     option(xenon_ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" OFF)
@@ -37,6 +38,7 @@ macro(xenon_options_setup)
         xenon_ENABLE_SANITIZER_UNDEFINED
         xenon_ENABLE_SANITIZER_THREAD
         xenon_ENABLE_SANITIZER_MEMORY
+		xenon_ENABLE_PCH
     )
 endmacro()
 
@@ -65,5 +67,32 @@ macro(xenon_apply_options)
     if(xenon_ENABLE_CPPCHECK)
         xenon_enable_cppcheck(${xenon_WARNINGS_AS_ERRORS} "")
     endif()
+
+	if(xenon_ENABLE_PCH)
+		target_precompile_headers(
+			xenon_options
+			INTERFACE
+			<utility>
+			<fstream>
+			<algorithm>
+			<filesystem>
+			<thread>
+			<chrono>
+			<functional>
+			<memory>
+			<cmath>
+			<numeric>
+			<vector>
+			<array>
+			<string>
+			<map>
+			<unordered_map>
+			<initializer_list>
+			<queue>
+			<list>
+			<cstdint>
+			<stdexcept>)
+	endif()
+
 
 endmacro()
