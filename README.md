@@ -10,7 +10,7 @@ A Game Engine
 ## Features
 
 - Okienko 
-<img src=okienko.png width=250>
+<img src=ReadmeAssets/okienko.png width=250>
 
 ## Used 3rd party resources 
 
@@ -21,8 +21,8 @@ A Game Engine
 
 ## How to build the project
 
-- [Windows](README_BuildW.md)
-- [Linux](README_BuildL.md)
+- [Windows](ReadmeAssets/README_BuildW.md)
+- [Linux](ReadmeAssets/README_BuildL.md)
 
 ## Authors
 

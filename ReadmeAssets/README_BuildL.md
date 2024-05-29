@@ -17,7 +17,7 @@ With avalible configuraions being:
 - unixlike-clang-debug
 
 ### (2)
-Go into the `build/<configuraion>` folder and run: `"ninja"`
+Go into the `build/<configuraion>` directory and run: `"ninja"`
 
 ### (3)
 
