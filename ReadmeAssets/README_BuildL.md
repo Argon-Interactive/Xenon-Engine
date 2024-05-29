@@ -1,6 +1,6 @@
 # Building for Linux
 
-## Required Packages (Inside the parethasis are the sugested versions)
+## Required Packages (Inside the parethasis are the suggested versions)
 
 - cmake (3.25)
 - g++/clang (g++ 12.2 / clang 14.0.5 )
