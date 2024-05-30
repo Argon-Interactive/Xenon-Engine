@@ -15,6 +15,9 @@ include(cmake/PreventInSourceBuild.cmake)
 
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
+if(NOT DEFINED CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
+endif()
 if(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
 endif()
@@ -55,4 +58,5 @@ xenon_apply_options()
 target_compile_features(xenon_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
 
 add_subdirectory(Xenon)
+
 add_subdirectory(Sandbox)
