@@ -33,7 +33,7 @@ namespace Xenon {
 	class Logger
 	{
 	public:
-		~Logger() noexcept;
+		~Logger();
 		Logger(Logger &&) = delete;
 		Logger &operator=(Logger &&) = delete;
 		Logger(const Logger &) = delete;

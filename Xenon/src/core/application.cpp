@@ -14,8 +14,14 @@ Application::Application() {
 }
 
 Application::~Application() {
-	Core::AppData::terminate();
-	XN_LOG_TRC("Application: destroyed");
+	try {
+		Core::AppData::terminate();
+		XN_LOG_TRC("Application: destroyed");
+	} catch (std::exception& e) {
+		try {
+			std::cout << "something went terribly fucking wrong: " << e.what();
+		} catch (std::exception& e2) { /* Holy fuck that is even worse lol */ }
+	}
 }
 
 int Application::run() {

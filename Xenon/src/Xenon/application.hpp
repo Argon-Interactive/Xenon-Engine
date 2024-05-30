@@ -10,17 +10,17 @@ namespace Core { class Application; }
 
 namespace Xenon {
 
-class XAPI Application {
+class Application {
 public:
-	Application();
-	virtual ~Application();
+	XAPI Application();
+	virtual XAPI ~Application();
 	Application(const Application&) = delete;
 	Application(Application&&) noexcept = delete;
 	Application& operator=(const Application&) = delete;
 	Application& operator=(Application&&) = delete;
 
 private:
-	int run();
+	int XAPI run();
 
 	std::unique_ptr<Core::Application> m_impl;
 

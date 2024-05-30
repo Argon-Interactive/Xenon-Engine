@@ -65,37 +65,43 @@ void Xenon::Logger::proccesToken(char token, const char* arg)
 	else { m_msg << '{' << token << '}'; }
 }
 
-Xenon::Logger::~Logger() noexcept {
-	if (m_toFile && !m_msg.str().empty()) {
-		const auto lTime = std::chrono::zoned_time{ std::chrono::current_zone(), std::chrono::system_clock::now() }.get_local_time();
-		const auto ld = floor<std::chrono::days>(lTime);
-		const std::chrono::year_month_day ymd{ ld };
+Xenon::Logger::~Logger() {
+	try {
+		if (m_toFile && !m_msg.str().empty()) {
+			const auto lTime = std::chrono::zoned_time{ std::chrono::current_zone(), std::chrono::system_clock::now() }.get_local_time();
+			const auto ld = floor<std::chrono::days>(lTime);
+			const std::chrono::year_month_day ymd{ ld };
 
-		std::stringstream ss;
-		ss << ymd << "-";
-		m_filepath += ss.str();
+			std::stringstream ss;
+			ss << ymd << "-";
+			m_filepath += ss.str();
 
-		for (int i = 1; true; ++i) {
-			try {
-				if (std::filesystem::exists(m_filepath + std::to_string(i)) && std::filesystem::is_regular_file(m_filepath + std::to_string(i))) {
-					continue;
+			for (int i = 1; true; ++i) {
+				try {
+					if (std::filesystem::exists(m_filepath + std::to_string(i)) && std::filesystem::is_regular_file(m_filepath + std::to_string(i))) {
+						continue;
+					}
+					m_filepath += std::to_string(i) + ".txt";
+					break;
 				}
-				m_filepath += std::to_string(i) + ".txt";
-				break;
+				catch (const std::filesystem::filesystem_error& e) {
+					std::cerr << "Logger: Filesystem error: " << e.what() << "\n";
+					return;
+				}
 			}
-			catch (const std::filesystem::filesystem_error& e) {
-				std::cerr << "Logger: Filesystem error: " << e.what() << "\n";
-				return;
+			try {
+				std::ofstream out(m_filepath, std::ios::out);
+				out << m_msg.str();
+				out.close();
+			}
+			catch (const std::ofstream::failure& e) {
+				std::cerr << "Logger: File operation error: " << e.what() << '\n';
 			}
 		}
+	} catch (std::exception& e) {
 		try {
-			std::ofstream out(m_filepath, std::ios::out);
-			out << m_msg.str();
-			out.close();
-		}
-		catch (const std::ofstream::failure& e) {
-			std::cerr << "Logger: File operation error: " << e.what() << '\n';
-		}
+			std::cout << "Logger couldn't save logs to file: " << e.what();
+		} catch (std::exception& e2) { /* Holy fuck that is even worse lol */ }
 	}
 }
 
