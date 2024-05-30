@@ -1,7 +1,7 @@
 #ifndef _XENON_WINDOW_
 #define _XENON_WINDOW_
 
-#include"core/event/event.hpp"
+#include"core/event.hpp"
 #include<glfw3.h>
 #include<functional>
 #include<string>

@@ -1,19 +1,16 @@
-#ifndef _XENON_APPLICATION_
-#define _XENON_APPLICATION_
+#ifndef _XENON_CORE_APPLICATION_
+#define _XENON_CORE_APPLICATION_
 
-#include "api.h"
-#include "core/input/input.hpp"
-#include "event/event.hpp"
+#include "event.hpp"
 #include <queue>
 #include <mutex>
 #include <condition_variable>
 
-extern int main(int argc, char** argv);
+namespace Xenon { class Application; }
 
-namespace Xenon
-{
-	class XAPI Application
-	{
+namespace Core {
+
+	class Application {
 	public:
 		Application();
 		virtual ~Application();
@@ -22,7 +19,7 @@ namespace Xenon
 		Application& operator=(const Application&) = delete;
 		Application& operator=(Application&&) = delete;
 
-		void pushEvent(const Core::Event& event) noexcept;
+		void pushEvent(const Core::Event& event);
 
 	private:
 		int run();
@@ -39,9 +36,9 @@ namespace Xenon
 		mutable std::mutex m_mutex;
 		std::condition_variable m_cond;
 
-		friend int ::main(int argc, char** argv);
+		friend class Xenon::Application;
 	};
 
 }
 
-#endif // !_XENON_APPLICATION_
+#endif // !_XENON_CORE_APPLICATION_

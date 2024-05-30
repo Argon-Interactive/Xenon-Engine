@@ -1,6 +1,3 @@
-#include "core/input/input.hpp"
-#include "devTools/logger/logger.hpp"
-#include "devTools/logger/logger_client.hpp"
 #include "xenon.h"
 
 class Sandbox : public Xenon::Application

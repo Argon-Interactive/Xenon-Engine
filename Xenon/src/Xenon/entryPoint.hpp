@@ -1,5 +1,5 @@
-#ifndef _XENON_ENTRYPOINT_
-#define _XENON_ENTRYPOINT_
+#ifndef _XENON_XENON_ENTRYPOINT_
+#define _XENON_XENON_ENTRYPOINT_
 
 #include "application.hpp"
 #include <memory>
@@ -12,4 +12,4 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 	return res;
 }
 
-#endif // !_XENON_ENTRYPOINT_
+#endif // !_XENON_XENON_ENTRYPOINT_

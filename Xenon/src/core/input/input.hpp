@@ -1,7 +1,6 @@
 #ifndef CORE_INPUT_HPP
 #define CORE_INPUT_HPP
 
-#include "api.h"
 #include <array>
 #include <cstdint>
 
@@ -134,8 +133,9 @@
 #define XN_KEY_MB7 Xenon::Input::Key::Mouse_Button_7
 #define XN_KEY_MB8 Xenon::Input::Key::Mouse_Button_8
 
-namespace Xenon {
-class XAPI Input {
+namespace Core {
+
+class Input {
 public:
 	~Input() = default;
 	Input(const Input&) = delete;
@@ -188,6 +188,7 @@ private:
 
 	friend class Application;
 };
+
 }
 
 #endif

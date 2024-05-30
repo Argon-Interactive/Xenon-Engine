@@ -1,13 +1,16 @@
 set(XENON_SRC 
 	api.h
 
-	core/entryPoint.hpp
+	Xenon/entryPoint.hpp
+	Xenon/application.cpp
+	Xenon/application.hpp
+
 	core/application.cpp
 	core/application.hpp
 	core/appData.cpp
 	core/appData.hpp
-	core/event/event.cpp
-	core/event/event.hpp
+	core/event.cpp
+	core/event.hpp
 	core/input/input.hpp
 	core/input/input.cpp
 
