@@ -10,7 +10,7 @@ namespace Core { class Application; }
 
 namespace Xenon {
 
-class Application {
+class XAPI Application {
 public:
 	XAPI Application();
 	virtual XAPI ~Application();
