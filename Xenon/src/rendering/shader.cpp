@@ -3,14 +3,16 @@
 #include<glad.h>
 #include<glfw3.h>
 #include<fstream>
+#include <memory>
+#include <unordered_map>
+#include <unordered_set>
 
-unsigned int Core::Shader::sm_currBind = 0;
+unsigned int Core::Shader::s_currBind = 0;
 
-unsigned int Core::Shader::CompileShader(unsigned int type, const std::string& src)
+unsigned int Core::Shader::CompileShader(unsigned int type, const char* src)
 {
 	unsigned int id = glCreateShader(type);
-	const char* srcc = src.c_str();
-	glShaderSource(id, 1, &srcc, nullptr);
+	glShaderSource(id, 1, &src, nullptr);
 	glCompileShader(id);
 	//error handling
 	int shaderCompiled = 0;
@@ -19,10 +21,11 @@ unsigned int Core::Shader::CompileShader(unsigned int type, const std::string& s
 	{
 		int logLength = 0;
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &logLength);
-		char* message = new char[logLength];
-		glGetShaderInfoLog(id, logLength, &logLength, message);
-		std::string errorlog(message);
+		std::unique_ptr<char[]> message = std::make_unique<char[]>(static_cast<unsigned long>(logLength));
+		glGetShaderInfoLog(id, logLength, &logLength, message.get());
+		std::string errorlog(message.get());
 		std::string errorshadertype;
+
 		switch (type)
 		{
 			case(GL_VERTEX_SHADER):
@@ -36,7 +39,6 @@ unsigned int Core::Shader::CompileShader(unsigned int type, const std::string& s
 				break;
 		}
 		XN_LOG_ERR("Compilaton of a shader with a type of \"{0}\" failed. Error message:\n{0}\n", errorshadertype, errorlog);
-		delete[] message;
 		return 0;
 	}
 	return id;

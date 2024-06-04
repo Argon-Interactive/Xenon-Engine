@@ -14,10 +14,15 @@ namespace Core
 	class Shader
 	{
 	public:
-		Shader(const Shader&) = delete;
-		Shader(const std::string& FilePath);
+		explicit Shader(const std::string& FilePath);
 		Shader(const std::string& VertexFilePath, const std::string& FragmentFilePath, const std::string& GeometryFilePath = "");
 		~Shader();
+		// It is deleted for now to not couse stupid bugs but it probaly should be implemented at some point
+		Shader(const Shader& oth) = delete;
+		Shader& operator=(const Shader& oth) = delete;
+		Shader(Shader&& oth) = delete;
+		Shader& operator=(Shader&& oth) = delete;
+
 		void bind() const;
 		static void unbind();
 		static void enableBlending();
@@ -63,7 +68,7 @@ namespace Core
 		enum shaderType
 		{ vertex, fragment, geometry, none };
 		bool getUniformLoc(const std::string& varName, uint32_t id);
-		static unsigned int CompileShader(unsigned int type, const std::string& src);
+		static unsigned int CompileShader(unsigned int type, const char* src);
 	};
 }
 
