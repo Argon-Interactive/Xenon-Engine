@@ -58,19 +58,20 @@ void Xenon::Logger::proccesToken(char token, const std::string& arg)
 {
 	if (token == '0') { m_msg << arg; }
 	if (token == 'q') { m_msg << "\"" << arg << "\""; }
-	else { m_msg << '{' << token << '}'; }
+	else { m_msg << "{" << token << "}"; }
 }
 void Xenon::Logger::proccesToken(char token, const char* arg)
 {
 	if (token == '0') { m_msg << arg; }
 	if (token == 'q') { m_msg << "\"" << arg << "\""; }
-	else { m_msg << '{' << token << '}'; }
+	else { m_msg << "{" << token << "}"; }
 }
 void Xenon::Logger::proccesToken(char token, char* arg)
 {
 	if (token == '0') { m_msg << arg; }
 	if (token == 'q') { m_msg << "\"" << arg << "\""; }
-	else { m_msg << '{' << token << '}'; }
+	//it makes no fucking sense what so ever and i dont care to fix it since it will never be used more then once 
+	else if(token != '0' && token != 'q') { m_msg << "{" << token << "}"; } 
 }
 
 Xenon::Logger::~Logger() {

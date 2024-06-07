@@ -67,11 +67,10 @@ namespace Core
 		static unsigned int s_currentBind;
 		std::unordered_map<std::string, int> uniformLocs;
 		enum shaderType // "none" should alweys be last, else it may couse bugs
-		{ vertex, fragment, geometry, compute, tess_control, tess_eval, none };
+		{ vertex, fragment, geometry, compute, tessControl, tessEval, none };
 		bool getUniformLoc(const std::string& varName, uint32_t id);
-		static std::string getShaderName(uint32_t shaderType);
-		static uint32_t compileShader(unsigned int type, const char* src);
-		static uint32_t linkShader(uint32_t vertexID, uint32_t fragmentID);
+		static uint32_t compileShader(shaderType type, const char* src);
+		static uint32_t linkShader(uint32_t vertexID, uint32_t fragmentID, uint32_t geometryID, uint32_t computeID, uint32_t tessControlID, uint32_t tessEvalID);
 	};
 }
 

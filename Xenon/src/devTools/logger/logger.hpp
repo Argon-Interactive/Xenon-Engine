@@ -68,7 +68,7 @@ namespace Xenon {
 			const std::lock_guard<std::mutex> lg(m_mutex);
 			if (!m_toFile) m_msg << m_colors[mode];
 			m_msg << getTime();
-			m_msg << s_labels[m_isCore] << s_labels[mode] << " ";
+			m_msg << s_source[m_isCore] << s_labels[mode] << " ";
 			output(first, args...);
 			m_msg << '\n';
 			if (!m_toFile) { 

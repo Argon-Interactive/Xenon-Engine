@@ -5,7 +5,7 @@ layout(location = 1) in vec2 iUV;
 layout(location = 2) in vec4 iCol; 
 layout(location = 3) in float iTexID;
 
-uniform mat4 u_projMatrix;
+uniform mat4 u_projMatrix
 
 out vec2 vUV;
 out vec4 vCol;
