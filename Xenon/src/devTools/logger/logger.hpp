@@ -102,11 +102,11 @@ namespace Xenon {
 		template<typename T, typename ...Types>
 		void output(const char* text, T&& arg, Types&& ...args)
 		{
-			const size_t tlc = findToken(text);
-			if (tlc == std::string::npos) { m_msg << text; return; }
-			m_msg.write(text, static_cast<int64_t>(tlc));	
-			proccesToken(text[tlc + 1], arg);
-			output(&text[tlc+3], args...);
+			const size_t tokenLocation = findToken(text);
+			if (tokenLocation == std::string::npos) { m_msg << text; return; }
+			m_msg.write(text, static_cast<int64_t>(tokenLocation));	
+			proccesToken(text[tokenLocation + 1], arg);
+			output(&text[tokenLocation + 3], args...);
 		}
 		template<typename T, typename ...Types>
 		void output(T&& arg, Types&& ...args)
@@ -120,6 +120,7 @@ namespace Xenon {
 
 		void XAPI proccesToken(char token, const std::string& arg);
 		void XAPI proccesToken(char token, const char* arg);
+		void XAPI proccesToken(char token, char* arg);
 		template<typename T>
 		void proccesToken(char token, T arg)
 		{ 

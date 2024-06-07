@@ -1,6 +1,7 @@
 #include"shader.hpp"
 #include"devTools/logger/logger_core.hpp"
 #include<array>
+#include <cstddef>
 #include<glad.h>
 #include<glfw3.h>
 #include<fstream>
@@ -43,7 +44,7 @@ uint32_t Core::Shader::compileShader(uint32_t type, const char* src)
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &logLength);
 		std::unique_ptr<char[]> message = std::make_unique<char[]>(static_cast<size_t>(logLength));
 		glGetShaderInfoLog(id, logLength, &logLength, message.get());
-		XN_LOG_ERR("Compilaton of a shader with a type of \"{0}\" failed. Error message:\n{0}\n", getShaderName(type), std::string(message.get()));
+		XN_LOG_ERR("Compilaton of a shader with a type of \"{0}\" failed. Error message:\n{0}\n", getShaderName(type), message.get());
 		return 0;
 	}
 	return id;
@@ -63,7 +64,7 @@ uint32_t Core::Shader::linkShader(uint32_t vertexID, uint32_t fragmentID) {
 	{
 		int logLength = 0;
 		glGetProgramiv(shaderID, GL_INFO_LOG_LENGTH, &logLength);
-		std::unique_ptr<char[]> message = std::make_unique<char[]>(static_cast<szie_t>(logLength));
+		std::unique_ptr<char[]> message = std::make_unique<char[]>(static_cast<size_t>(logLength));
 		glGetProgramInfoLog(shaderID, logLength, &logLength, message.get());
 		XN_LOG_ERR("Linking of a shader program failed. Error message:\n{0}\n", std::string(message.get()));
 		return 0;
