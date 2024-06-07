@@ -15,7 +15,7 @@ namespace Core
 	{
 	public:
 		explicit Shader(const std::string& FilePath);
-		Shader(const std::string& VertexFilePath, const std::string& FragmentFilePath, const std::string& GeometryFilePath = "");
+		Shader(const std::string& VertexFilePath, const std::string& FragmentFilePath);
 		~Shader();
 		// It is deleted for now to not couse stupid bugs but it probaly should be implemented at some point
 		Shader(const Shader& oth) = delete;
@@ -63,12 +63,14 @@ namespace Core
 		void setUniformMatrix4(const std::string& varName, glm::mat4 v0);
 	private:
 		unsigned int m_ID;
-		static unsigned int s_currBind;
+		static unsigned int s_currentBind;
 		std::unordered_map<std::string, int> uniformLocs;
-		enum shaderType
-		{ vertex, fragment, geometry, none };
+		enum shaderType // "none" should alweys be last, else it may couse bugs
+		{ vertex, fragment, geometry, compute, tess_control, tess_eval, none };
 		bool getUniformLoc(const std::string& varName, uint32_t id);
-		static unsigned int CompileShader(unsigned int type, const char* src);
+		static std::string getShaderName(uint32_t shaderType);
+		static uint32_t compileShader(unsigned int type, const char* src);
+		static uint32_t linkShader(uint32_t vertexID, uint32_t fragmentID);
 	};
 }
 

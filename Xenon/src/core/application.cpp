@@ -2,7 +2,10 @@
 #include "appData.hpp"
 #include "devTools/logger/logger_core.hpp"
 #include "input/input.hpp"
+#include <GL/glext.h>
 #include <functional>
+//debug
+#include "rendering/shader.hpp"
 
 namespace Core {
 
@@ -10,6 +13,7 @@ Application::Application() {
 	XN_LOG_TO_FILE("Xenon-log");
 	Core::AppData::init([this](auto && a) { pushEvent(std::forward<decltype(a)>(a)); });
 	Input::init(Core::AppData::getWindow().passPointer());
+	Core::Shader shader("Application/assets/ShaderTest.glsl");
 	XN_LOG_TRC("Application: created");
 }
 

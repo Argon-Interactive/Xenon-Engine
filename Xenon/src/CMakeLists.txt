@@ -14,6 +14,9 @@ set(XENON_SRC
 	core/input/input.hpp
 	core/input/input.cpp
 
+	rendering/shader.cpp
+	rendering/shader.hpp
+
 	window/window.cpp
 	window/window.hpp
 
