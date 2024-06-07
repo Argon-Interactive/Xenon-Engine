@@ -47,6 +47,21 @@ namespace Xenon {
 		static XAPI Logger& getInstance();
 		static Logger& getInstanceCore();
 		
+		/*
+			0 - default
+			Numbers:
+				b - base 2
+				o - base 8
+				x - base 16
+				s - scientific notation
+			Strings:
+				q - quote
+			Vectors and Arrays:
+				0 - horizontal
+				i - indexed, horizontal
+				s - vertical
+				l - indexed, vertical  
+		*/
 		template<typename T, typename ...Types>
 		void log(logMode mode, T first, Types&& ... args)
 		{
@@ -158,6 +173,31 @@ namespace Xenon {
 			else if (token == 'l') {
 				m_msg << "\n";
 				for (int i = 0; i < arg.size(); ++i) 
+				{ m_msg << i << ". " << arg[i] << "\n"; }
+			}
+			else m_msg << '{' << token << '}';
+		}
+		template<typename T, size_t S>
+		void proccesToken(char token, const std::array<T, S>& arg)
+		{
+			if (token == '0') {
+				for (int i = 0; i < S - 1; ++i) 
+				{ m_msg << arg[i] << ", "; } 
+				m_msg << arg[S - 1];
+			}
+			else if (token == 'i') {
+				for (int i = 0; i < S - 1; ++i) 
+				{ m_msg << i << ": " << arg[i] << ", "; }
+				m_msg << S - 1 << ": " << arg[S - 1];
+			}
+			else if (token == 's') {
+				m_msg << "\n";
+				for (int i = 0; i < S; ++i) 
+				{ m_msg << arg[i] << "\n"; }
+			}
+			else if (token == 'l') {
+				m_msg << "\n";
+				for (int i = 0; i < S; ++i) 
 				{ m_msg << i << ". " << arg[i] << "\n"; }
 			}
 			else m_msg << '{' << token << '}';

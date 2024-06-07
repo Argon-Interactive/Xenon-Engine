@@ -14,8 +14,9 @@ namespace Core
 	class Shader
 	{
 	public:
-		explicit Shader(const std::string& FilePath);
-		Shader(const std::string& VertexFilePath, const std::string& FragmentFilePath);
+		explicit Shader(const std::string& filePath);
+		Shader(const std::string& vertexSrc, const std::string& fragmentSrc, const std::string& geometrySrc = "", 
+		 const std::string& computeSrc = "", const std::string& tessControlSrc = "", const std::string& tessEvalSrc = "");
 		~Shader();
 		// It is deleted for now to not couse stupid bugs but it probaly should be implemented at some point
 		Shader(const Shader& oth) = delete;

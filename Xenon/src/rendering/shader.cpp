@@ -44,7 +44,7 @@ uint32_t Core::Shader::compileShader(uint32_t type, const char* src)
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &logLength);
 		std::unique_ptr<char[]> message = std::make_unique<char[]>(static_cast<size_t>(logLength));
 		glGetShaderInfoLog(id, logLength, &logLength, message.get());
-		XN_LOG_ERR("Compilaton of a shader with a type of \"{0}\" failed. Error message:\n{0}\n", getShaderName(type), message.get());
+		XN_LOG_ERR("Compilaton of a shader with a type of {q} failed. Error message:\n{0}", getShaderName(type), message.get());
 		return 0;
 	}
 	return id;
@@ -66,7 +66,7 @@ uint32_t Core::Shader::linkShader(uint32_t vertexID, uint32_t fragmentID) {
 		glGetProgramiv(shaderID, GL_INFO_LOG_LENGTH, &logLength);
 		std::unique_ptr<char[]> message = std::make_unique<char[]>(static_cast<size_t>(logLength));
 		glGetProgramInfoLog(shaderID, logLength, &logLength, message.get());
-		XN_LOG_ERR("Linking of a shader program failed. Error message:\n{0}\n", std::string(message.get()));
+		XN_LOG_ERR("Linking of a shader program failed. Error message:\n{0}", message.get());
 		return 0;
 	}
 	return shaderID;
@@ -122,10 +122,11 @@ Core::Shader::Shader(const std::string& FilePath)
 	glDeleteShader(fragmentID);
 }
 
-Core::Shader::Shader(const std::string& VertexFilePath, const std::string& FragmentFilePath)
+Core::Shader::Shader(const std::string& vertexSrc, const std::string& fragmentSrc, const std::string& geometrySrc, 
+					 const std::string& computeSrc, const std::string& tessControlSrc, const std::string& tessEvalSrc)
 	: m_ID(0)
 {
-	if (VertexFilePath.empty() || FragmentFilePath.empty()) { 
+	if (vertexSrc.empty() || fragmentSrc.empty()) { 
 		XN_LOG_ERR("Vertex and fragment must be provided");
 		return; 
 	}
