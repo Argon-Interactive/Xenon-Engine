@@ -11,7 +11,7 @@ namespace Core {
 
 Application::Application() {
 	XN_LOG_TO_FILE("Xenon-log");
-	Core::AppData::init([this](auto && a) { pushEvent(std::forward<decltype(a)>(a)); });
+	Core::AppData::init([this](auto && a) { pushEvent(std::forward<decltype(a)>(a)); }); // what the fuck?
 	Input::init(Core::AppData::getWindow().passPointer());
 	Core::Shader shader("Application/assets/ShaderTest.glsl");
 	XN_LOG_TRC("Application: created");
