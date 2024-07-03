@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 3.21...3.27 FATAL_ERROR)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+project(
+    ArgonDevTools
+    VERSION 1.0.0
+    DESCRIPTION "Tools used for assisting development from Argon Interactive"
+    # HOMEPAGE_URL "jebacdziekana.pl"
+    LANGUAGES CXX C
+)
+
+set(SRC 
+    logger.cpp
+    logger.hpp
+)
+
+add_library(lib_adt ${SRC})
+
+# Library build
+target_include_directories(lib_adt PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+
+target_compile_features(lib_adt PUBLIC cxx_std_20)
+target_compile_definitions(lib_adt PUBLIC SAMPLE_LIBRARY_STATIC_DEFINE)

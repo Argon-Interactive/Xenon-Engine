@@ -46,6 +46,7 @@ endif()
 add_compile_definitions(GLM_FORCE_CXX11)
 add_compile_definitions(GLM_FORCE_SILENT_WARNINGS)
 
+include_directories(Libs/ArgonDevTools)
 include_directories(Xenon/include)
 include_directories(Xenon/vendor/all)
 
@@ -58,5 +59,5 @@ xenon_apply_options()
 target_compile_features(xenon_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
 
 add_subdirectory(Xenon)
-
+add_subdirectory(Libs/ArgonDevTools)
 add_subdirectory(Sandbox)

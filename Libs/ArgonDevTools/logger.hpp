@@ -7,7 +7,6 @@
 #include<vector>
 #include<mutex>
 #include<format>
-#include"api.h"
 
 #define XN_LOG_BLACK		"\033[0;30m"
 #define XN_LOG_DARK_GRAY	"\033[1;30m"
@@ -44,23 +43,22 @@ namespace Xenon {
 		// logging
 		//===============================================================================
 
-		static XAPI Logger& getInstance();
-		static Logger& getInstanceCore();
-		
+		static Logger& getInstance();
+
 		/*
-			0 - default
-			Numbers:
-				b - base 2
-				o - base 8
-				x - base 16
-				s - scientific notation
-			Strings:
-				q - quote
-			Vectors and Arrays:
-				0 - horizontal
-				i - indexed, horizontal
-				s - vertical
-				l - indexed, vertical  
+		0 - default
+		Numbers:
+		b - base 2
+		o - base 8
+		x - base 16
+		s - scientific notation
+		Strings:
+		q - quote
+		Vectors and Arrays:
+		0 - horizontal
+		i - indexed, horizontal
+		s - vertical
+		l - indexed, vertical  
 		*/
 		template<typename T, typename ...Types>
 		void log(logMode mode, T first, Types&& ... args)
@@ -79,14 +77,14 @@ namespace Xenon {
 			}
 		}
 
-		void XAPI breakLine(logMode mode = logMode::entry);
+		void breakLine(logMode mode = logMode::entry);
 
 		//===============================================================================
 		// settings
 		//===============================================================================
 
-		void XAPI setColors(XN_COLOR entryColor, XN_COLOR infoColor, XN_COLOR warningColor, XN_COLOR errorColor, XN_COLOR debugColor, XN_COLOR traceColor);
-		void XAPI setFilePath(const std::string& filePath);
+		void setColors(XN_COLOR entryColor, XN_COLOR infoColor, XN_COLOR warningColor, XN_COLOR errorColor, XN_COLOR debugColor, XN_COLOR traceColor);
+		void setFilePath(const std::string& filePath);
 	private:
 		explicit Logger(bool isCore) :m_timeStart(std::chrono::steady_clock::now()), m_isCore(isCore) {}
 		const std::chrono::steady_clock::time_point m_timeStart;
@@ -102,8 +100,8 @@ namespace Xenon {
 		// helper funcions
 		//===============================================================================
 
-		std::string XAPI getTime();
-		static size_t XAPI findToken(const char* string);
+		std::string getTime();
+		static size_t findToken(const char* string);
 		//===============================================================================
 		// recursive output
 		//===============================================================================
@@ -133,9 +131,9 @@ namespace Xenon {
 		// tokens processing
 		//===============================================================================
 
-		void XAPI proccesToken(char token, const std::string& arg);
-		void XAPI proccesToken(char token, const char* arg);
-		void XAPI proccesToken(char token, char* arg);
+		void proccesToken(char token, const std::string& arg);
+		void proccesToken(char token, const char* arg);
+		void proccesToken(char token, char* arg);
 		template<typename T>
 		void proccesToken(char token, T arg)
 		{ 

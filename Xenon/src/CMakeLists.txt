@@ -20,12 +20,6 @@ set(XENON_SRC
 	window/window.cpp
 	window/window.hpp
 
-	devTools/timer.hpp
-	devTools/logger/logger.cpp
-	devTools/logger/logger.hpp
-	devTools/logger/logger_core.hpp
-	devTools/logger/logger_client.hpp
-
 	scenes/scene.cpp
 	scenes/scene.hpp
 	scenes/sceneManager.cpp
@@ -41,4 +35,4 @@ target_include_directories(XenonEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_compile_definitions(XenonEngine PUBLIC XENON_DLL_BUILD)
 
-target_link_libraries(XenonEngine PRIVATE xenon_options xenon_warnings glm glfw glad stb)
+target_link_libraries(XenonEngine PRIVATE xenon_options xenon_warnings glm glfw glad stb lib_adt)

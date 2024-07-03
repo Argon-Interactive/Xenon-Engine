@@ -13,11 +13,6 @@ Xenon::Logger& Xenon::Logger::getInstance() {
 	return logger; 
 }
 
-Xenon::Logger& Xenon::Logger::getInstanceCore() { 
-	static Logger logger(true);
-	return logger; 
-}
-
 void Xenon::Logger::setColors(XN_COLOR entryColor, XN_COLOR infoColor, XN_COLOR warningColor, XN_COLOR errorColor, XN_COLOR debugColor, XN_COLOR traceColor)
 {
 	m_colors[0] = (debugColor.empty())   ? XN_LOG_CYAN			: debugColor;
@@ -58,13 +53,15 @@ void Xenon::Logger::proccesToken(char token, const std::string& arg)
 {
 	if (token == '0') { m_msg << arg; }
 	if (token == 'q') { m_msg << "\"" << arg << "\""; }
-	else { m_msg << "{" << token << "}"; }
+	//it makes no fucking sense what so ever and i dont care to fix it since it will never be used more then once 
+	else if(token != '0' && token != 'q') { m_msg << "{" << token << "}"; } 
 }
 void Xenon::Logger::proccesToken(char token, const char* arg)
 {
 	if (token == '0') { m_msg << arg; }
 	if (token == 'q') { m_msg << "\"" << arg << "\""; }
-	else { m_msg << "{" << token << "}"; }
+	//it makes no fucking sense what so ever and i dont care to fix it since it will never be used more then once 
+	else if(token != '0' && token != 'q') { m_msg << "{" << token << "}"; } 
 }
 void Xenon::Logger::proccesToken(char token, char* arg)
 {

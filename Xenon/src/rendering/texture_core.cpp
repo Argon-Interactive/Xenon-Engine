@@ -1,5 +1,5 @@
 #include "texture_core.hpp" 
-#include "devTools/logger/logger_core.hpp"
+#include "devTools/logger_core.hpp"
 #include <stb_image.h>
 #include <glad/glad.h>
 

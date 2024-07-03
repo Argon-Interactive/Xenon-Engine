@@ -1,6 +1,6 @@
 #include "application.hpp"
 #include "appData.hpp"
-#include "devTools/logger/logger_core.hpp"
+#include "devTools/logger_core.hpp"
 #include "input/input.hpp"
 #include <functional>
 //debug
