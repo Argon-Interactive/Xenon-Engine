@@ -25,8 +25,15 @@ set(XENON_SRC
 	devTools/logger/logger.hpp
 	devTools/logger/logger_core.hpp
 	devTools/logger/logger_client.hpp
+
+	scenes/scene.cpp
+	scenes/scene.hpp
+	scenes/sceneManager.cpp
+	scenes/sceneManager.hpp
 	
- )
+	ECS/Entity.cpp
+	ECS/Entity.hpp
+)
 
 add_library(XenonEngine SHARED ${XENON_SRC})
 

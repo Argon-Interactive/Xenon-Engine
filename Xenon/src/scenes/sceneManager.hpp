@@ -4,7 +4,11 @@
 #include "scene.hpp"
 #include <memory>
 
-namespace Core {
+namespace Core { // idk if not xenon
+
+	class Ex : public Xenon::Scene {
+
+	};
 
 class SceneManager {
 public:
@@ -15,14 +19,13 @@ public:
 	SceneManager& operator=(SceneManager&&) = delete;
 	SceneManager& operator=(const SceneManager&) = delete;
 	
-	template<typename T>
-	void loadScene() {
-		m_currentScene = std::make_unique<T>();
-	}
-
+	static void loadScene(std::unique_ptr<Xenon::Scene> scene);
+	static void loadSceneWithTransition(std::unique_ptr<Xenon::Scene> scene /*, Transition*/);
+	static void update(double deltaT);
+	static void render();
 
 private:
-	std::unique_ptr<Xenon::Scene> m_currentScene; //TODO a scene could probably be on the stack since it will hold all it's data on the heap anyways	
+	static std::unique_ptr<Xenon::Scene> m_currentScene;
 
 };
 
