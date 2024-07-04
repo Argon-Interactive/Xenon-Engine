@@ -1,7 +1,7 @@
 #ifndef LOGGER_CORE_HPP
 #define LOGGER_CORE_HPP
 
-#include "logger.hpp"
+#include "logger.hpp" //NOLINT
 
 #ifdef __DEBUG__
 	#define XN_LOG_TO_FILE(file)

@@ -16,10 +16,11 @@ set(SRC
     logger.hpp
 )
 
-add_library(lib_adt ${SRC})
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+add_library(adt ${SRC})
 
 # Library build
-target_include_directories(lib_adt PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
-
-target_compile_features(lib_adt PUBLIC cxx_std_20)
-target_compile_definitions(lib_adt PUBLIC SAMPLE_LIBRARY_STATIC_DEFINE)
+target_include_directories(adt PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_compile_features(adt PUBLIC cxx_std_20)
+target_compile_definitions(adt PUBLIC SAMPLE_LIBRARY_STATIC_DEFINE)
