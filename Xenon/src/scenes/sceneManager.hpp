@@ -1,35 +1,46 @@
-#ifndef SCENEMANAGER_HPP
-#define SCENEMANAGER_HPP
+#ifndef _XENON_SCENES_SCENEMANAGER_
+#define _XENON_SCENES_SCENEMANAGER_
 
 #include "scene.hpp"
-#include <memory>
+#include <cstdint>
+#include <functional>
+#include <vector>
 
-namespace Core { // idk if not xenon
-
-	class Ex : public Xenon::Scene {
-
-	};
+namespace Core {
 
 class SceneManager {
 public:
-	SceneManager();
+	explicit SceneManager(std::function<void(Scene*)>* buildFunctions);
 	~SceneManager();
 	SceneManager(SceneManager&&) = delete;
 	SceneManager(const SceneManager&) = delete;
 	SceneManager& operator=(SceneManager&&) = delete;
 	SceneManager& operator=(const SceneManager&) = delete;
 	
-	static void loadScene(std::unique_ptr<Xenon::Scene> scene);
-	static void loadSceneWithTransition(std::unique_ptr<Xenon::Scene> scene /*, Transition*/);
-	static void update(double deltaT);
-	static void render();
+	Scene* createScene();
+	void loadScene(int64_t buildIndex);
+	void unloadScene(int64_t buildIndex);
+	void loadSceneAsync(int64_t buildIndex);
+	void unloadSceneAsync(int64_t buildIndex);
+	void setActiveScene(int64_t buildIndex);
+	[[nodiscard]] Scene* getActiveScene();
+	[[nodiscard]] Scene* getScene(int64_t index);
+	[[nodiscard]] Scene* getSceneByBuildIndex(int64_t buildIndex);
+	[[nodiscard]] int64_t getActiveSceneIndex() const;
+
+	[[nodiscard]] int64_t getSceneCount() const;
 
 private:
-	static std::unique_ptr<Xenon::Scene> m_currentScene;
+	std::vector<Scene*> m_scenes;
+	int64_t m_activeSceneIndex = 0;
+	int64_t m_loadedSceneCount = 0;
 
+	std::function<void(Scene*)>* m_buildFunctions;
+
+	void deleteScene(int64_t index);
+	int64_t findNearestScene(int64_t buildIndex);
 };
 
 }
 
-#endif // !DEBUG
-
+#endif // _XENON_SCENES_SCENEMANAGER_

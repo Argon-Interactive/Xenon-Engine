@@ -30,7 +30,8 @@ Application::~Application() {
 int Application::run() {
 	try {
 		while (m_running) {
-			update();
+			update(1);
+			fixedUpdate();
 			render();
 			handleEvents();
 			Input::resetStickyKeys();
@@ -51,7 +52,11 @@ void Application::render() {
 
 }
 
-void Application::update() {
+void Application::update([[maybe_unused]] double deltaT) {
+
+}
+
+void Application::fixedUpdate() {
 
 }
 
