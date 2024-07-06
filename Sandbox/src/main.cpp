@@ -6,7 +6,7 @@ class Sandbox : public Xenon::Application
 public:
 	Sandbox() {
 		XN_LOG_ENT("Hello from sandbox");
-		XN_LOG_BR(Xenon::Logger::logMode::info);
+		XN_LOG_BR(XNTools::Logger::logMode::info);
 	}
 	~Sandbox() override { 
 		XN_LOG_ENT("Bye from sandbox"); 

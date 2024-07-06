@@ -8,12 +8,12 @@
 #include <sstream>
 #include <string>
 
-Xenon::Logger& Xenon::Logger::getInstance() { 
-	static Logger logger(false);
+XNTools::Logger& XNTools::Logger::getInstance() { 
+	static Logger logger;
 	return logger; 
 }
 
-void Xenon::Logger::setColors(XN_COLOR entryColor, XN_COLOR infoColor, XN_COLOR warningColor, XN_COLOR errorColor, XN_COLOR debugColor, XN_COLOR traceColor)
+void XNTools::Logger::setColors(XN_COLOR entryColor, XN_COLOR infoColor, XN_COLOR warningColor, XN_COLOR errorColor, XN_COLOR debugColor, XN_COLOR traceColor)
 {
 	m_colors[0] = (debugColor.empty())   ? XN_LOG_CYAN			: debugColor;
 	m_colors[1] = (traceColor.empty())   ? XN_LOG_LIGHT_GRAY	: traceColor;
@@ -22,11 +22,12 @@ void Xenon::Logger::setColors(XN_COLOR entryColor, XN_COLOR infoColor, XN_COLOR 
 	m_colors[4] = (warningColor.empty()) ? XN_LOG_YELLOW		: warningColor;
 	m_colors[5] = (errorColor.empty())   ? XN_LOG_RED			: errorColor;
 }
-void Xenon::Logger::setFilePath(const std::string& filePath)
+void XNTools::Logger::setFilePath(const std::string& filePath)
 { m_filepath = filePath; m_toFile = true; }
 
+void XNTools::Logger::setName(const char* name) { if(!m_namechange) return; m_name = name; m_namechange = false; }
 
-std::string Xenon::Logger::getTime()
+std::string XNTools::Logger::getTime()
 {
 	const int time = static_cast<int>(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - m_timeStart).count());
 	const int hours = time / 3600;
@@ -38,7 +39,7 @@ std::string Xenon::Logger::getTime()
 	return result.str();
 }
 
-size_t Xenon::Logger::findToken(const char* string)
+size_t XNTools::Logger::findToken(const char* string)
 {
 	if (string[0] == '\0') { return std::string::npos; }
 	if (string[1] == '\0') { return std::string::npos; }
@@ -49,21 +50,21 @@ size_t Xenon::Logger::findToken(const char* string)
 	return std::string::npos;
 }
 
-void Xenon::Logger::proccesToken(char token, const std::string& arg)
+void XNTools::Logger::proccesToken(char token, const std::string& arg)
 {
 	if (token == '0') { m_msg << arg; }
 	if (token == 'q') { m_msg << "\"" << arg << "\""; }
 	//it makes no fucking sense what so ever and i dont care to fix it since it will never be used more then once 
 	else if(token != '0' && token != 'q') { m_msg << "{" << token << "}"; } 
 }
-void Xenon::Logger::proccesToken(char token, const char* arg)
+void XNTools::Logger::proccesToken(char token, const char* arg)
 {
 	if (token == '0') { m_msg << arg; }
 	if (token == 'q') { m_msg << "\"" << arg << "\""; }
 	//it makes no fucking sense what so ever and i dont care to fix it since it will never be used more then once 
 	else if(token != '0' && token != 'q') { m_msg << "{" << token << "}"; } 
 }
-void Xenon::Logger::proccesToken(char token, char* arg)
+void XNTools::Logger::proccesToken(char token, char* arg)
 {
 	if (token == '0') { m_msg << arg; }
 	if (token == 'q') { m_msg << "\"" << arg << "\""; }
@@ -71,7 +72,7 @@ void Xenon::Logger::proccesToken(char token, char* arg)
 	else if(token != '0' && token != 'q') { m_msg << "{" << token << "}"; } 
 }
 
-Xenon::Logger::~Logger() {
+XNTools::Logger::~Logger() {
 	try {
 		if (m_toFile && !m_msg.str().empty()) {
 			const auto lTime = std::chrono::zoned_time{ std::chrono::current_zone(), std::chrono::system_clock::now() }.get_local_time();
@@ -111,7 +112,7 @@ Xenon::Logger::~Logger() {
 	}
 }
 
-void Xenon::Logger::breakLine(logMode mode)
+void XNTools::Logger::breakLine(logMode mode)
 {
 	log(mode, "=========================================================================");
 }

@@ -28,7 +28,7 @@
 
 using XN_COLOR = std::string;
 
-namespace Xenon {
+namespace XNTools {
 	class Logger
 	{
 	public:
@@ -66,7 +66,7 @@ namespace Xenon {
 			const std::lock_guard<std::mutex> lg(m_mutex);
 			if (!m_toFile) m_msg << m_colors[mode];
 			m_msg << getTime();
-			m_msg << s_source[m_isCore] << s_labels[mode] << " ";
+			m_msg << m_name << s_labels[mode] << " ";
 			output(first, args...);
 			m_msg << '\n';
 			if (!m_toFile) { 
@@ -85,12 +85,13 @@ namespace Xenon {
 
 		void setColors(XN_COLOR entryColor, XN_COLOR infoColor, XN_COLOR warningColor, XN_COLOR errorColor, XN_COLOR debugColor, XN_COLOR traceColor);
 		void setFilePath(const std::string& filePath);
+		void setName(const char* name);
 	private:
-		explicit Logger(bool isCore) :m_timeStart(std::chrono::steady_clock::now()), m_isCore(isCore) {}
+		explicit Logger() :m_timeStart(std::chrono::steady_clock::now()) {}
 		const std::chrono::steady_clock::time_point m_timeStart;
 		bool m_toFile = false;
-		bool m_isCore;
-		static constexpr const char* s_source[2] = { "[CLIENT]", "[ENGINE]" };
+		std::string m_name = "[ENGINE]";
+		bool m_namechange = true;
 		static constexpr const char* s_labels[6] = { "[DEB]", "[TRC]", "[ENT]", "[INF]", "[WAR]", "[ERR]" };
 		std::string m_colors[6] = { XN_LOG_CYAN, XN_LOG_LIGHT_GRAY,	XN_LOG_WHITE, XN_LOG_GREEN, XN_LOG_YELLOW, XN_LOG_RED};
 		std::string m_filepath;
