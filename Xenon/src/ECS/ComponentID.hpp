@@ -1,5 +1,5 @@
-#ifndef COMPONEND_ID_HPP
-#define COMPONEND_ID_HPP
+#ifndef _XENON_ECS_COMPONENT_ID_
+#define _XENON_ECS_COMPONENT_ID_
 
 namespace Core {
 enum class ComponentID {
@@ -7,4 +7,4 @@ enum class ComponentID {
 };
 }
 
-#endif // !COMPONEND_ID_HPP
+#endif // !_XENON_ECS_COMPONENT_ID_

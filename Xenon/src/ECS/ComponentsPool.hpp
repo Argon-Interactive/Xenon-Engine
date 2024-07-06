@@ -39,7 +39,7 @@ private:
 	void setData(Entity ent, const T& data) { m_data[m_indexLookupTable.at(ent)] = data; }
 	[[nodiscard]] std::pair<Entity, size_t> removeComponent(Entity ent) {
 		auto inx = m_indexLookupTable.at(ent);
-		if(inx != m_data.size()) {
+		if(inx != m_data.size() - 1) {
 			m_data[inx] = std::move(m_data.back());
 			m_entityList[inx] = m_entityList.back();
 		}
@@ -47,6 +47,7 @@ private:
 		m_indexLookupTable.at(movedEnt) = inx;
 		m_data.popBack();
 		m_entityList.popBack();
+		// TODO: handle last item removal
 		return { movedEnt, inx };
 	}
 	[[nodiscard]] bool hasComponent(Entity ent) { return m_indexLookupTable.contains(ent); }

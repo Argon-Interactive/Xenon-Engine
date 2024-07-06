@@ -1,5 +1,5 @@
-#ifndef COMPONENT_MANAGER_HPP
-#define COMPONENT_MANAGER_HPP
+#ifndef _XENON_ECS_COMPONENT_MANAGER_
+#define _XENON_ECS_COMPONENT_MANAGER_
 
 #include "ComponentID.hpp"
 #include "ComponentsPool.hpp"
@@ -12,8 +12,7 @@ namespace Core {
 class ComponentManager {
 public:
 	ComponentManager() 
-	:m_test(this, ComponentID::Test)
-	{}
+	:m_test(this, ComponentID::Test) {}
 	~ComponentManager();
 	ComponentManager(const ComponentManager&);
 	ComponentManager (ComponentManager&&) noexcept;
@@ -35,4 +34,4 @@ private:
 };
 }
 
-#endif
+#endif // !_XENON_ECS_COMPONENT_MANAGER_

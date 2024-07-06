@@ -14,6 +14,7 @@ SceneManager::~SceneManager() = default;
 
 Scene* SceneManager::createScene() {
 	m_scenes.emplace_back();
+	m_scenes.back() = new Scene;
 	return m_scenes.back();
 }
 
