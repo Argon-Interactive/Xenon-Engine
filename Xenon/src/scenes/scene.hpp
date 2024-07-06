@@ -11,24 +11,21 @@ namespace Core {
 class Scene {
 public:
 	Scene();
-	virtual ~Scene();
-	Scene(Scene&&) = delete;
-	Scene(const Scene&) = delete;
-	Scene& operator=(Scene&&) = delete;
-	Scene& operator=(const Scene&) = delete;
+	~Scene();
 
 	void unload();
 
 	uint64_t createEntity();
 	void deleteEntity(uint64_t uuid);
 
-	int64_t getBuildIndex();
+	void setBuildIndex(int64_t index);
+	[[nodiscard]] int64_t getBuildIndex() const;
 
 private:
 	std::vector<uint64_t> m_entities;   // men titties
 	
 	bool m_runtimeCreated = true;
-	int64_t m_buildIndex;
+	int64_t m_buildIndex = -1;
 
 };
 

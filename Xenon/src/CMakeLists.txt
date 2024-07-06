@@ -4,6 +4,8 @@ set(XENON_SRC
 	Xenon/entryPoint.hpp
 	Xenon/application.cpp
 	Xenon/application.hpp
+	Xenon/scene.cpp
+	Xenon/scene.hpp
 
 	core/application.cpp
 	core/application.hpp

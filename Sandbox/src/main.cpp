@@ -1,22 +1,18 @@
 #include "xenon.h"
 
-class Sandbox : public Xenon::Application
-{
-public:
-	Sandbox() {
-		XN_LOG_ENT("Hello from sandbox");
-		XN_LOG_BR(Xenon::Logger::logMode::info);
-	}
-	~Sandbox() override { 
-		XN_LOG_ENT("Bye from sandbox"); 
-	}
+void config([[maybe_unused]]void* something) {
+	XN_LOG_DEB("Helo, I am under the water");
+}
 
-	Sandbox(const Sandbox &) = delete;
-	Sandbox(Sandbox &&) = delete;
-	Sandbox &operator=(const Sandbox &) = delete;
-	Sandbox &operator=(Sandbox &&) = delete;
-};
+void scene1(Xenon::Scene* scene) {
+	scene->setBuildIndex(0);
+	XN_LOG_DEB(scene->getBuildIndex());
+}
 
-std::unique_ptr<Xenon::Application> create() {
-	return std::make_unique<Sandbox>();
+std::function<void(void*)> defineConfig() {
+	return config;
+}
+
+std::vector<std::function<void(Xenon::Scene*)>> defineScenes() {
+	return {scene1};
 }

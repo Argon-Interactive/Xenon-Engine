@@ -2,9 +2,13 @@
 #define _XENON_CORE_APPLICATION_
 
 #include "event.hpp"
+#include "Xenon/scene.hpp"
+
+#include <functional>
 #include <queue>
 #include <mutex>
 #include <condition_variable>
+#include <vector>
 
 namespace Xenon { class Application; }
 
@@ -12,8 +16,8 @@ namespace Core {
 
 class Application {
 public:
-	Application();
-	virtual ~Application();
+	Application(std::function<void(void*)> configFunction, std::vector<std::function<void(Xenon::Scene*)>> buildFunctions);
+	~Application();
 	Application(const Application&) = delete;
 	Application(Application&&) noexcept = delete;
 	Application& operator=(const Application&) = delete;
