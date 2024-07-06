@@ -18,7 +18,7 @@ namespace XNTools {
 	#define XN_LOG_DEB(...)
 #else
 	#if defined __COMPILER_GCC__ || __COMPILER_CLANG__ || __COMPILER_CLANG_CL__
-		#define XN_LOG_DEB(first, ...) XNTools::Logger::getInstance().log(XNTools::Logger::logMode::degub, first __VA_OPT__(,) __VA_ARGS__)
+		#define XN_LOG_DEB(first, ...) XNTools::Logger::getInstance().log(XNTools::Logger::logMode::debug, first __VA_OPT__(,) __VA_ARGS__)
 	#elif defined __COMPILER_CL__ 
 		#define XN_LOG_DEB(first, ...) XNTools::Logger::getInstance().log(XNTools::Logger::logMode::debug, first, ## __VA_ARGS__)
 	#else 
