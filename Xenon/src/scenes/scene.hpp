@@ -1,39 +1,34 @@
-#ifndef SCENE_HPP
-#define SCENE_HPP
+#ifndef _XENON_SCENES_SCENE_
+#define _XENON_SCENES_SCENE_
 
-namespace Core { class SceneManager; }
+#include <vector>
+#include <cstdint>
 
-namespace Xenon { //chyba
+namespace Core {
 
-class Transition {
-public:
-	Transition();
-	~Transition();
-	Transition(Transition&&) = delete;
-	Transition(const Transition&) = delete;
-	Transition& operator=(Transition&) = delete;
-	Transition& operator=(Transition&&) = delete;
-
-private:
-
-};
+// class SceneManager;
 
 class Scene {
 public:
 	Scene();
-	virtual ~Scene();
+	~Scene();
 
-	//Scene(Scene&&) = default;
-	//Scene(const Scene&) = delete;
-	//Scene& operator=(Scene&&) = default;
-	//Scene& operator=(const Scene&) = delete;
+	void unload();
 
-protected:
-	virtual void render() = 0;
-	virtual void update(double deltaT) = 0;
+	uint64_t createEntity();
+	void deleteEntity(uint64_t uuid);
+
+	void setBuildIndex(int64_t index);
+	[[nodiscard]] int64_t getBuildIndex() const;
+
+private:
+	std::vector<uint64_t> m_entities;   // men titties
+	
+	bool m_runtimeCreated = true;
+	int64_t m_buildIndex = -1;
 
 };
 
 }
 
-#endif
+#endif // _XENON_SCENES_SCENE_
