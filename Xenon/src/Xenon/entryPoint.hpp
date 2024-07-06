@@ -3,14 +3,21 @@
 
 #include "application.hpp"
 #include "logger.hpp"
-#include <memory>
+#include "scene.hpp"
 
-std::unique_ptr<Xenon::Application> create();
+#include <vector>
+#include <functional>
+
+std::function<void(void*)> defineConfig();
+std::vector<std::function<void(Xenon::Scene*)>> defineScenes();
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 	XNTools::Logger::getInstance().setName("[CLIENT]");
-	std::unique_ptr<Xenon::Application> game(create());
-	int res = game->run();
+	Xenon::Application game;
+	game.addConfiguration(defineConfig());
+	game.addScenes(defineScenes());
+	game.create();
+	int res = game.run();
 	return res;
 }
 
