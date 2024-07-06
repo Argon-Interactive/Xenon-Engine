@@ -25,8 +25,11 @@ set(XENON_SRC
 	scenes/sceneManager.cpp
 	scenes/sceneManager.hpp
 	
-	ECS/Entity.cpp
-	ECS/Entity.hpp
+	ECS/ComponentID.hpp
+	ECS/ComponentManager.cpp
+	ECS/ComponentManager.hpp
+	ECS/ComponentsPool.hpp
+	ECS/LinkedArray.hpp
 )
 
 add_library(XenonEngine SHARED ${XENON_SRC})

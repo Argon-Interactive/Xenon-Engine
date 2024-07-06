@@ -1,3 +1,4 @@
+#define XENON_DEBUG //This macro makes Xenon run the application in debug mode
 #include "xenon.h"
 
 class Sandbox : public Xenon::Application

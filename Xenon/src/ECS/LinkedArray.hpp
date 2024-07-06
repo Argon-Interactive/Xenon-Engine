@@ -21,7 +21,7 @@ public:
 	}
     ~LinekdArray() {
         for (auto ptr : m_dataArrays)
-            delete[] ptr;
+            delete[] ptr; //NOLINT
     }
     //TODO deleted for now. should be implemented at some point;
 	LinekdArray(const LinekdArray&) = delete;
@@ -34,11 +34,20 @@ public:
 		m_dataArrays[m_currInxMajor][m_currInxMinor++] = newElement;
 		if(m_currInxMinor >= m_reserved) resize();
 	}
+	void popBack() {
+		if(m_currInxMinor != 0) m_currInxMinor--;
+		else {
+			m_currInxMajor--;
+			m_currInxMinor = m_maxsize;
+		}
+	}
+	T& back() { return m_dataArrays[m_currInxMajor][m_currInxMinor - 1]; }
+	T& front() { return m_dataArrays[0][0]; }
 	size_t size() { return m_currInxMajor * m_maxsize + m_currInxMinor; }
 	bool empty() { return m_currInxMinor == 0 && m_currInxMajor == 0; }
 	void clear() {
 		for(auto ptr : m_dataArrays) 
-			delete[] ptr;
+			delete[] ptr; //NOLINT
 		m_dataArrays.clear();
 		m_currInxMajor = 0;
 		m_currInxMinor = 0;
@@ -54,7 +63,7 @@ private:
 		m_currInxMinor = 0;
 		m_currInxMajor++;
 		m_reserved = m_startingSize;
-		T* newArray = new T[m_reserved];
+		T* newArray = new T[m_reserved]; //NOLINT
 		m_dataArrays.push_back(newArray);
 	}
 	void resize() {
@@ -63,7 +72,7 @@ private:
 		if(m_reserved * 4 <= m_maxsize) m_reserved *= 4;
 		else if (m_reserved < m_maxsize) m_reserved = m_maxsize;
 		else { makeNewArray(); return; }
-		T* newArray = new T[m_reserved];
+		T* newArray = new T[m_reserved]; //NOLINT
 		std::memmove(newArray, m_dataArrays.back(), oldsize);
 		delete[] m_dataArrays.back();
 		m_dataArrays[m_dataArrays.size() - 1] = newArray;
