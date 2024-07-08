@@ -38,7 +38,7 @@ namespace XNTools {
 		Logger(const Logger &) = delete;
 		Logger& operator = (const Logger&) = delete;
 
-		enum logMode { degub, trace, entry, info, warning, error};
+		enum logMode { debug, trace, entry, info, warning, error};
 		//===============================================================================
 		// logging
 		//===============================================================================

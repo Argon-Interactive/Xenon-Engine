@@ -5,6 +5,7 @@
 #include "LinkedArray.hpp"
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <unordered_map>
 #include <utility>
 namespace Core {
@@ -25,6 +26,9 @@ public:
 private:
 	CompnentPool(ComponentManager* cmgr, ComponentID cID) : m_ID(cID), m_componentMgr(cmgr) {}
 
+	void runSystem(std::function<void(T& comp)>) {
+
+	}
 	void addComponent(Entity ent, const T& data = {}) {
 		#ifdef XENON_DEBUG
 		if(m_indexLookupTable.contains(ent)) {
@@ -51,6 +55,11 @@ private:
 		return { movedEnt, inx };
 	}
 	[[nodiscard]] bool hasComponent(Entity ent) { return m_indexLookupTable.contains(ent); }
+	void purge() {
+		m_data.clear();
+		m_entityList.clear();
+		m_indexLookupTable.clear();
+	}
 
 	ComponentID m_ID;
 	ComponentManager* m_componentMgr{};

@@ -4,6 +4,7 @@
 namespace Core {
 enum class ComponentID {
 	Test,
+	Count
 };
 }
 
