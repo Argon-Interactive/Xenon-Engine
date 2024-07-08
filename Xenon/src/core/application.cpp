@@ -2,7 +2,9 @@
 #include "appData.hpp"
 #include "devTools/logger_core.hpp"
 #include "input/input.hpp"
+#include <exception>
 #include <functional>
+#include <stdexcept>
 //debug
 #include "rendering/shader.hpp"
 
@@ -23,7 +25,9 @@ Application::~Application() {
 	} catch (std::exception& e) {
 		try {
 			std::cout << "something went terribly fucking wrong: " << e.what();
-		} catch (std::exception& e2) { /* Holy fuck that is even worse lol */ }
+		} catch (std::exception& e2) { 
+			exit(-1); // that would be even worse
+		}
 	}
 }
 
