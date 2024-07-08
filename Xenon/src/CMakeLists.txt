@@ -32,6 +32,8 @@ set(XENON_SRC
 	ECS/ComponentManager.hpp
 	ECS/ComponentsPool.hpp
 	ECS/LinkedArray.hpp
+	ECS/systemTest.cpp
+	ECS/systemTest.hpp
 )
 
 add_library(XenonEngine SHARED ${XENON_SRC})
