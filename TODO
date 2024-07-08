@@ -1,0 +1,2 @@
+addComponent in class ComponentManager cannot automaticly determine template type when not giving data
+add a way for systems to acces other components form component manager

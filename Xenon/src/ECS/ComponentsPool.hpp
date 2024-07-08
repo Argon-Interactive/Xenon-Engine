@@ -18,7 +18,7 @@ template<typename T>
 class CompnentPool {
 public:
 	CompnentPool() = delete;
-	~CompnentPool();
+	~CompnentPool() = default;
 	CompnentPool(const CompnentPool&);
 	CompnentPool(CompnentPool&&) noexcept ;
 	CompnentPool& operator=(const CompnentPool&);

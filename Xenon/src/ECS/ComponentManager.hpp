@@ -13,7 +13,7 @@ class ComponentManager {
 public:
 	ComponentManager() 
 	:m_test(this, ComponentID::Test) {}
-	~ComponentManager();
+	~ComponentManager() = default;
 	ComponentManager(const ComponentManager&);
 	ComponentManager (ComponentManager&&) noexcept;
 	ComponentManager& operator=(const ComponentManager&);
