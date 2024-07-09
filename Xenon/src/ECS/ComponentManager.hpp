@@ -1,6 +1,5 @@
 #ifndef _XENON_ECS_COMPONENT_MANAGER_
 #define _XENON_ECS_COMPONENT_MANAGER_
-
 #include "ComponentID.hpp"
 #include "ComponentsPool.hpp"
 #include <cstddef>

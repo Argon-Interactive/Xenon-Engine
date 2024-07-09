@@ -10,7 +10,6 @@
 namespace Core {
 
 class ComponentManager;
-class SystemFactory;
 
 using Entity = uint64_t;
 
