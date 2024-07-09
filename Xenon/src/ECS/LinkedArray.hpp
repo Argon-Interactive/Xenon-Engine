@@ -44,8 +44,8 @@ public:
 			m_currInxMinor = m_maxsize;
 		}
 	}
-	T& back() { return m_dataArrays[m_currInxMajor][m_currInxMinor - 1]; }
 	T& front() { return m_dataArrays[0][0]; }
+	T& back() { return m_dataArrays[m_currInxMajor][m_currInxMinor - 1]; }
 	size_t size() { return m_currInxMajor * m_maxsize + m_currInxMinor; }
 	bool empty() { return m_currInxMinor == 0 && m_currInxMajor == 0; }
 	void clear() {

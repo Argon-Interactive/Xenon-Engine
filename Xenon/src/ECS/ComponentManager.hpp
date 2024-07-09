@@ -3,7 +3,6 @@
 
 #include "ComponentID.hpp"
 #include "ComponentsPool.hpp"
-#include "systemTest.hpp"
 #include <cstddef>
 #include <cstdint>
 
@@ -19,6 +18,15 @@ public:
 	ComponentManager& operator=(const ComponentManager&);
 	ComponentManager& operator=(ComponentManager&&) noexcept ;
 
+	template<typename T>
+	[[nodiscard]] CompnentPool<T>& getComponent(ComponentID ID) {
+		switch (ID) {
+			case ComponentID::Test:
+			return m_test;
+		
+		}
+	}
+	void addComponent(ComponentID ID, Entity ent);
 	template<typename T>
 	void addComponent(ComponentID ID, Entity ent, T data = {}) {
 		switch (ID) {
@@ -39,13 +47,11 @@ public:
 	void removeComponent(ComponentID ID, Entity ent);
 	void purgeComponent(ComponentID ID);
 	void purgeAll();
-	void runSystems();
 private:
 	void resolveRemoval(ComponentID ID, uint64_t oldEntity, size_t newInx);
 
 	CompnentPool<int> m_test;
-	Core::Systems::testMetadata m_testMetadata;
-
+	friend class System;
 };
 }
 
