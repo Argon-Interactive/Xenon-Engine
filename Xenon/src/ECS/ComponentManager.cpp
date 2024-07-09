@@ -1,7 +1,6 @@
 #include "ComponentManager.hpp"
 #include "ComponentsPool.hpp"
 #include "ECS/ComponentID.hpp"
-#include "ECS/systemTest.hpp"
 
 namespace Core {
 
