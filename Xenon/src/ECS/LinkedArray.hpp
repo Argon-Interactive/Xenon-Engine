@@ -85,7 +85,8 @@ public:
 			m_itPtr = m_itLA->m_dataArrays[m_itInxMajor] + currInx % m_itLA->m_maxsize;
 			return *this;
 		}
-		iterator operator-(size_t val) {			auto currInx = m_itPtr - m_itLA->m_dataArrays[m_itInxMajor];
+		iterator operator-(size_t val) {
+			auto currInx = m_itPtr - m_itLA->m_dataArrays[m_itInxMajor];
 			currInx -= val;
 			auto divVal = currInx / m_itLA->m_maxsize;
 			m_itInxMajor += divVal;
