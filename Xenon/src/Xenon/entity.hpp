@@ -9,7 +9,7 @@ namespace Xenon {
 
 class XAPI Entity {
 public:
-	Entity() = default;
+	explicit Entity(uint64_t uuid);
 
 	//addComponent();
 	
@@ -20,7 +20,9 @@ public:
 private:
 	uint64_t m_uuid;
 
-	friend class Scene;
+	bool m_enabled = true;
+	bool m_exists = true;
+
 };
 
 

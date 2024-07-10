@@ -6,6 +6,8 @@ set(XENON_SRC
 	Xenon/application.hpp
 	Xenon/scene.cpp
 	Xenon/scene.hpp
+	Xenon/entity.cpp
+	Xenon/entity.hpp
 
 	core/application.cpp
 	core/application.hpp

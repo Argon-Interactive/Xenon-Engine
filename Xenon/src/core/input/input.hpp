@@ -169,6 +169,7 @@ public:
 	static void disableCursor();
 	static void enableCursor();
 	[[nodiscard]] static std::pair<float, float> getMouseScreenPosition(); //Consider changeing std::pair to some Vector (Engine struct)
+	static void resetStickyKeys();
 
 private:
 	Input();
@@ -180,12 +181,12 @@ private:
 	
 	static void init(void* window);
 	//If a key state was not read for two frames it is reset
-	static void resetStickyKeys();
 	enum Action { Press, Relese };
 	static void proccesEvents(Action act, int GLFWKeyCode);
 	static void proccesEvents(float xpos, float ypos);
 	
 
+	friend class AppData;
 	friend class Application;
 };
 

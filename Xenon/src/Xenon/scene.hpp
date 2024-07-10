@@ -17,9 +17,8 @@ public:
 	void unload();
 
 	Entity createEntity();
-	void deleteEntity(Entity& entity);
 
-	int64_t getBuildIndex();
+	uint64_t getBuildIndex();
 
 private:
 	Core::Scene* m_impl;

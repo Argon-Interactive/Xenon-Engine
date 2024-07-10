@@ -9,6 +9,7 @@ void config([[maybe_unused]]void* something) {
 
 void scene1(Xenon::Scene* scene) {
 	XN_LOG_DEB(scene->getBuildIndex());
+	scene->createEntity();
 }
 
 std::function<void(void*)> defineConfig() {
