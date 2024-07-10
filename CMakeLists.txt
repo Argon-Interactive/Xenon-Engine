@@ -59,5 +59,5 @@ xenon_apply_options()
 target_compile_features(xenon_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
 
 add_subdirectory(Xenon)
-add_subdirectory(Libs/ArgonDevTools)
+add_subdirectory(Xenon/Libs/ArgonDevTools)
 add_subdirectory(Sandbox)
