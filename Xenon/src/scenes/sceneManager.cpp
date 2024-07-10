@@ -30,6 +30,7 @@ void SceneManager::loadScene(int64_t buildIndex) {
 	m_scenes.emplace_back();
 	m_scenes.back() = new Scene;
 	auto clientScene = Xenon::Scene(m_scenes.back());
+	m_scenes.back()->setBuildIndex(buildIndex);
 	m_buildFunctions[static_cast<size_t>(buildIndex)](&clientScene);
 }
 

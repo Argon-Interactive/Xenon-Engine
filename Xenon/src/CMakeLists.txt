@@ -1,5 +1,5 @@
 set(XENON_SRC 
-	api.h
+	Xenon/api.h
 
 	Xenon/entryPoint.hpp
 	Xenon/application.cpp
@@ -32,8 +32,7 @@ set(XENON_SRC
 	ECS/ComponentManager.hpp
 	ECS/ComponentsPool.hpp
 	ECS/LinkedArray.hpp
-	ECS/systemTest.cpp
-	ECS/systemTest.hpp
+	ECS/System.hpp
 )
 
 add_library(XenonEngine SHARED ${XENON_SRC})

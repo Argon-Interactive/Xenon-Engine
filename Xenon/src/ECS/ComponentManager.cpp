@@ -1,19 +1,20 @@
 #include "ComponentManager.hpp"
 #include "ComponentsPool.hpp"
 #include "ECS/ComponentID.hpp"
-#include "ECS/systemTest.hpp"
-#include <functional>
 
 namespace Core {
-
-void ComponentManager::runSystems() {
-	m_test.runSystem(std::bind(Core::Systems::systemTest, this, m_testMetadata, std::placeholders::_1));
-}
 
 void ComponentManager::resolveRemoval(ComponentID ID, uint64_t oldEntity, size_t newInx) {
 	switch (ID) {
 		
 	}
+}
+
+void ComponentManager::addComponent(ComponentID ID, Entity ent) {
+		switch (ID) {
+			case ComponentID::Test:
+			m_test.addComponent(ent); break;
+		}
 }
 
 void ComponentManager::purgeComponent(ComponentID ID) {

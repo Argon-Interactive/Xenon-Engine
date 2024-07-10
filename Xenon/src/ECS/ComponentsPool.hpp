@@ -5,7 +5,6 @@
 #include "LinkedArray.hpp"
 #include <cstddef>
 #include <cstdint>
-#include <functional>
 #include <unordered_map>
 #include <utility>
 namespace Core {
@@ -18,17 +17,15 @@ template<typename T>
 class CompnentPool {
 public:
 	CompnentPool() = delete;
-	~CompnentPool();
-	CompnentPool(const CompnentPool&);
-	CompnentPool(CompnentPool&&) noexcept ;
-	CompnentPool& operator=(const CompnentPool&);
-	CompnentPool& operator=(CompnentPool&&) noexcept ;
+	~CompnentPool() = default;
+	CompnentPool(const CompnentPool&) = delete;
+	CompnentPool(CompnentPool&&) noexcept = delete;
+	CompnentPool& operator=(const CompnentPool&) = delete;
+	CompnentPool& operator=(CompnentPool&&) noexcept = delete;
 private:
 	CompnentPool(ComponentManager* cmgr, ComponentID cID) : m_ID(cID), m_componentMgr(cmgr) {}
 
-	void runSystem(std::function<void(T& comp)>) {
-
-	}
+	[[nodiscard]] T& getComponent(Entity ent) { return m_data[m_indexLookupTable.at(ent)]; }
 	void addComponent(Entity ent, const T& data = {}) {
 		#ifdef XENON_DEBUG
 		if(m_indexLookupTable.contains(ent)) {
@@ -62,11 +59,12 @@ private:
 	}
 
 	ComponentID m_ID;
-	ComponentManager* m_componentMgr{};
+	ComponentManager* m_componentMgr;
 	std::unordered_map<Entity, size_t> m_indexLookupTable;
 	LinekdArray<T> m_data;
 	LinekdArray<Entity> m_entityList;
 	friend class ComponentManager;
+	friend class System;
 };
 }
 #endif // !COMPONENTS_POOL_HPP
