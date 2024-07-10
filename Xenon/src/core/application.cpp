@@ -13,7 +13,6 @@ namespace Core {
 Application::Application(std::function<void(void*)> configFunction, std::vector<std::function<void(Xenon::Scene*)>> buildFunctions) {
 	XN_LOG_TO_FILE("Xenon-log");
 	Core::AppData::init([this](auto && a) { pushEvent(std::forward<decltype(a)>(a)); }, configFunction, buildFunctions); // what the fuck?
-	Input::init(Core::AppData::getWindow().passPointer());
 	Core::Shader shader("Application/assets/ShaderTest.glsl");
 	XN_LOG_TRC("Application: created");
 }
@@ -38,7 +37,6 @@ int Application::run() {
 			fixedUpdate();
 			render();
 			handleEvents();
-			Input::resetStickyKeys();
 			Core::AppData::getWindow().FEP();
 		}
 	} catch (std::exception& e) {
@@ -88,6 +86,7 @@ void Application::handleEvents() {
 				XN_LOG_ERR("Unknown event: " + e.getName());
 		}
 	}
+	Input::resetStickyKeys();
 }
 
 void Application::pushEvent(const Core::Event& event) {

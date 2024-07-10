@@ -1,6 +1,7 @@
 #include <functional>
 #include <glad.h>
 #include "appData.hpp"
+#include "input/input.hpp"
 #include "devTools/logger_core.hpp"
 
 namespace Core {
@@ -19,7 +20,9 @@ void AppData::init(std::function<void(const Event&)> eventDispatcher, [[maybe_un
 		exit(EXIT_FAILURE);
 	}
 	s_appData = std::make_unique<AppData>(ConstructorToken{}, 800, 600, "XENON APP", buildFunctions);
-	s_appData->getWindow().setEventDispatcher(eventDispatcher);
+	getWindow().setEventDispatcher(eventDispatcher);
+
+	Input::init(getWindow().passPointer());
 
 	XN_LOG_INF("AppData: Application systems initialized successfully");
 	XN_LOG_BR();
