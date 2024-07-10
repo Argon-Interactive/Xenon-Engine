@@ -6,6 +6,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <memory>
 #include <vector>
 
 namespace Core {
@@ -21,27 +22,27 @@ public:
 	
 	Scene* createScene();
 	void purge();
-	void loadScene(int64_t buildIndex);
-	void unloadScene(int64_t buildIndex);
-	void loadSceneAsync(int64_t buildIndex);
-	void unloadSceneAsync(int64_t buildIndex);
-	void setActiveScene(int64_t buildIndex);
+	void loadScene(uint64_t buildIndex);
+	void unloadScene(uint64_t buildIndex);
+	void loadSceneAsync(uint64_t buildIndex);
+	void unloadSceneAsync(uint64_t buildIndex);
+	void setActiveScene(uint64_t buildIndex);
 	[[nodiscard]] Scene* getActiveScene();
-	[[nodiscard]] Scene* getScene(int64_t index);
-	[[nodiscard]] Scene* getSceneByBuildIndex(int64_t buildIndex);
-	[[nodiscard]] int64_t getActiveSceneIndex() const;
+	[[nodiscard]] Scene* getScene(uint64_t index);
+	[[nodiscard]] Scene* getSceneByBuildIndex(uint64_t buildIndex);
+	[[nodiscard]] uint64_t getActiveSceneIndex() const;
 
-	[[nodiscard]] int64_t getSceneCount() const;
+	[[nodiscard]] uint64_t getSceneCount() const;
 
 private:
-	std::vector<Scene*> m_scenes;
-	int64_t m_activeSceneIndex = 0;
-	int64_t m_loadedSceneCount = 0;
+	std::vector<std::unique_ptr<Scene>> m_scenes;
+	uint64_t m_activeSceneIndex = 0;
+	uint64_t m_loadedSceneCount = 0;
 
 	std::vector<std::function<void(Xenon::Scene*)>> m_buildFunctions;
 
-	void deleteScene(int64_t index);
-	int64_t findNearestScene(int64_t buildIndex);
+	void deleteScene(uint64_t index);
+	uint64_t findNearestScene(uint64_t buildIndex);
 };
 
 }
