@@ -8,7 +8,6 @@ void config([[maybe_unused]]void* something) {
 }
 
 void scene1(Xenon::Scene* scene) {
-	scene->setBuildIndex(0);
 	XN_LOG_DEB(scene->getBuildIndex());
 }
 
