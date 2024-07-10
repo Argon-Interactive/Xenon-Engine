@@ -1,2 +1,4 @@
-addComponent in class ComponentManager cannot automaticly determine template type when not giving data
-add a way for systems to acces other components form component manager
+Redo data visibility with systems
+Think about accesing the LinkedArray by index pair and store this index for component accesing a little bit faster
+Try to do removing element in more elegant and efficient fasion
+
