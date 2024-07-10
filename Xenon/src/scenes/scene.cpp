@@ -13,11 +13,11 @@ void Scene::unload() {
 
 }
 
-uint64_t Scene::createEntity() {
+Entity Scene::createEntity() {
 	return 0;
 }
 
-void Scene::deleteEntity([[maybe_unused]]uint64_t uuid) {
+void Scene::deleteEntity(Entity uuid) {
 	
 }
 

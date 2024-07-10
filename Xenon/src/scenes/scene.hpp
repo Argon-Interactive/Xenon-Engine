@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cstdint>
+#include "ECS/Entity.hpp"
 
 namespace Core {
 
@@ -15,8 +16,8 @@ public:
 
 	void unload();
 
-	uint64_t createEntity();
-	void deleteEntity(uint64_t uuid);
+	Entity createEntity();
+	void deleteEntity(Entity uuid);
 
 	void setBuildIndex(int64_t index);
 	[[nodiscard]] int64_t getBuildIndex() const;

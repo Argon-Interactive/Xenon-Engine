@@ -3,15 +3,14 @@
 
 #include "ECS/ComponentID.hpp"
 #include "LinkedArray.hpp"
+#include "ECS/Entity.hpp"
 #include <cstddef>
-#include <cstdint>
 #include <unordered_map>
 #include <utility>
+
 namespace Core {
 
 class ComponentManager;
-
-using Entity = uint64_t;
 
 template<typename T>
 class CompnentPool {

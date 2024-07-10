@@ -11,16 +11,14 @@ void Scene::unload() {
 	m_impl->unload();
 }
 
-uint64_t Scene::createEntity() {
-	return m_impl->createEntity();
+Entity Scene::createEntity() {
+	Entity ent;
+	ent.m_uuid = m_impl->createEntity();
+	return ent;
 }
 
-void Scene::deleteEntity(uint64_t uuid) {
-	m_impl->deleteEntity(uuid);
-}
-
-void Scene::setBuildIndex(int64_t index) {
-	m_impl->setBuildIndex(index);
+void Scene::deleteEntity(Entity& entity) {
+	m_impl->deleteEntity(entity.m_uuid);
 }
 
 int64_t Scene::getBuildIndex() {
