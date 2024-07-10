@@ -5,6 +5,7 @@
 #include "LinkedArray.hpp"
 #include "ECS/Entity.hpp"
 #include <cstddef>
+#include <strings.h>
 #include <unordered_map>
 #include <utility>
 
@@ -13,18 +14,23 @@ namespace Core {
 class ComponentManager;
 
 template<typename T>
-class CompnentPool {
+class ComponentPool {
 public:
-	CompnentPool() = delete;
-	~CompnentPool() = default;
-	CompnentPool(const CompnentPool&) = delete;
-	CompnentPool(CompnentPool&&) noexcept = delete;
-	CompnentPool& operator=(const CompnentPool&) = delete;
-	CompnentPool& operator=(CompnentPool&&) noexcept = delete;
+	ComponentPool() = delete;
+	~ComponentPool() = default;
+	ComponentPool(const ComponentPool&) = delete;
+	ComponentPool(ComponentPool&&) noexcept = delete;
+	ComponentPool& operator=(const ComponentPool&) = delete;
+	ComponentPool& operator=(ComponentPool&&) noexcept = delete;
 private:
-	CompnentPool(ComponentManager* cmgr, ComponentID cID) : m_ID(cID), m_componentMgr(cmgr) {}
+	using LAInxType = LinkedArray<T>::index;
+	ComponentPool(ComponentManager* cmgr, ComponentID cID) : m_ID(cID), m_componentMgr(cmgr) {}
 
 	[[nodiscard]] T& getComponent(Entity ent) { return m_data[m_indexLookupTable.at(ent)]; }
+	[[nodiscard]] T& getComponent(uint32_t inxMajor, uint32_t inxMinor) { return m_data[LAInxType(inxMajor, inxMinor)]; }
+	[[nodiscard]] bool hasComponent(Entity ent) { return m_indexLookupTable.contains(ent); }
+	void setData(Entity ent, const T& data) { m_data[m_indexLookupTable.at(ent)] = data; }
+
 	void addComponent(Entity ent, const T& data = {}) {
 		#ifdef XENON_DEBUG
 		if(m_indexLookupTable.contains(ent)) {
@@ -32,14 +38,13 @@ private:
 			return;
 		}
 		#endif
-		m_indexLookupTable[ent] = m_data.size();
+		m_indexLookupTable.emplace(ent, m_data.getMMIndexLast());
 		m_data.pushBack(data);
 		m_entityList.pushBack(ent);
 	}
-	void setData(Entity ent, const T& data) { m_data[m_indexLookupTable.at(ent)] = data; }
-	[[nodiscard]] std::pair<Entity, size_t> removeComponent(Entity ent) {
+	[[nodiscard]] std::pair<Entity, std::pair<uint32_t, uint32_t>> removeComponent(Entity ent) {
 		auto inx = m_indexLookupTable.at(ent);
-		if(inx != m_data.size() - 1) {
+		if(!m_data.isLast(inx)) {
 			m_data[inx] = std::move(m_data.back());
 			m_entityList[inx] = m_entityList.back();
 		}
@@ -48,9 +53,8 @@ private:
 		m_data.popBack();
 		m_entityList.popBack();
 		// TODO: handle last item removal
-		return { movedEnt, inx };
+		return { movedEnt, {inx.m_inxMajor, inx.m_inxMinor} };
 	}
-	[[nodiscard]] bool hasComponent(Entity ent) { return m_indexLookupTable.contains(ent); }
 	void purge() {
 		m_data.clear();
 		m_entityList.clear();
@@ -59,11 +63,10 @@ private:
 
 	ComponentID m_ID;
 	ComponentManager* m_componentMgr;
-	std::unordered_map<Entity, size_t> m_indexLookupTable;
-	LinekdArray<T> m_data;
-	LinekdArray<Entity> m_entityList;
+	std::unordered_map<Entity, LAInxType> m_indexLookupTable;
+	LinkedArray<T> m_data;
+	LinkedArray<Entity> m_entityList;
 	friend class ComponentManager;
-	friend class System;
 };
 }
 #endif // !COMPONENTS_POOL_HPP

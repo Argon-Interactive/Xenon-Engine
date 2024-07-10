@@ -1,7 +1,7 @@
 #ifndef _XENON_ECS_COMPONENT_MANAGER_
 #define _XENON_ECS_COMPONENT_MANAGER_
 #include "ComponentID.hpp"
-#include "ComponentsPool.hpp"
+#include "ComponentPool.hpp"
 #include <cstddef>
 #include <cstdint>
 
@@ -18,14 +18,14 @@ public:
 	ComponentManager& operator=(ComponentManager&&) noexcept ;
 
 	template<typename T>
-	[[nodiscard]] CompnentPool<T>& getComponent(ComponentID ID) {
+	[[nodiscard]] ComponentPool<T>& getComponent(ComponentID ID) {
 		switch (ID) {
 			case ComponentID::Test:
 			return m_test;
 		
 		}
 	}
-	void addComponent(ComponentID ID, Entity ent);
+
 	template<typename T>
 	void addComponent(ComponentID ID, Entity ent, T data = {}) {
 		switch (ID) {
@@ -43,13 +43,16 @@ public:
 		}
 	}
 
+	void addComponent(ComponentID ID, Entity ent);
 	void removeComponent(ComponentID ID, Entity ent);
 	void purgeComponent(ComponentID ID);
 	void purgeAll();
 private:
-	void resolveRemoval(ComponentID ID, uint64_t oldEntity, size_t newInx);
+	void resolveRemoval(ComponentID ID, uint64_t oldEntity, uint32_t newInxMajor, uint32_t newInxMinor);
+	template<typename T>
+	LinkedArray<T>& getComponentData(ComponentPool<T>& CP) { return CP.m_data; }
 
-	CompnentPool<int> m_test;
+	ComponentPool<int> m_test;
 	friend class System;
 };
 }

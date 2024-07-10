@@ -9,13 +9,8 @@ namespace Core {
 class System {
 protected:
 	template<typename T>
-	CompnentPool<T>* getComponentPool(ComponentManager& cmgr, ComponentID ID) { return cmgr.getComponent<T>(ID); }
-	template<typename T>
-	LinekdArray<T>* getData(CompnentPool<T>* componentPool) { return &componentPool->m_data; }
+	LinekdArray<T>& getData(ComponentManager& cmgr, ComponentID ID) { return cmgr.getComponentData(cmgr.getComponent<T>(ID)); }
 };
 }
-
-
-
 
 #endif

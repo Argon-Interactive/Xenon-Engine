@@ -1,10 +1,10 @@
 #include "ComponentManager.hpp"
-#include "ComponentsPool.hpp"
+#include "ComponentPool.hpp"
 #include "ECS/ComponentID.hpp"
 
 namespace Core {
 
-void ComponentManager::resolveRemoval(ComponentID ID, uint64_t oldEntity, size_t newInx) {
+void ComponentManager::resolveRemoval(ComponentID ID, uint64_t oldEntity, uint32_t newInxMajor, uint32_t newInxMinor) {
 	switch (ID) {
 		
 	}
@@ -29,11 +29,11 @@ void ComponentManager::purgeAll() {
 }
 
 void ComponentManager::removeComponent(ComponentID ID, Entity ent) {
-	std::pair<Entity, size_t> ret;
+	std::pair<Entity, std::pair<uint32_t, uint32_t>> ret;
 	switch(ID) {
 		case ComponentID::Test:
 		ret = m_test.removeComponent(ent); break;
 	}
-	resolveRemoval(ID, ret.first, ret.second);
+	resolveRemoval(ID, ret.first, ret.second.first, ret.second.second);
 }
 }

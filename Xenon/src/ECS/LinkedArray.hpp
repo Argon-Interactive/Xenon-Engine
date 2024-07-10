@@ -7,26 +7,27 @@
 
 namespace Core {
 template<typename T>
-class LinekdArray {
+class LinkedArray {
 public:
 	class iterator;
 	class const_iterator;
 	class index;
-	LinekdArray() : m_maxsize(8388608/sizeof(T)) {
+	LinkedArray() : m_maxsize(8388608/sizeof(T)) {
 		if(m_maxsize == 0 || m_maxsize == 1) {
 			m_maxsize = 2;
 			m_startingSize = 2;
 		}
 		else for(size_t i = 1; m_startingSize == 0; i*=4)
 			m_startingSize = 512 * i / sizeof(T) / 2;
+		m_currInxMajor -=1; //Yes this overflows. Too bad
 		makeNewArray();
 	}
-    ~LinekdArray() { for (auto ptr : m_dataArrays) delete[] ptr; } //NOLINT
+    ~LinkedArray() { for (auto ptr : m_dataArrays) delete[] ptr; } //NOLINT
     //TODO deleted for now. should be implemented at some point;
-	LinekdArray(const LinekdArray&) = delete;
-	LinekdArray& operator=(const LinekdArray&) = delete;
-	LinekdArray(LinekdArray&&) noexcept = delete;
-	LinekdArray& operator=(LinekdArray&&) noexcept = delete;
+	LinkedArray(const LinkedArray&) = delete;
+	LinkedArray(LinkedArray&&) noexcept = delete;
+	LinkedArray& operator=(const LinkedArray&) = delete;
+	LinkedArray& operator=(LinkedArray&&) noexcept = delete;
 
 	void pushBack(const T& newElement) {
 		m_dataArrays[m_currInxMajor][m_currInxMinor++] = newElement;
@@ -37,13 +38,20 @@ public:
 		else { m_currInxMajor--; m_currInxMinor = m_maxsize; }
 	}
 	[[nodiscard]] T& operator[](size_t inx) { return m_dataArrays[inx / m_maxsize][inx % m_maxsize]; }
+	[[nodiscard]] T& operator[](const index& inx) { return m_dataArrays[inx.m_inxMajor][inx.m_inxMinor]; }
 	[[nodiscard]] T& at(size_t inx) { return this[inx]; }
 	[[nodiscard]] T& at(const index& inx) { return m_dataArrays[inx.m_inxMajor][inx.m_inxMinor]; }
 	[[nodiscard]] index getMMIndex(size_t inx) { return index(this, inx); }
+	//returns the index after the last element
+	[[nodiscard]] index getMMIndexLast() { return index(m_currInxMajor, m_currInxMinor); }
+	[[nodiscard]] bool isLast(size_t inx) { return m_currInxMajor * m_maxsize + m_currInxMinor == inx; }
+	[[nodiscard]] bool isLast(const index& inx) { return m_currInxMajor * m_maxsize + m_currInxMinor == inx.m_inxMajor * m_maxsize + inx.m_inxMinor; }
+
 	iterator begin() { return iterator(this, m_dataArrays[0]); }
 	iterator end() { return iterator(this, m_dataArrays.back() + m_currInxMinor); }
 	const_iterator begin() const { return const_iterator(this, m_dataArrays[0]); }
 	const_iterator end() const { return const_iterator(this, m_dataArrays.back() + m_currInxMinor); }
+
 	T& front() { return m_dataArrays[0][0]; }
 	T& back() { return m_dataArrays[m_currInxMajor][m_currInxMinor - 1]; }
 	size_t size() { return m_currInxMajor * m_maxsize + m_currInxMinor; }
@@ -56,8 +64,8 @@ public:
 		m_currInxMinor = 0;
 	}
 private:
-	size_t m_currInxMinor = 0;
-	size_t m_currInxMajor = -1UL;
+	uint32_t m_currInxMinor = 0;
+	uint32_t m_currInxMajor = 0;
 	size_t m_maxsize = 0;
 	size_t m_startingSize = 0;
 	size_t m_reserved = 0;
@@ -82,17 +90,18 @@ private:
 };
 
 template<typename T>
-class LinekdArray<T>::index {
-	explicit index(const LinekdArray<T>* LA, size_t inx) : m_inxMajor(inx/LA->m_maxsize), m_inxMinor(inx%LA->m_maxsize) {}
+class LinkedArray<T>::index {
+	explicit index(uint32_t inxMajor, uint32_t inxMinor) : m_inxMajor(inxMajor), m_inxMinor(inxMinor) {}
+	explicit index(const LinkedArray<T>* LA, size_t inx) : m_inxMajor(inx/LA->m_maxsize), m_inxMinor(inx%LA->m_maxsize) {}
 	uint32_t m_inxMajor;
 	uint32_t m_inxMinor;
-	friend class LinekdArray;
+	friend class LinkedArray;
 };
 
 template<typename T>
-class LinekdArray<T>::iterator {
+class LinkedArray<T>::iterator {
 	public:
-		explicit iterator(LinekdArray<T>* LA, T* ptr) : m_itPtr(ptr), m_itLA(LA) {}
+		explicit iterator(LinkedArray<T>* LA, T* ptr) : m_itPtr(ptr), m_itLA(LA) {}
 		iterator operator++() {
 			m_itPtr++;
 			if(m_itPtr == m_itLA->m_dataArrays[m_itInxMajor] + m_itLA->m_maxsize) m_itPtr = m_itLA->m_dataArrays[++m_itInxMajor];
@@ -129,22 +138,22 @@ class LinekdArray<T>::iterator {
 			return *this;
 		}
 		
-		bool operator==(const LinekdArray<T>::iterator& other) {
+		bool operator==(const LinkedArray<T>::iterator& other) {
 			return m_itPtr == other.m_itPtr;
 		}
-		bool operator!=(const LinekdArray<T>::iterator& other) {
+		bool operator!=(const LinkedArray<T>::iterator& other) {
 			return m_itPtr != other.m_itPtr;
 		}
-		bool operator>(const LinekdArray<T>::iterator& other) {
+		bool operator>(const LinkedArray<T>::iterator& other) {
 			return (m_itPtr > other.m_itPtr && m_itInxMajor == other.m_itInxMajor) || m_itInxMajor > other.m_itInxMajor;
 		}
-		bool operator<(const LinekdArray<T>::iterator& other) {
+		bool operator<(const LinkedArray<T>::iterator& other) {
 			return (m_itPtr < other.m_itPtr && m_itInxMajor == other.m_itInxMajor) || m_itInxMajor < other.m_itInxMajor;
 		}
-		bool operator>=(const LinekdArray<T>::iterator& other) {
+		bool operator>=(const LinkedArray<T>::iterator& other) {
 			return (m_itPtr >= other.m_itPtr && m_itInxMajor == other.m_itInxMajor) || m_itInxMajor > other.m_itInxMajor;
 		}
-		bool operator<=(const LinekdArray<T>::iterator& other) {
+		bool operator<=(const LinkedArray<T>::iterator& other) {
 			return (m_itPtr <= other.m_itPtr && m_itInxMajor == other.m_itInxMajor) || m_itInxMajor < other.m_itInxMajor;
 		}
 
@@ -155,13 +164,13 @@ class LinekdArray<T>::iterator {
 	private:
 		T* m_itPtr;
 		size_t m_itInxMajor = 0;
-		const LinekdArray<T>* m_itLA;
+		const LinkedArray<T>* m_itLA;
 
 };
 template<typename T>
-class LinekdArray<T>::const_iterator {
+class LinkedArray<T>::const_iterator {
 	public:
-		explicit const_iterator(LinekdArray<T>* LA, T* ptr) : m_itPtr(ptr), m_itLA(LA) {}
+		explicit const_iterator(LinkedArray<T>* LA, T* ptr) : m_itPtr(ptr), m_itLA(LA) {}
 		const_iterator operator++() {
 			m_itPtr++;
 			if(m_itPtr == m_itLA->m_dataArrays[m_itInxMajor] + m_itLA->m_maxsize) m_itPtr = m_itLA->m_dataArrays[++m_itInxMajor];
@@ -198,22 +207,22 @@ class LinekdArray<T>::const_iterator {
 			return *this;
 		}
 		
-		bool operator==(const LinekdArray<T>::const_iterator& other) {
+		bool operator==(const LinkedArray<T>::const_iterator& other) {
 			return m_itPtr == other.m_itPtr;
 		}
-		bool operator!=(const LinekdArray<T>::const_iterator& other) {
+		bool operator!=(const LinkedArray<T>::const_iterator& other) {
 			return m_itPtr != other.m_itPtr;
 		}
-		bool operator>(const LinekdArray<T>::const_iterator& other) {
+		bool operator>(const LinkedArray<T>::const_iterator& other) {
 			return (m_itPtr > other.m_itPtr && m_itInxMajor == other.m_itInxMajor) || m_itInxMajor > other.m_itInxMajor;
 		}
-		bool operator<(const LinekdArray<T>::const_iterator& other) {
+		bool operator<(const LinkedArray<T>::const_iterator& other) {
 			return (m_itPtr < other.m_itPtr && m_itInxMajor == other.m_itInxMajor) || m_itInxMajor < other.m_itInxMajor;
 		}
-		bool operator>=(const LinekdArray<T>::const_iterator& other) {
+		bool operator>=(const LinkedArray<T>::const_iterator& other) {
 			return (m_itPtr >= other.m_itPtr && m_itInxMajor == other.m_itInxMajor) || m_itInxMajor > other.m_itInxMajor;
 		}
-		bool operator<=(const LinekdArray<T>::const_iterator& other) {
+		bool operator<=(const LinkedArray<T>::const_iterator& other) {
 			return (m_itPtr <= other.m_itPtr && m_itInxMajor == other.m_itInxMajor) || m_itInxMajor < other.m_itInxMajor;
 		}
 
@@ -224,7 +233,7 @@ class LinekdArray<T>::const_iterator {
 	private:
 		T* m_itPtr;
 		size_t m_itInxMajor = 0;
-		const LinekdArray<T>* m_itLA;
+		const LinkedArray<T>* m_itLA;
 
 };
 }

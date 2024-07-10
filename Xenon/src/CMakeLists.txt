@@ -32,7 +32,7 @@ set(XENON_SRC
 	ECS/ComponentID.hpp
 	ECS/ComponentManager.cpp
 	ECS/ComponentManager.hpp
-	ECS/ComponentsPool.hpp
+	ECS/ComponentPool.hpp
 	ECS/LinkedArray.hpp
 	ECS/System.hpp
 )
