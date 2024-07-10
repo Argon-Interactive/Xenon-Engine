@@ -1,5 +1,5 @@
 set(XENON_SRC 
-	api.h
+	Xenon/api.h
 
 	Xenon/entryPoint.hpp
 	Xenon/application.cpp
