@@ -44,6 +44,7 @@ public:
 	[[nodiscard]] index getMMIndex(size_t inx) { return index(this, inx); }
 	//returns the index after the last element
 	[[nodiscard]] index getMMIndexLast() { return index(m_currInxMajor, m_currInxMinor); }
+	[[nodiscard]] size_t getIndex(const index& inx) { return inx.m_inxMajor * m_maxsize + inx.m_inxMinor; }
 	[[nodiscard]] bool isLast(size_t inx) { return m_currInxMajor * m_maxsize + m_currInxMinor == inx; }
 	[[nodiscard]] bool isLast(const index& inx) { return m_currInxMajor * m_maxsize + m_currInxMinor == inx.m_inxMajor * m_maxsize + inx.m_inxMinor; }
 

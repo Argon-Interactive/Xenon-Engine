@@ -1,13 +1,13 @@
-#ifndef COMPONENTS_POOL_HPP
-#define COMPONENTS_POOL_HPP
+#ifndef _XENON_SRC_ECS_COMPONENTS_POOL_
+#define _XENON_SRC_ECS_COMPONENTS_POOL_
 
 #include "ECS/ComponentID.hpp"
 #include "LinkedArray.hpp"
 #include "ECS/Entity.hpp"
-#include <cstddef>
+#include "devTools/logger_core.hpp" //NOLINT
 #include <strings.h>
-#include <unordered_map>
 #include <utility>
+#include <unordered_map>
 
 namespace Core {
 
@@ -42,18 +42,20 @@ private:
 		m_data.pushBack(data);
 		m_entityList.pushBack(ent);
 	}
-	[[nodiscard]] std::pair<Entity, std::pair<uint32_t, uint32_t>> removeComponent(Entity ent) {
+	[[nodiscard]] std::pair<Entity, LAInxType> removeComponent(Entity ent) {
+		#ifdef XENON_DEBUG
+			if(!m_indexLookupTable.contains(ent)) XN_LOG_WAR("Tried to remove an component from an entity that doesnt have it");
+		#endif
 		auto inx = m_indexLookupTable.at(ent);
 		if(!m_data.isLast(inx)) {
 			m_data[inx] = std::move(m_data.back());
-			m_entityList[inx] = m_entityList.back();
+			m_entityList[m_data.getIndex(inx)];
 		}
 		Entity movedEnt = m_entityList.back();
 		m_indexLookupTable.at(movedEnt) = inx;
 		m_data.popBack();
 		m_entityList.popBack();
-		// TODO: handle last item removal
-		return { movedEnt, {inx.m_inxMajor, inx.m_inxMinor} };
+		return {movedEnt, inx};
 	}
 	void purge() {
 		m_data.clear();
