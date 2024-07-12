@@ -1,15 +1,14 @@
 #ifndef _XENON_CORE_APPDATA_H_
 #define _XENON_CORE_APPDATA_H_
 
-#include "Xenon/scene.hpp"
 #include "event.hpp"
 #include "scenes/sceneManager.hpp"
 #include "ECS/componentManager.hpp"
 #include "window/window.hpp"
+#include "Xenon/appConfig.hpp"
 
 #include <functional>
 #include <memory>
-#include <vector>
 
 namespace Core {
 
@@ -18,9 +17,9 @@ private:
 	struct ConstructorToken {};
 
 public:
-	AppData(ConstructorToken t, uint32_t width, uint32_t height, const std::string& title, std::vector<std::function<void(Xenon::Scene*)>> buildFunctions);
+	AppData(ConstructorToken t, uint32_t width, uint32_t height, const std::string& title, const Xenon::BuildFunctions& buildFunctions);
 
-	static void init(std::function<void(const Event&)> eventDispatcher, std::function<void(void*)> configFunction, std::vector<std::function<void(Xenon::Scene*)>> buildFunctions);
+	static void init(std::function<void(const Event&)> eventDispatcher, const Xenon::AppConfig& config);
 	static void terminate();
 
 	[[nodiscard]] static Core::Window& getWindow();

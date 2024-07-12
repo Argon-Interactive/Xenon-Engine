@@ -1,14 +1,13 @@
 #include "sceneManager.hpp"
 #include "devTools/logger_core.hpp"
+#include "Xenon/scene.hpp"
 
-#include <cstddef>
 #include <cstdint>
-#include <utility>
 
 namespace Core {
 
-SceneManager::SceneManager(std::vector<std::function<void(Xenon::Scene*)>> buildFunctions)
-	: m_buildFunctions(std::move(buildFunctions)) {}
+SceneManager::SceneManager(const Xenon::BuildFunctions& buildFunctions)
+	: m_buildFunctions(buildFunctions) {}
 SceneManager::~SceneManager() = default;
 
 Scene* SceneManager::createScene() {
@@ -27,7 +26,7 @@ void SceneManager::loadScene(uint64_t buildIndex) {
 	m_scenes.emplace_back(std::make_unique<Scene>(buildIndex));
 	auto clientScene = Xenon::Scene(m_scenes.back().get());
 	m_scenes.back()->setBuildIndex(buildIndex);
-	m_buildFunctions[static_cast<size_t>(buildIndex)](&clientScene);
+	m_buildFunctions[buildIndex](&clientScene);
 }
 
 void SceneManager::unloadScene(uint64_t buildIndex) {
