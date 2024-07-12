@@ -10,10 +10,10 @@ namespace Xenon {
 
 class Scene;
 
-using BuildFunction = void (*const)(Xenon::Scene *);
+using BuildFunction = void (*)(Xenon::Scene *);
 
 struct XAPI BuildFunctions {
-	BuildFunction* functions;
+	const BuildFunction* functions;
 	size_t size;
 
 	inline BuildFunction operator[](size_t index) const {

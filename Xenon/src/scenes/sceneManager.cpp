@@ -54,7 +54,7 @@ Scene* SceneManager::getActiveScene() {
 }
 
 Scene* SceneManager::getScene(uint64_t index) {
-	if(index < 0 || index >= m_scenes.size()) [[unlikely]]
+	if(index >= m_scenes.size()) [[unlikely]]
 		XN_LOG_ERR("Invalid scene manager index {0}.", index);
 	return m_scenes.at(index).get();
 }
@@ -78,7 +78,7 @@ uint64_t SceneManager::getSceneCount() const {
 
 
 void SceneManager::deleteScene(uint64_t index) {
-	if(index < 0 || index >= m_scenes.size()) [[unlikely]]
+	if(index >= m_scenes.size()) [[unlikely]]
 		XN_LOG_ERR("Invalid scene manager index {0}.", index);
 	m_scenes.erase(m_scenes.begin() + static_cast<int64_t>(index));
 }

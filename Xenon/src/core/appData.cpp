@@ -1,5 +1,3 @@
-#include <functional>
-#include <glad.h>
 #include "appData.hpp"
 #include "input/input.hpp"
 #include "devTools/logger_core.hpp"
@@ -19,7 +17,12 @@ void AppData::init(std::function<void(const Event&)> eventDispatcher, const Xeno
 		XN_LOG_ERR("AppData: Failed to initialize GLFW"); 
 		exit(EXIT_FAILURE);
 	}
-	s_appData = std::make_unique<AppData>(ConstructorToken{}, 800, 600, "XENON APP", config.buildFunctions);
+
+	const uint32_t width = config.defaultWindowWidth;
+	const uint32_t height = config.defaultWindowHeight;
+	const std::string name = config.defaultWindowName;
+
+	s_appData = std::make_unique<AppData>(ConstructorToken{}, width, height, name, config.buildFunctions);
 	getWindow().setEventDispatcher(eventDispatcher);
 
 	Input::init(getWindow().passPointer());
