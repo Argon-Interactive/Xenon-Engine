@@ -9,7 +9,7 @@ namespace Core {
 class System {
 protected:
 	template<typename T>
-	LinekdArray<T>& getData(ComponentManager& cmgr, ComponentID ID) { return cmgr.getComponentData(cmgr.getComponent<T>(ID)); }
+	LinkedArray<T>& getData(ComponentManager& cmgr, ComponentID ID) { return cmgr.getComponentData(cmgr.getComponent<T>(ID)); }
 };
 }
 

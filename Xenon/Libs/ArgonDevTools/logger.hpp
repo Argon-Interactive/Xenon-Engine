@@ -136,6 +136,8 @@ namespace XNTools {
 		void proccesToken(char token, const char* arg);
 		void proccesToken(char token, char* arg);
 		template<typename T>
+		void proccesToken(char /*token*/, T* arg) { m_msg << std::hex << arg << std::dec; }
+		template<typename T>
 		void proccesToken(char token, T arg)
 		{ 
 			if(token == '0')
