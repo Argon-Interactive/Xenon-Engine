@@ -59,7 +59,7 @@ public:
 		m_inxLookupTable.erase(ent);
 		m_entLookupTable.erase(inxLast);
 		m_data.pop_back();
-		//TODO resolve components index dependencies when a component is moved
+		//TODO: resolve components index dependencies when a component is moved
 		//I was thinking about adding compennt to a movedComponent list and when a component is read through index a check weather this index was moved 
 		//is made and if so the saved value is updated
 	}
@@ -73,7 +73,7 @@ public:
 
 private:
 	ChunkedArray<T> m_data;
-	//TODO get rid of std::unordered_map for something more performent
+	//TODO: get rid of std::unordered_map for something more performent
 	std::pmr::unordered_map<Entity, ChunkedArrayMMindexType> m_inxLookupTable;
 	std::pmr::unordered_map<ChunkedArrayMMindexType, Entity> m_entLookupTable;
 };	
