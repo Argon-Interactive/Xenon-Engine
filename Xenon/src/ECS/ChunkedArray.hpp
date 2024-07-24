@@ -21,7 +21,6 @@ public:
 			maxSize = m_allocationSize / sizeof(T);
 		}
 		m_maxPartitionSize = maxSize;
-		m_dataPtrs.reserve(8);
 		m_dataPtrs.push_back(m_resource->allocate(m_allocationSize));
 	}
 	~ChunkedArray() { for(auto ptr : m_dataPtrs) { m_resource->deallocate(ptr, m_allocationSize); } }
@@ -87,7 +86,10 @@ public:
 		size_t inxMajor = inx / m_maxPartitionSize;
 		return { inxMajor, inx - inxMajor * m_maxPartitionSize }; 
 	}
-	MMindex getMMindexBack() { return { m_indexMajor, --m_indexMinor }; }
+	MMindex getMMindexBack() {
+		if(m_indexMinor == 0) return { --m_indexMajor, --m_maxPartitionSize };
+		return { m_indexMajor, --m_indexMinor }; 
+	}
 	size_t getIndex(const MMindex& mminx) { return mminx.m_inxMajor * m_maxPartitionSize + mminx.m_inxMinor; }
 private:
 	std::pmr::memory_resource* m_resource;
@@ -99,7 +101,6 @@ private:
 
 	void resize() {
 		m_dataPtrs.push_back(m_resource->allocate(m_allocationSize));
-		if(m_dataPtrs.capacity == m_dataPtrs.size()) m_dataPtrs.reserve(8);
 		m_indexMajor++;
 		m_indexMinor = 0;
 	}

@@ -1,74 +1,81 @@
-#ifndef _XENON_SRC_ECS_COMPONENTS_POOL_
-#define _XENON_SRC_ECS_COMPONENTS_POOL_
+#ifndef _XENON_SRC_ECS_COMPONENTPOOL_
+#define _XENON_SRC_ECS_COMPONENTPOOL_
 
-#include "ECS/ComponentID.hpp"
-#include "LinkedArray.hpp"
-#include "ECS/Entity.hpp"
-#include "devTools/logger_core.hpp" //NOLINT
-#include <strings.h>
-#include <utility>
+#include <memory_resource>
 #include <unordered_map>
+
+#include "Entity.hpp"
+#include "ChunkedArray.hpp"
 
 namespace Core {
 
-class ComponentManager;
-
 template<typename T>
 class ComponentPool {
+	using ChunkedArrayMMindexType = ChunkedArray<T>::MMindex;
 public:
-	ComponentPool() = delete;
+	explicit ComponentPool(std::pmr::memory_resource* memoryResource)
+	: m_data{memoryResource}, m_inxLookupTable{memoryResource}, m_entLookupTable{memoryResource} {}
 	~ComponentPool() = default;
+
+	ComponentPool(ComponentPool&&) = delete;
 	ComponentPool(const ComponentPool&) = delete;
-	ComponentPool(ComponentPool&&) noexcept = delete;
-	ComponentPool& operator=(const ComponentPool&) = delete;
-	ComponentPool& operator=(ComponentPool&&) noexcept = delete;
-private:
-	using LAInxType = LinkedArray<T>::index;
-	ComponentPool(ComponentManager* cmgr, ComponentID cID) : m_ID(cID), m_componentMgr(cmgr) {}
+	ComponentPool &operator=(ComponentPool &&) = delete;
+	ComponentPool &operator=(const ComponentPool &) = delete;
 
-	[[nodiscard]] T& getComponent(Entity ent) { return m_data[m_indexLookupTable.at(ent)]; }
-	[[nodiscard]] T& getComponent(uint32_t inxMajor, uint32_t inxMinor) { return m_data[LAInxType(inxMajor, inxMinor)]; }
-	[[nodiscard]] bool hasComponent(Entity ent) { return m_indexLookupTable.contains(ent); }
-	void setData(Entity ent, const T& data) { m_data[m_indexLookupTable.at(ent)] = data; }
+	///////////////////////////////////////
+	/// Entity interface
+	///////////////////////////////////////
 
-	void addComponent(Entity ent, const T& data = {}) {
-		#ifdef XENON_DEBUG
-		if(m_indexLookupTable.contains(ent)) {
-			XN_LOG_WAR("Entity {0} already contains component {q}", ent, typeid(T).name());
+	[[nodiscard]] T& getComponent(Entity ent) { return m_data[m_inxLookupTable.at(ent)]; }
+	[[nodiscard]] T& getComponent(ChunkedArrayMMindexType inx) { return m_data[inx]; }
+
+	[[nodiscard]] bool hasComponent(Entity ent) { return m_inxLookupTable.contains(ent); }
+	[[nodiscard]] bool isIndexValid(ChunkedArrayMMindexType inx) { return m_entLookupTable.contains(inx); }
+
+	void addEntity(Entity ent) { emplaceEntity(ent); }
+	void addEntity(Entity ent, const T& data) { emplaceEntity(ent, data); }
+	void addEntity(Entity ent, T&& data) { emplaceEntity(ent, std::move(data)); }
+
+	template<typename ...Args>
+	void emplaceEntity(Entity ent, Args&&... args) {
+		m_data.emplace_back(std::forward<Args>(args)...);
+		auto inx = m_data.getMMindexBack();
+		m_inxLookupTable[ent] = inx;
+		m_entLookupTable[inx] = ent;
+	}
+	void removeEntity(Entity ent) {
+		auto inx = m_inxLookupTable.at(ent);
+		auto inxLast = m_data.getMMindexBack();
+		if(m_inxLookupTable.at(ent) == inxLast) {
+			m_data.pop_back();
+			m_entLookupTable.erase(inx);
+			m_inxLookupTable.erase(ent);
 			return;
 		}
-		#endif
-		m_indexLookupTable.emplace(ent, m_data.getMMIndexLast());
-		m_data.pushBack(data);
-		m_entityList.pushBack(ent);
+		auto entLast = m_entLookupTable.at(inxLast);
+		m_data[inx] = std::move(m_data[inxLast]);
+		m_inxLookupTable[m_entLookupTable.at(inxLast)] = inx;
+		m_entLookupTable[inx] = entLast;
+		m_inxLookupTable.erase(ent);
+		m_entLookupTable.erase(inxLast);
+		m_data.pop_back();
+		//TODO resolve components index dependencies when a component is moved
+		//I was thinking about adding compennt to a movedComponent list and when a component is read through index a check weather this index was moved 
+		//is made and if so the saved value is updated
 	}
-	[[nodiscard]] std::pair<Entity, LAInxType> removeComponent(Entity ent) {
-		#ifdef XENON_DEBUG
-			if(!m_indexLookupTable.contains(ent)) XN_LOG_WAR("Tried to remove an component from an entity that doesnt have it");
-		#endif
-		auto inx = m_indexLookupTable.at(ent);
-		if(!m_data.isLast(inx)) {
-			m_data[inx] = std::move(m_data.back());
-			m_entityList[m_data.getIndex(inx)];
-		}
-		Entity movedEnt = m_entityList.back();
-		m_indexLookupTable.at(movedEnt) = inx;
-		m_data.popBack();
-		m_entityList.popBack();
-		return {movedEnt, inx};
-	}
+	void setComponentData(Entity ent, const T& data) { m_data.at(m_inxLookupTable(ent)) = data; }
+	void setComponentData(Entity ent, T&& data) { m_data.at(m_inxLookupTable(ent)) = std::move(data); }
 	void purge() {
 		m_data.clear();
-		m_entityList.clear();
-		m_indexLookupTable.clear();
+		m_inxLookupTable.clear();
+		m_entLookupTable.clear();
 	}
 
-	ComponentID m_ID;
-	ComponentManager* m_componentMgr;
-	std::unordered_map<Entity, LAInxType> m_indexLookupTable;
-	LinkedArray<T> m_data;
-	LinkedArray<Entity> m_entityList;
-	friend class ComponentManager;
-};
+private:
+	ChunkedArray<T> m_data;
+	//TODO get rid of std::unordered_map for something more performent
+	std::pmr::unordered_map<Entity, ChunkedArrayMMindexType> m_inxLookupTable;
+	std::pmr::unordered_map<ChunkedArrayMMindexType, Entity> m_entLookupTable;
+};	
 }
-#endif // !COMPONENTS_POOL_HPP
+#endif
