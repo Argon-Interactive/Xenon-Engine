@@ -3,6 +3,7 @@
 
 #include <memory_resource>
 #include <unordered_map>
+#include <algorithm>
 
 #include "Entity.hpp"
 #include "ChunkedArray.hpp"
@@ -14,7 +15,7 @@ class ComponentPool {
 	using ChunkedArrayMMindexType = ChunkedArray<T>::MMindex;
 public:
 	explicit ComponentPool(std::pmr::memory_resource* memoryResource)
-	: m_data{memoryResource}, m_inxLookupTable{memoryResource}, m_entLookupTable{memoryResource} {}
+	: m_data{memoryResource}, m_inxLookupTable{memoryResource}, m_entLookupTable{memoryResource}, m_entitiesToDelete{memoryResource} {}
 	~ComponentPool() = default;
 
 	ComponentPool(ComponentPool&&) = delete;
@@ -43,7 +44,28 @@ public:
 		m_inxLookupTable[ent] = inx;
 		m_entLookupTable[inx] = ent;
 	}
-	void removeEntity(Entity ent) {
+	void removeEntity(Entity ent) { m_entitiesToDelete.push_back(ent); }
+	void setComponentData(Entity ent, const T& data) { m_data.at(m_inxLookupTable(ent)) = data; }
+	void setComponentData(Entity ent, T&& data) { m_data.at(m_inxLookupTable(ent)) = std::move(data); }
+	void purge() {
+		m_data.clear();
+		m_inxLookupTable.clear();
+		m_entLookupTable.clear();
+		m_entitiesToDelete.clear();
+	}
+	void resolveRemovals() {
+		std::sort(m_entitiesToDelete.begin(), m_entitiesToDelete.end(), std::greater<ChunkedArrayMMindexType>());
+		for(auto ent : m_entitiesToDelete) pm_deleteComponentData(ent);
+	}
+
+private:
+	ChunkedArray<T> m_data;
+	//TODO: get rid of std::unordered_map for something more performent
+	std::pmr::unordered_map<Entity, ChunkedArrayMMindexType> m_inxLookupTable;
+	std::pmr::unordered_map<ChunkedArrayMMindexType, Entity> m_entLookupTable;
+	std::pmr::vector<Entity> m_entitiesToDelete;
+
+	void pm_deleteComponentData(Entity ent) {
 		auto inx = m_inxLookupTable.at(ent);
 		auto inxLast = m_data.getMMindexBack();
 		if(m_inxLookupTable.at(ent) == inxLast) {
@@ -63,19 +85,6 @@ public:
 		//I was thinking about adding compennt to a movedComponent list and when a component is read through index a check weather this index was moved 
 		//is made and if so the saved value is updated
 	}
-	void setComponentData(Entity ent, const T& data) { m_data.at(m_inxLookupTable(ent)) = data; }
-	void setComponentData(Entity ent, T&& data) { m_data.at(m_inxLookupTable(ent)) = std::move(data); }
-	void purge() {
-		m_data.clear();
-		m_inxLookupTable.clear();
-		m_entLookupTable.clear();
-	}
-
-private:
-	ChunkedArray<T> m_data;
-	//TODO: get rid of std::unordered_map for something more performent
-	std::pmr::unordered_map<Entity, ChunkedArrayMMindexType> m_inxLookupTable;
-	std::pmr::unordered_map<ChunkedArrayMMindexType, Entity> m_entLookupTable;
 };	
 }
 #endif

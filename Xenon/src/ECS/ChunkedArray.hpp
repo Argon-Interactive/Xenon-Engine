@@ -111,6 +111,13 @@ class ChunkedArray<T>::MMindex {
 	MMindex(size_t major, uint16_t minor) : m_inxMajor(major), m_inxMinor(minor) {}
 	size_t m_inxMajor;
 	uint16_t m_inxMinor;
+public:
+	bool operator<(MMindex oth) { return m_inxMajor < oth.m_inxMajor || (m_inxMajor == oth.m_inxMajor && m_inxMinor < oth.m_inxMinor); }
+	bool operator>(MMindex oth) { return m_inxMajor > oth.m_inxMajor || (m_inxMajor == oth.m_inxMajor && m_inxMinor > oth.m_inxMinor); }
+	bool operator==(MMindex oth) { return m_inxMajor == oth.m_inxMajor && m_inxMinor == oth.m_inxMinor; }
+	bool operator!=(MMindex oth) { return m_inxMajor != oth.m_inxMajor || m_inxMinor != oth.m_inxMinor; }
+	bool operator>=(MMindex oth) { return *this > oth || *this == oth; }
+	bool operator<=(MMindex oth) { return *this < oth || *this == oth; }
 };
 
 template<typename T>

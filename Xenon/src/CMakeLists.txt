@@ -32,9 +32,11 @@ set(XENON_SRC
 	ECS/ComponentID.hpp
 	ECS/ComponentManager.cpp
 	ECS/ComponentManager.hpp
+	ECS/ComponentCluster.hpp
+	ECS/ComponentCluster.cpp
 	ECS/ComponentPool.hpp
 	ECS/ChunkedArray.hpp
-	ECS/System.hpp
+	ECS/SystemImplementations/System.hpp
 )
 
 add_library(XenonEngine SHARED ${XENON_SRC})
