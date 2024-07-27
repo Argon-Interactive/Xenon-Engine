@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <cstdint>
-#include "ECS/Entity.hpp"
+#include "ECS/entity.hpp"
 
 namespace Core {
 

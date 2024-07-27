@@ -29,14 +29,17 @@ set(XENON_SRC
 	scenes/sceneManager.cpp
 	scenes/sceneManager.hpp
 	
-	ECS/ComponentID.hpp
-	ECS/ComponentManager.cpp
-	ECS/ComponentManager.hpp
-	ECS/ComponentCluster.hpp
-	ECS/ComponentCluster.cpp
-	ECS/ComponentPool.hpp
-	ECS/ChunkedArray.hpp
-	ECS/SystemImplementations/System.hpp
+	ECS/entity.hpp
+	ECS/componentManager.cpp
+	ECS/componentManager.hpp
+	ECS/componentCluster.hpp
+	ECS/componentCluster.cpp
+	ECS/componentPool.hpp
+	ECS/chunkedArray.hpp
+	ECS/systemImplementations/system.hpp
+
+	TEST/test.hpp
+	TEST/test.cpp
 )
 
 add_library(XenonEngine SHARED ${XENON_SRC})

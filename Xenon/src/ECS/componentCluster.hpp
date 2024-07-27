@@ -1,8 +1,8 @@
 #ifndef _XENON_SRC_ECS_COMPOENNTSCLUSTER_
 #define _XENON_SRC_ECS_COMPOENNTSCLUSTER_
 
-#include "ComponentPool.hpp"
-#include "ComponentManager.hpp"
+#include "componentPool.hpp"
+#include "componentManager.hpp"
 
 namespace Core {
 struct ComponentCluster {

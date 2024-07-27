@@ -1,7 +1,7 @@
 #ifndef _XENON_ECS_COMPONENT_MANAGER_
 #define _XENON_ECS_COMPONENT_MANAGER_
 
-#include "ComponentPool.hpp"
+#include "componentPool.hpp"
 
 namespace Core {
 

@@ -5,6 +5,8 @@
 #include <cmath>
 #include <vector>
 
+#include "devTools/logger_core.hpp"
+
 namespace Core {
 template<typename T>
 class ChunkedArray {
@@ -13,7 +15,7 @@ public:
 	class iterator;
 	class const_iterator;
 
-	explicit ChunkedArray(std::pmr::memory_resource* memoryRsrc) : m_resource(memoryRsrc), m_allocationSize(4096) { 
+	explicit ChunkedArray(std::pmr::memory_resource* memoryRsrc = std::pmr::get_default_resource()) : m_resource(memoryRsrc), m_allocationSize(4096) { 
 		//To change the default chunk size change the m_allocationSize value above, it is the only place where it needs to be changed
 		uint32_t maxSize = m_allocationSize / sizeof(T);
 		while(maxSize == 0) {
@@ -21,13 +23,19 @@ public:
 			maxSize = m_allocationSize / sizeof(T);
 		}
 		m_maxPartitionSize = maxSize;
-		m_dataPtrs.push_back(m_resource->allocate(m_allocationSize));
+		auto* newData = static_cast<T*>(m_resource->allocate(m_allocationSize));
+		m_dataPtrs.push_back(newData);
 	}
 	~ChunkedArray() { for(auto ptr : m_dataPtrs) { m_resource->deallocate(ptr, m_allocationSize); } }
-	ChunkedArray(const ChunkedArray &) = delete;
 	ChunkedArray(ChunkedArray &&) = delete;
-	ChunkedArray &operator=(const ChunkedArray &) = delete;
+	ChunkedArray(const ChunkedArray &) = delete;
 	ChunkedArray &operator=(ChunkedArray &&) = delete;
+	ChunkedArray &operator=(const ChunkedArray &) = delete;
+
+///////////////////?DEB?//////////////////////////////////
+	void loginx() {XN_LOG_DEB("Major: {0}, Minor: {0}", m_indexMajor, m_indexMinor); }
+
+
 	///////////////////////////////////////
 	/// Iterators
 	///////////////////////////////////////
@@ -100,7 +108,8 @@ private:
 	std::pmr::vector<T*> m_dataPtrs{m_resource};
 
 	void resize() {
-		m_dataPtrs.push_back(m_resource->allocate(m_allocationSize));
+		auto* newData = static_cast<T*>(m_resource->allocate(m_allocationSize));
+		m_dataPtrs.push_back(newData);
 		m_indexMajor++;
 		m_indexMinor = 0;
 	}
@@ -108,16 +117,27 @@ private:
 
 template<typename T>
 class ChunkedArray<T>::MMindex {
-	MMindex(size_t major, uint16_t minor) : m_inxMajor(major), m_inxMinor(minor) {}
 	size_t m_inxMajor;
 	uint16_t m_inxMinor;
+	MMindex(size_t major, uint16_t minor) : m_inxMajor(major), m_inxMinor(minor) {}
 public:
-	bool operator<(MMindex oth) { return m_inxMajor < oth.m_inxMajor || (m_inxMajor == oth.m_inxMajor && m_inxMinor < oth.m_inxMinor); }
+	//TODO: This is really broken bcoz std wont work with private constructor so this is to be deleted as soon as someone comes up with a better idea
+	//NOTE: Do not use this constructor, only construct an instance of this class using ChunkedArray::getMMindex()
+	MMindex() : m_inxMajor(-1), m_inxMinor(-1) {}
+	~MMindex() = default;
+	MMindex(MMindex &&) = default;
+	MMindex(const MMindex &) = default;
+	MMindex &operator=(MMindex &&) = default;
+	MMindex &operator=(const MMindex &) = default;
+  bool operator<(MMindex oth) {
+    return m_inxMajor < oth.m_inxMajor ||
+           (m_inxMajor == oth.m_inxMajor && m_inxMinor < oth.m_inxMinor); }
 	bool operator>(MMindex oth) { return m_inxMajor > oth.m_inxMajor || (m_inxMajor == oth.m_inxMajor && m_inxMinor > oth.m_inxMinor); }
 	bool operator==(MMindex oth) { return m_inxMajor == oth.m_inxMajor && m_inxMinor == oth.m_inxMinor; }
 	bool operator!=(MMindex oth) { return m_inxMajor != oth.m_inxMajor || m_inxMinor != oth.m_inxMinor; }
 	bool operator>=(MMindex oth) { return *this > oth || *this == oth; }
 	bool operator<=(MMindex oth) { return *this < oth || *this == oth; }
+	friend class ChunkedArray<T>;
 };
 
 template<typename T>
@@ -243,7 +263,7 @@ class ChunkedArray<T>::const_iterator {
 			return (m_itPtr <= other.m_itPtr && m_itInxMajor == other.m_itInxMajor) || m_itInxMajor < other.m_itInxMajor;
 		}
 
-		T& operator[](size_t inx) const { return *(this + inx); }
+		//T& operator[](size_t inx) const { return *(this + inx); }
 		T* operator->() const { return m_itPtr; }
 		T& operator*() const { return *m_itPtr; }
 	private:
