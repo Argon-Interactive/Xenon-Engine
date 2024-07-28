@@ -1,7 +1,7 @@
 #ifndef _XENON_SRC_ECS_COMPONENTLIST_
 #define _XENON_SRC_ECS_COMPONENTLIST_
 
-#include "componentPool.hpp"
+#include "chunkedArray.hpp"
 #include "devTools/logger_core.hpp"
 
 namespace Core {
@@ -28,7 +28,7 @@ public:
 	ComponentReferenceList &operator=(ComponentReferenceList &&) = delete;
 	ComponentReferenceList &operator=(const ComponentReferenceList &) = delete;
 
-	void push(ComponentPool<T>* elem) {
+	void push(ChunkedArray<T>* elem) {
 		Node* newNode = static_cast<Node*>(m_resource->allocate(sizeof(Node)));
 		new(newNode) Node(elem);
 		if(m_head == nullptr) {
@@ -43,7 +43,7 @@ public:
 		m_tail = newNode;
 		m_size++;
 	}
-	void pop(ComponentPool<T>* elem) {
+	void pop(ChunkedArray<T>* elem) {
 		Node* temp = nullptr;
 		if(m_head->data == elem) {
 			temp = m_head;
@@ -69,20 +69,20 @@ public:
 					return;
 				}
 			}
-			XN_LOG_WAR("Trying to delete an element form ComponentReferenceList with it doesn't contain");
+			XN_LOG_WAR("Trying to delete an element form ComponentReferenceList which it doesn't contain");
 		}
 	}
 
 	[[nodiscard]] uint32_t size() { return m_size; }
-	[[nodiscard]] bool contains(ComponentPool<T>* elem) const {
+	[[nodiscard]] bool contains(ChunkedArray<T>* elem) const {
 		for(Node* node = m_head; node != nullptr; node = node->next) { if(node->data == elem) return true; }
 		return false;
 	}	
 	//BUG: Something with this iterator is broken
 	[[nodiscard]] iterator begin() { return iterator(m_head); }
-	[[nodiscard]] iterator end() { return iterator(m_tail, 0); }
+	[[nodiscard]] iterator end() { return iterator(this); }
 	[[nodiscard]] const_iterator begin() const { return const_iterator(m_head); }
-	[[nodiscard]] const_iterator end() const { return const_iterator(m_tail, 0); }
+	[[nodiscard]] const_iterator end() const { return const_iterator(this); }
 private:
 	std::pmr::memory_resource* m_resource;
 	Node* m_head;
@@ -93,8 +93,8 @@ private:
 
 template<typename T>
 struct ComponentReferenceList<T>::Node {
-	explicit Node(ComponentPool<T>* elem) : data(elem) {}
-	ComponentPool<T>* data;
+	explicit Node(ChunkedArray<T>* elem) : data(elem) {}
+	ChunkedArray<T>* data;
 	Node* next;
 	Node* prev;
 };
@@ -102,21 +102,21 @@ struct ComponentReferenceList<T>::Node {
 template<typename T>
 class ComponentReferenceList<T>::iterator {
 	friend ComponentReferenceList<T>;
-	iterator(Node* ptr, int /*unused*/) : m_ptr(ptr), m_caIt(ptr->data->data().end()) {}
+	explicit iterator(ComponentReferenceList<T>* CRL) : m_ptr(CRL->m_tail), m_caIt(CRL->m_tail->data->end()) {}
 public:
-	explicit iterator(Node* ptr) : m_ptr(ptr), m_caIt(ptr->data->data().begin()) {}
+	explicit iterator(Node* ptr) : m_ptr(ptr), m_caIt(ptr->data->begin()) {}
 	iterator operator++() {
 		m_caIt++;
-		if(m_caIt == m_ptr->data->data().end()) {
+		if(m_caIt == m_ptr->data->end()) {
 			m_ptr = m_ptr->next;
-			m_caIt = m_ptr->data->data().begin();
+			if(m_ptr) m_caIt = m_ptr->data->begin();
 		}
 		return *this;
 	}
 	iterator operator--() {
-		if(m_caIt == m_ptr->data->data().begin()) {
+		if(m_caIt == m_ptr->data->begin()) {
 			m_ptr = m_ptr->prev;
-			m_caIt = m_ptr->data->data().end();
+			if(m_ptr) m_caIt = m_ptr->data->end();
 			return *this;
 		}
 		m_caIt--;
@@ -146,22 +146,22 @@ private:
 template<typename T>
 class ComponentReferenceList<T>::const_iterator {
 	friend ComponentReferenceList<T>;
-	const_iterator(Node* ptr, int /*unused*/) : m_ptr(ptr), m_caIt(ptr->data->data().end()) {}
+	explicit const_iterator(ComponentReferenceList<T>* CRL) : m_ptr(CRL->m_tail), m_caIt(CRL->m_tail->data->end()) {}
 public:
-	explicit const_iterator(Node* ptr) : m_ptr(ptr), m_caIt(ptr->data->data().begin()) {}
+	explicit const_iterator(Node* ptr) : m_ptr(ptr), m_caIt(ptr->data->begin()) {}
 	const_iterator operator++() {
 		m_caIt++;
-		if(m_caIt == m_ptr->data->data().end()) {
+		if(m_caIt == m_ptr->data->end()) {
 			m_ptr->next;
-			m_caIt = m_ptr->data->data().begin();
+			if(m_ptr) m_caIt = m_ptr->data->begin();
 		}
 		return *this;
 	}
 	const_iterator operator--() {
 		m_caIt--;
-		if(m_caIt == m_ptr->data->data().begin()) {
+		if(m_caIt == m_ptr->data->begin()) {
 			m_ptr->prev;
-			m_caIt = m_ptr->data->data().end();
+			if(m_ptr) m_caIt = m_ptr->data->end();
 		}
 		return *this;
 	}

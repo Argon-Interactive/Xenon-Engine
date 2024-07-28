@@ -11,7 +11,6 @@ namespace Core {
 template<typename T>
 class ChunkedArray {
 public:
-	class MMindex;
 	class iterator;
 	class const_iterator;
 
@@ -41,9 +40,9 @@ public:
 	///////////////////////////////////////
 
 	iterator begin() { return iterator(this, m_dataPtrs.front()); }
-	iterator end() { return iterator(this, m_dataPtrs.back() + m_indexMajor); }
+	iterator end() { return iterator(this, m_dataPtrs.back() + m_indexMinor); }
 	const_iterator begin() const { return const_iterator(this, m_dataPtrs.front()); }
-	const_iterator end() const { return const_iterator(this, m_dataPtrs.back() + m_indexMajor); }
+	const_iterator end() const { return const_iterator(this, m_dataPtrs.back() + m_indexMinor); }
 	///////////////////////////////////////
 	/// Modifiers 
 	///////////////////////////////////////
@@ -83,22 +82,8 @@ public:
 		size_t inxMajor = index / m_maxPartitionSize;
 		return m_dataPtrs[inxMajor][index - inxMajor * m_maxPartitionSize]; 
 	}
-	T& operator[](const MMindex& index) { m_dataPtrs[index.m_inxMajor][index.m_inxMinor]; }
 	T& front() { return m_dataPtrs.front()[0]; }
 	T& back() { return m_dataPtrs[m_indexMajor][--m_indexMinor]; }
-	///////////////////////////////////////
-	/// MMindex
-	///////////////////////////////////////
-	
-	MMindex getMMindex(size_t inx) { 
-		size_t inxMajor = inx / m_maxPartitionSize;
-		return { inxMajor, inx - inxMajor * m_maxPartitionSize }; 
-	}
-	MMindex getMMindexBack() {
-		if(m_indexMinor == 0) return { --m_indexMajor, --m_maxPartitionSize };
-		return { m_indexMajor, --m_indexMinor }; 
-	}
-	size_t getIndex(const MMindex& mminx) { return mminx.m_inxMajor * m_maxPartitionSize + mminx.m_inxMinor; }
 private:
 	std::pmr::memory_resource* m_resource;
 	uint16_t m_allocationSize; //NOLINT
@@ -113,31 +98,6 @@ private:
 		m_indexMajor++;
 		m_indexMinor = 0;
 	}
-};
-
-template<typename T>
-class ChunkedArray<T>::MMindex {
-	size_t m_inxMajor;
-	uint16_t m_inxMinor;
-	MMindex(size_t major, uint16_t minor) : m_inxMajor(major), m_inxMinor(minor) {}
-public:
-	//TODO: This is really broken bcoz std wont work with private constructor so this is to be deleted as soon as someone comes up with a better idea
-	//NOTE: Do not use this constructor, only construct an instance of this class using ChunkedArray::getMMindex()
-	MMindex() : m_inxMajor(-1), m_inxMinor(-1) {}
-	~MMindex() = default;
-	MMindex(MMindex &&) = default;
-	MMindex(const MMindex &) = default;
-	MMindex &operator=(MMindex &&) = default;
-	MMindex &operator=(const MMindex &) = default;
-  bool operator<(MMindex oth) {
-    return m_inxMajor < oth.m_inxMajor ||
-           (m_inxMajor == oth.m_inxMajor && m_inxMinor < oth.m_inxMinor); }
-	bool operator>(MMindex oth) { return m_inxMajor > oth.m_inxMajor || (m_inxMajor == oth.m_inxMajor && m_inxMinor > oth.m_inxMinor); }
-	bool operator==(MMindex oth) { return m_inxMajor == oth.m_inxMajor && m_inxMinor == oth.m_inxMinor; }
-	bool operator!=(MMindex oth) { return m_inxMajor != oth.m_inxMajor || m_inxMinor != oth.m_inxMinor; }
-	bool operator>=(MMindex oth) { return *this > oth || *this == oth; }
-	bool operator<=(MMindex oth) { return *this < oth || *this == oth; }
-	friend class ChunkedArray<T>;
 };
 
 template<typename T>

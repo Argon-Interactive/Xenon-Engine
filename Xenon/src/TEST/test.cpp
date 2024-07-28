@@ -4,49 +4,47 @@
 #include "devTools/logger_core.hpp"
 
 void Core::Test::test() {
-	Core::ComponentPool<int> cp1;
-	Core::ComponentPool<float> cp2;
-	Core::ComponentPool<char> cp3;
+	Core::ChunkedArray<int> cp1;
+	Core::ChunkedArray<float> cp2;
+	Core::ChunkedArray<char> cp3;
 	//
-	Core::ComponentPool<int> cp12;
-	Core::ComponentPool<float> cp22;
-	Core::ComponentPool<char> cp32;
+	Core::ChunkedArray<int> cp12;
+	Core::ChunkedArray<float> cp22;
+	Core::ChunkedArray<char> cp32;
 	//
-	Core::ComponentPool<int> cp13;
-	Core::ComponentPool<float> cp23;
-	Core::ComponentPool<char> cp33;
+	Core::ChunkedArray<int> cp13;
+	Core::ChunkedArray<float> cp23;
+	Core::ChunkedArray<char> cp33;
 
-	Core::Entity ent = 0;
+	cp1.emplace_back(1);
+	cp1.emplace_back(2);
 
-	cp1.addEntity(ent++, 1);
-	cp1.addEntity(ent++, 2);
+	cp2.emplace_back(3.14f);
+	cp2.emplace_back(6.28f);
+	cp2.emplace_back(9.42f);
 
-	cp2.addEntity(ent++, 3.14f);
-	cp2.addEntity(ent++, 6.28f);
-	cp2.addEntity(ent++, 9.42f);
+	cp3.emplace_back('a');
+	cp3.emplace_back('b');
 
-	cp3.addEntity(ent++, 'a');
-	cp3.addEntity(ent++, 'b');
+	cp12.emplace_back(3);
+	cp12.emplace_back(4);
 
-	cp12.addEntity(ent++, 3);
-	cp12.addEntity(ent++, 4);
+	cp22.emplace_back(12.56f);
+	cp22.emplace_back(15.7f);
+	cp22.emplace_back(18.84f);
 
-	cp22.addEntity(ent++, 12.56f);
-	cp22.addEntity(ent++, 15.7f);
-	cp22.addEntity(ent++, 18.84f);
+	cp32.emplace_back('c');
+	cp32.emplace_back('d');
 
-	cp32.addEntity(ent++, 'c');
-	cp32.addEntity(ent++, 'd');
+	cp13.emplace_back(5);
+	cp13.emplace_back(6);
 
-	cp13.addEntity(ent++, 5);
-	cp13.addEntity(ent++, 6);
+	cp23.emplace_back(21.98f);
+	cp23.emplace_back(25.12f);
+	cp23.emplace_back(28.26f);
 
-	cp23.addEntity(ent++, 21.98f);
-	cp23.addEntity(ent++, 25.12f);
-	cp23.addEntity(ent++, 28.26f);
-
-	cp33.addEntity(ent++, 'e');
-	cp33.addEntity(ent++, 'f');
+	cp33.emplace_back('e');
+	cp33.emplace_back('f');
 
 	Core::ComponentReferenceList<int> intList;
 	intList.push(&cp1);
@@ -61,14 +59,6 @@ void Core::Test::test() {
 	charList.push(&cp32);
 	charList.push(&cp33);
 
-	XN_LOG_ENT("Int size: {0}", intList.size());
-	XN_LOG_ENT("Int pool 1 size: {0}", cp1.data().size());
-	cp1.data().loginx();
-
-	XN_LOG_ENT("Printing int pool 1");
-	for(const auto a : cp1.data()) {
-		XN_LOG_ENT(a);
-	}
 	XN_LOG_ENT("ints: 1, 2, 3, 4, 5, 6");
 	for(const auto a : intList) {
 		XN_LOG_ENT(a);
@@ -81,5 +71,22 @@ void Core::Test::test() {
 	for(const auto a : charList) {
 		XN_LOG_ENT(a);
 	}
+	XN_LOG_BR();
+	intList.pop(&cp1);
+	XN_LOG_ENT("ints: 3, 4, 5, 6");
+	for(const auto a : intList) {
+		XN_LOG_ENT(a);
+	}
+	floatList.pop(&cp22);
+	XN_LOG_ENT("floats: 3.14, 6.28, 9.42, 21.98, 25.12, 28.26");
+	for(const auto a : floatList) {
+		XN_LOG_ENT(a);
+	}
+	charList.pop(&cp33);
+	XN_LOG_ENT("chars: a, b, c, d");
+	for(const auto a : charList) {
+		XN_LOG_ENT(a);
+	}
+	
 
 }
