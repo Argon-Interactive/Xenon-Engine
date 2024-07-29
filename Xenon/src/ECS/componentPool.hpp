@@ -3,18 +3,16 @@
 
 #include <memory_resource>
 #include <unordered_map>
-#include <algorithm>
 
 #include "entity.hpp"
 #include "chunkedArray.hpp"
 
 namespace Core {
+class ComponentCluster;
 
 template<typename T>
 class ComponentPool {
 public:
-	explicit ComponentPool(std::pmr::memory_resource* memoryResource = std::pmr::get_default_resource())
-	: m_data(memoryResource), m_entitiesToDelete(memoryResource) {}
 	~ComponentPool() = default;
 
 	ComponentPool(ComponentPool&&) = delete;
@@ -22,42 +20,64 @@ public:
 	ComponentPool &operator=(ComponentPool &&) = delete;
 	ComponentPool &operator=(const ComponentPool &) = delete;
 
-	[[nodiscard]] ChunkedArray<T>* data() { return &m_data; }
 	[[nodiscard]] size_t size() { return m_data.size(); }
 
 	///////////////////////////////////////
 	/// Entity interface
 	///////////////////////////////////////
 
-
-private:
-	ChunkedArray<T> m_data;
-	//TODO: get rid of std::unordered_map for something more performent
-	std::unordered_map<size_t, Entity> m_entLookupTable;
-	std::pmr::vector<Entity> m_entitiesToDelete;
-
-	void pm_deleteComponentData(Entity ent) {
-		/*
-		auto inx = m_inxLookupTable.at(ent);
-		auto inxLast = m_data.getMMindexBack();
-		if(m_inxLookupTable.at(ent) == inxLast) {
-			m_data.pop_back();
-			m_entLookupTable.erase(m_data.getIndex(inx));
-			m_inxLookupTable.erase(ent);
-			return;
-		}
-		auto entLast = m_entLookupTable.at(m_data.getIndex(inxLast));
-		m_data[inx] = std::move(m_data[inxLast]);
-		m_inxLookupTable[m_entLookupTable.at(inxLast)] = inx;
-		m_entLookupTable[m_data.getIndex(inx)] = entLast;
-		m_inxLookupTable.erase(ent);
-		m_entLookupTable.erase(m_data.getIndex(inxLast));
-		m_data.pop_back();
-		//TODO: resolve components index dependencies when a component is moved
-		//I was thinking about adding compennt to a movedComponent list and when a component is read through index a check weather this index was moved 
-		//is made and if so the saved value is updated
-		*/
+	[[nodiscard]] T& getComponent(Entity ent) { return *m_ptrLookupTable.at(ent); }
+	template<typename ...Args>
+	void emplaceComponent(Entity ent, Args ...args) {
+		m_data.emplace_back(std::forward<Args>(args)...);
+		auto* ptr = &m_data.back();
+		m_ptrLookupTable[ent] = ptr;
+		m_entLookupTable[ptr] = ent;
 	}
+	void addComponent(Entity ent) { emplaceComponent(ent); }
+	void addComponent(Entity ent, const T& data) { emplaceComponent(ent, data); }
+	void addComponent(Entity ent,T&& data) { emplaceComponent(ent, std::move(data)); }
+	void removeComponent(Entity ent) { m_entitiesToRemove.push_back(ent); }
+	void purge() {
+		m_data.clear();
+		m_ptrLookupTable.clear();
+		m_entLookupTable.clear();
+		m_entitiesToRemove.clear();
+	}
+private:
+	explicit ComponentPool(std::pmr::memory_resource* memRes = std::pmr::get_default_resource())
+	: m_data(memRes), m_ptrLookupTable(memRes), m_entLookupTable(memRes), m_entitiesToRemove(memRes), m_movedEnts(memRes) {}
+
+	ChunkedArray<T> m_data;
+	//PERF: get rid of std::unordered_map for something more performent
+	std::pmr::unordered_map<Entity, T*> m_ptrLookupTable;
+	std::pmr::unordered_map<T*, Entity> m_entLookupTable;
+	std::pmr::vector<Entity> m_entitiesToRemove;
+	std::pmr::vector<std::pair<Entity, T*>> m_movedEnts;
+	
+	void p_resolveRemovals() {
+		T* ptr = nullptr;
+		for(auto ent : m_entitiesToRemove) {
+			if(&m_data.back() == m_ptrLookupTable.at(ent)) {
+				m_data.pop_back();
+				ptr = &m_data.back();
+				m_ptrLookupTable.erase(ent);
+				m_entLookupTable.erase(ptr);
+				continue;
+			}
+			ptr = m_ptrLookupTable.at(ent);
+			T* ptrLast = &m_data.back();
+			Entity entLast = m_entLookupTable.at(ptrLast);
+			*ptr = std::move(*ptrLast);
+			m_ptrLookupTable[entLast] = ptr;
+			m_entLookupTable[ptr] = entLast;
+			m_ptrLookupTable.erase(ent);
+			m_entLookupTable.erase(ptrLast);
+			m_movedEnts.push_back({entLast, ptr});
+		}
+		m_entitiesToRemove.clear();
+	}
+	friend class ComponentCluster;
 };	
 }
 #endif
