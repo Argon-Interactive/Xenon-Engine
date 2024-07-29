@@ -58,12 +58,8 @@ AppData::AppData([[maybe_unused]]ConstructorToken t, uint32_t width, uint32_t he
 	s_exists = true;
 }
 
-Window& AppData::getWindow() {
-	return s_appData->m_window;
-}
-
-SceneManager& AppData::getSceneManager() {
-	return s_appData->m_sceneManager;
-}
+Window& AppData::getWindow() { return s_appData->m_window; }
+SceneManager& AppData::getSceneManager() { return s_appData->m_sceneManager; }
+ComponentManager& AppData::getComponentManager() { return s_appData->m_componentManager; }
 
 }

@@ -16,7 +16,7 @@ public:
 
 	explicit ChunkedArray(std::pmr::memory_resource* memoryRsrc = std::pmr::get_default_resource()) : m_resource(memoryRsrc), m_allocationSize(4096) { 
 		//To change the default chunk size change the m_allocationSize value above, it is the only place where it needs to be changed
-		uint32_t maxSize = m_allocationSize / sizeof(T);
+		uint16_t maxSize = m_allocationSize / sizeof(T);
 		while(maxSize == 0) {
 			m_allocationSize *= 4;
 			maxSize = m_allocationSize / sizeof(T);
@@ -31,10 +31,6 @@ public:
 	ChunkedArray &operator=(ChunkedArray &&) = delete;
 	ChunkedArray &operator=(const ChunkedArray &) = delete;
 
-///////////////////?DEB?//////////////////////////////////
-	void loginx() {XN_LOG_DEB("Major: {0}, Minor: {0}", m_indexMajor, m_indexMinor); }
-
-
 	///////////////////////////////////////
 	/// Iterators
 	///////////////////////////////////////
@@ -47,14 +43,16 @@ public:
 	/// Modifiers 
 	///////////////////////////////////////
 	template<typename ...Args>
-	void emplace_back(Args&&... args) {
-		new(&m_dataPtrs[m_indexMajor][m_indexMinor]) T(std::forward<Args>(args)...);
+	T* emplace_back(Args&&... args) {
+		T* ptr = &m_dataPtrs[m_indexMajor][m_indexMinor];
+		new(ptr) T(std::forward<Args>(args)...);
 		if(++m_indexMinor == m_maxPartitionSize) resize();
+		return ptr;
 	}
 	void push_back(const T& value) { emplace_back(value); }
 	void push_back(T&& value) { emplace_back(std::move(value)); }
 	void pop_back() {
-		if(m_indexMajor == 0) {
+		if(m_indexMinor == 0) {
 			m_indexMajor--;
 			m_indexMinor = m_maxPartitionSize - 1;
 			m_resource->deallocate(m_dataPtrs.back(), m_allocationSize);
@@ -83,7 +81,7 @@ public:
 		return m_dataPtrs[inxMajor][index - inxMajor * m_maxPartitionSize]; 
 	}
 	T& front() { return m_dataPtrs.front()[0]; }
-	T& back() { return m_dataPtrs[m_indexMajor][--m_indexMinor]; }
+	T& back() { return m_dataPtrs[m_indexMajor][m_indexMinor - 1]; }
 private:
 	std::pmr::memory_resource* m_resource;
 	uint16_t m_allocationSize; //NOLINT

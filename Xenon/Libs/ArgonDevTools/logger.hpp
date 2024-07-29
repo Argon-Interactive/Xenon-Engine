@@ -153,6 +153,24 @@ namespace XNTools {
 			else
 				m_msg << '{' << token << '}';
 		}
+		void proccesToken(char token, float arg)
+		{ 
+			if(token == '0')
+				m_msg << arg;
+			else if (token == 's')
+				m_msg << std::scientific << arg;
+			else
+				m_msg << '{' << token << '}';
+		}
+		void proccesToken(char token, double arg)
+		{ 
+			if(token == '0')
+				m_msg << arg;
+			else if (token == 's')
+				m_msg << std::scientific << arg;
+			else
+				m_msg << '{' << token << '}';
+		}
 		template<typename T>
 		void proccesToken(char token, const std::vector<T>& arg)
 		{

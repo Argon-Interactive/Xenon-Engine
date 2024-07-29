@@ -13,7 +13,6 @@ namespace Core {
 
 class SceneManager {
 public:
-	explicit SceneManager(std::vector<std::function<void(Xenon::Scene*)>> buildFunctions);
 	~SceneManager();
 	SceneManager(SceneManager&&) = delete;
 	SceneManager(const SceneManager&) = delete;
@@ -35,6 +34,8 @@ public:
 	[[nodiscard]] uint64_t getSceneCount() const;
 
 private:
+	explicit SceneManager(std::vector<std::function<void(Xenon::Scene*)>> buildFunctions);
+
 	std::vector<std::unique_ptr<Scene>> m_scenes;
 	uint64_t m_activeSceneIndex = 0;
 	uint64_t m_loadedSceneCount = 0;
@@ -43,6 +44,8 @@ private:
 
 	void deleteScene(uint64_t index);
 	uint64_t findNearestScene(uint64_t buildIndex);
+
+	friend class AppData;
 };
 
 }

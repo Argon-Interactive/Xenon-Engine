@@ -35,6 +35,7 @@ set(XENON_SRC
 	ECS/componentCluster.hpp
 	ECS/componentCluster.cpp
 	ECS/componentPool.hpp
+	ECS/componentReferenceList.hpp
 	ECS/chunkedArray.hpp
 	ECS/systemImplementations/system.hpp
 

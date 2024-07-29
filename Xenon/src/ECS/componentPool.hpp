@@ -8,8 +8,6 @@
 #include "chunkedArray.hpp"
 
 namespace Core {
-class ComponentCluster;
-
 template<typename T>
 class ComponentPool {
 public:
@@ -27,10 +25,10 @@ public:
 	///////////////////////////////////////
 
 	[[nodiscard]] T& getComponent(Entity ent) { return *m_ptrLookupTable.at(ent); }
+	[[nodiscard]] T* getComponentPtr(Entity ent) { return m_ptrLookupTable.at(ent); }
 	template<typename ...Args>
 	void emplaceComponent(Entity ent, Args ...args) {
-		m_data.emplace_back(std::forward<Args>(args)...);
-		auto* ptr = &m_data.back();
+		auto* ptr = m_data.emplace_back(std::forward<Args>(args)...);
 		m_ptrLookupTable[ent] = ptr;
 		m_entLookupTable[ptr] = ent;
 	}
@@ -56,28 +54,24 @@ private:
 	std::pmr::vector<std::pair<Entity, T*>> m_movedEnts;
 	
 	void p_resolveRemovals() {
-		T* ptr = nullptr;
+		m_movedEnts.reserve(m_entitiesToRemove.size());
 		for(auto ent : m_entitiesToRemove) {
-			if(&m_data.back() == m_ptrLookupTable.at(ent)) {
-				m_data.pop_back();
-				ptr = &m_data.back();
-				m_ptrLookupTable.erase(ent);
-				m_entLookupTable.erase(ptr);
-				continue;
-			}
-			ptr = m_ptrLookupTable.at(ent);
+			T* ptr = m_ptrLookupTable.at(ent);
 			T* ptrLast = &m_data.back();
-			Entity entLast = m_entLookupTable.at(ptrLast);
-			*ptr = std::move(*ptrLast);
-			m_ptrLookupTable[entLast] = ptr;
-			m_entLookupTable[ptr] = entLast;
+			if(ptrLast != ptr) {
+				Entity entLast = m_entLookupTable.at(ptrLast);
+				*ptr = std::move(*ptrLast);
+				m_ptrLookupTable[entLast] = ptr;
+				m_entLookupTable[ptr] = entLast;
+				m_movedEnts.push_back({entLast, ptr});
+			}
 			m_ptrLookupTable.erase(ent);
 			m_entLookupTable.erase(ptrLast);
-			m_movedEnts.push_back({entLast, ptr});
+			m_data.pop_back();
 		}
 		m_entitiesToRemove.clear();
 	}
-	friend class ComponentCluster;
+	friend struct ComponentCluster;
 };	
 }
 #endif

@@ -4,6 +4,7 @@
 #include "Xenon/scene.hpp"
 #include "event.hpp"
 #include "scenes/sceneManager.hpp"
+#include "ECS/componentManager.hpp"
 #include "window/window.hpp"
 
 #include <functional>
@@ -24,6 +25,7 @@ public:
 
 	[[nodiscard]] static Core::Window& getWindow();
 	[[nodiscard]] static Core::SceneManager& getSceneManager();
+	[[nodiscard]] static Core::ComponentManager& getComponentManager();
 
 private:
 
@@ -32,6 +34,7 @@ private:
 
 	Core::Window m_window;
 	Core::SceneManager m_sceneManager;
+	Core::ComponentManager m_componentManager;
 };
 
 }
