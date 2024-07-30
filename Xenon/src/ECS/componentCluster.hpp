@@ -19,10 +19,22 @@ struct ComponentCluster {
 	ComponentPool<Comp> intComp;
 	ComponentPool<float> floatComp;
 
-	void syncComponentData() { p_resolveRemovals(); p_resolveDependencies(); }
+	void load();
+	void unload();
+
+	void syncComponentData() {
+		p_performeRemovals(); 
+		p_performeAdditions();
+		p_resolveDependencies(); 
+		p_performeResolvingCleaup();
+	}
 private:
-	void p_resolveRemovals();
+	bool m_isLoaded = false;
+
+	void p_performeRemovals();
 	void p_resolveDependencies();
+	void p_performeResolvingCleaup();
+	void p_performeAdditions();
 };
 }
 #endif // !_XENON_SRC_ECS_COMPOENNTSCLUSTER_

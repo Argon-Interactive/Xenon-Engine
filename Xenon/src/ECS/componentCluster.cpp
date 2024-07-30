@@ -3,28 +3,38 @@
 
 //TEST:
 
-Core::ComponentCluster::ComponentCluster(std::pmr::memory_resource* memres) : 
-intComp(memres), floatComp(memres) 
-{
+Core::ComponentCluster::ComponentCluster(std::pmr::memory_resource* memres)
+: intComp(memres), floatComp(memres) {}
+
+Core::ComponentCluster::~ComponentCluster() { if(m_isLoaded) unload(); }
+
+void Core::ComponentCluster::load() { 
 	AppData::getComponentManager().intCRL.push(&intComp.m_data);
 	AppData::getComponentManager().floatCRL.push(&floatComp.m_data);
+	m_isLoaded = true;
 }
 
-Core::ComponentCluster::~ComponentCluster() {
+void Core::ComponentCluster::unload() {
 	AppData::getComponentManager().intCRL.pop(&intComp.m_data);
 	AppData::getComponentManager().floatCRL.pop(&floatComp.m_data);
-}
-
-void Core::ComponentCluster::p_resolveRemovals() {
-	intComp.p_resolveRemovals();
-	floatComp.p_resolveRemovals();
+	m_isLoaded = false;
 }
  
 void Core::ComponentCluster::p_resolveDependencies() {
-	//TODO: Implement a better way of writeing this, I was thinkink about something with lambdas
-	for(auto pair : floatComp.m_movedEnts) {
-		intComp.getComponent(pair.first).ref = pair.second;
-	}
+	intComp.p_resolveDependencies<float>(floatComp.m_movedEnts, [](Comp& comp, float* dep) { comp.ref = dep; });
+}
+
+void Core::ComponentCluster::p_performeRemovals() {
+	intComp.p_resolveRemovals();
+	floatComp.p_resolveRemovals();
+}
+void Core::ComponentCluster::p_performeResolvingCleaup() {
 	intComp.m_movedEnts.clear();
 	floatComp.m_movedEnts.clear();
+}
+void Core::ComponentCluster::p_performeAdditions() {
+	intComp.p_resolveAdditions();
+	intComp.m_entitiesToAdd.clear();
+	floatComp.p_resolveAdditions();
+	floatComp.m_entitiesToAdd.clear();
 }

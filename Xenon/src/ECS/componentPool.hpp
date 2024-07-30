@@ -1,6 +1,7 @@
 #ifndef _XENON_SRC_ECS_COMPONENTPOOL_
 #define _XENON_SRC_ECS_COMPONENTPOOL_
 
+#include <functional>
 #include <memory_resource>
 #include <unordered_map>
 
@@ -27,14 +28,14 @@ public:
 	[[nodiscard]] T& getComponent(Entity ent) { return *m_ptrLookupTable.at(ent); }
 	[[nodiscard]] T* getComponentPtr(Entity ent) { return m_ptrLookupTable.at(ent); }
 	template<typename ...Args>
-	void emplaceComponent(Entity ent, Args ...args) {
+	T* emplaceComponent(Entity ent, Args ...args) {
 		auto* ptr = m_data.emplace_back(std::forward<Args>(args)...);
 		m_ptrLookupTable[ent] = ptr;
 		m_entLookupTable[ptr] = ent;
+		return ptr;
 	}
-	void addComponent(Entity ent) { emplaceComponent(ent); }
-	void addComponent(Entity ent, const T& data) { emplaceComponent(ent, data); }
-	void addComponent(Entity ent,T&& data) { emplaceComponent(ent, std::move(data)); }
+	void addComponent(Entity ent, const T& data) { m_entitiesToAdd.emplace_back(ent, data); }
+	void addComponent(Entity ent,T&& data) { m_entitiesToAdd.emplace_back(ent, std::move(data)); }
 	void removeComponent(Entity ent) { m_entitiesToRemove.push_back(ent); }
 	void purge() {
 		m_data.clear();
@@ -44,13 +45,14 @@ public:
 	}
 private:
 	explicit ComponentPool(std::pmr::memory_resource* memRes = std::pmr::get_default_resource())
-	: m_data(memRes), m_ptrLookupTable(memRes), m_entLookupTable(memRes), m_entitiesToRemove(memRes), m_movedEnts(memRes) {}
+	: m_data(memRes), m_ptrLookupTable(memRes), m_entLookupTable(memRes), m_entitiesToRemove(memRes), m_entitiesToAdd(memRes), m_movedEnts(memRes) {}
 
 	ChunkedArray<T> m_data;
-	//PERF: get rid of std::unordered_map for something more performent
+	//PERF: get rid of std::unordered_map, and maybe std::vector, for something more performent
 	std::pmr::unordered_map<Entity, T*> m_ptrLookupTable;
 	std::pmr::unordered_map<T*, Entity> m_entLookupTable;
 	std::pmr::vector<Entity> m_entitiesToRemove;
+	std::pmr::vector<std::pair<Entity, T>> m_entitiesToAdd;
 	std::pmr::vector<std::pair<Entity, T*>> m_movedEnts;
 	
 	void p_resolveRemovals() {
@@ -70,6 +72,20 @@ private:
 			m_data.pop_back();
 		}
 		m_entitiesToRemove.clear();
+	}
+	template<typename DT>
+	void p_resolveDependencies(const std::pmr::vector<std::pair<Entity, DT*>>& movedEnts, std::function<void(T&, DT*)> resolveFunc ) {
+		for(auto pair : movedEnts) {
+			resolveFunc(getComponent(pair.first), pair.second);
+		}
+	}
+	void p_resolveAdditions() {
+		m_movedEnts.reserve(m_entitiesToAdd.size());
+		for(auto pair : m_entitiesToAdd) {
+			auto* ptr = emplaceComponent(pair.first, pair.second);
+			m_movedEnts.emplace_back(pair.first, ptr);
+		}
+		m_entitiesToAdd.clear();
 	}
 	friend struct ComponentCluster;
 };	
