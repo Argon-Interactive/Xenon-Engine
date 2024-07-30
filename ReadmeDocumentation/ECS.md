@@ -14,28 +14,28 @@ An instance of this class cannot be constructed outside ComponentCluster.
   - Parameters:
   memres - a memory resource that will be used to initialize all of its private fields
 - `T& getComponent(Entity ent)`
-  - Parameters
+  - Parameters:  
   ent - Entity that owns required component
 - `T* getComponentPtr(Entity ent)`
-  - Parameters
+  - Parameters:  
   ent - Entity that owns required component
 - `T* emplaceComponent(Entity ent, Args ...args)`
-  - Parameters
-  ent - Entity that will own the new component
+  - Parameters:  
+  ent - Entity that will own the new component  
   args - constructor arguments of T
   - Return value: returns a pointer to created component
   - Note: This funcion is not SRTS(Systems Run Time Save) so should be only used to add components before loading ComponentCluster.
 - `void addComponent(Entity ent, const T& data)`
-  - Parameters 
-  ent - Entity that will own the new component
+  - Parameters:  
+  ent - Entity that will own the new component  
   data - The new component
   - Note: This is much slower then emplaceCompoennt but is SRTS. It will only take effect when a ComponentCluster is synced.
 - `void removeComponent(Entity ent)`
-  - Parameters
+  - Parameters:  
   ent - Entity which component will be removed
   - Note: This will only take effect when a ComponentCluster is synced.
 - `void purge()`
-  - Note: It whipes the whole memory of the ComponentPool.
+  - Note: It wipes the entire memory of the ComponentPool.
 
 ### References
 - [ComponentCluster](#componentcluster)
@@ -46,12 +46,12 @@ This is a structure that holds ComponentPool instances and provides an interface
 It also provides a way to load and unload all components to and from ComponentManager.  
 To add a new component you need to add a new public field of type `ComponentPool<desired component type>` and update the following methods whitch should
 run the following functions for all ComponentPools:  
-- `load()`: `AppData::getComponentManager().ComponentReferenceListName.push(&ComponentPoolName.m_data);`
-- `unload()`: `AppData::getComponentManager().ComponentReferenceListName.pop(&ComponentPoolName.m_data);`
-- `p_performeRemovals()`: `p_resolveRemovals();`
-- `p_resolveDependencies()`: `p_resolveDependencies<dependency type (DT)>();`
-- `p_performeResolvingCleanup()`: `.m_movedEnts.clear();`
-- `p_performeAdditions()`: `p_resolveAdditions(); m_entitiesToAdd.clear();`  
+- `load(): AppData::getComponentManager().ComponentReferenceListName.push(&ComponentPoolName.m_data);`
+- `unload(): AppData::getComponentManager().ComponentReferenceListName.pop(&ComponentPoolName.m_data);`
+- `p_performeRemovals(): p_resolveRemovals();`
+- `p_resolveDependencies(): p_resolveDependencies<dependency type (DT)>();`
+- `p_performeResolvingCleanup(): .m_movedEnts.clear();`
+- `p_performeAdditions(): p_resolveAdditions(); m_entitiesToAdd.clear();`  
 Each scene should have exactly one instance of ComponentCluster and run ComponentCluster.load() ,after initializing and emplacing all components, and unload()
 when the scene no longer needs to be updated.
 ### Member functions
@@ -75,10 +75,10 @@ It stores references to loaded components data and provides an interface for ite
 will iterate over all loaded components and not the nodes of the underlying data structure, that is linked list.
 ### Member functions
 - `void push(ChunkedArray<T>* elem) private`
-  - Parameters:
+  - Parameters:  
   elem - a pointer to a ChunkedArray<T> that will be added.
 - `void pop(ChunkedArray<T>* elem) private`
-  - Parameters:
+  - Parameters:  
   elem - a pointer to a ChunkedArray<T> that will be removed.
 ### References
 - [ChunkedArray]( )
