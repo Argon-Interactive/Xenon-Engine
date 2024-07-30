@@ -15,24 +15,24 @@ An instance of this class cannot be constructed outside ComponentCluster.
   memres - a memory resource that will be used to initialize all of its private fields
 - `T& getComponent(Entity ent)`
   - Parameters:  
-  ent - Entity that owns required component
+    - ent - Entity that owns required component
 - `T* getComponentPtr(Entity ent)`
   - Parameters:  
-  ent - Entity that owns required component
+    - ent - Entity that owns required component
 - `T* emplaceComponent(Entity ent, Args ...args)`
   - Parameters:  
-  ent - Entity that will own the new component  
-  args - constructor arguments of T
+    - ent - Entity that will own the new component  
+    - args - constructor arguments of T
   - Return value: returns a pointer to created component
   - Note: This funcion is not SRTS(Systems Run Time Save) so should be only used to add components before loading ComponentCluster.
 - `void addComponent(Entity ent, const T& data)`
   - Parameters:  
-  ent - Entity that will own the new component  
-  data - The new component
+    - ent - Entity that will own the new component  
+    - data - The new component
   - Note: This is much slower then emplaceCompoennt but is SRTS. It will only take effect when a ComponentCluster is synced.
 - `void removeComponent(Entity ent)`
   - Parameters:  
-  ent - Entity which component will be removed
+    - ent - Entity which component will be removed
   - Note: This will only take effect when a ComponentCluster is synced.
 - `void purge()`
   - Note: It wipes the entire memory of the ComponentPool.
@@ -76,10 +76,10 @@ will iterate over all loaded components and not the nodes of the underlying data
 ### Member functions
 - `void push(ChunkedArray<T>* elem) private`
   - Parameters:  
-  elem - a pointer to a ChunkedArray<T> that will be added.
+    - elem - a pointer to a ChunkedArray<T> that will be added.
 - `void pop(ChunkedArray<T>* elem) private`
   - Parameters:  
-  elem - a pointer to a ChunkedArray<T> that will be removed.
+    - elem - a pointer to a ChunkedArray<T> that will be removed.
 ### References
 - [ChunkedArray]( )
 
