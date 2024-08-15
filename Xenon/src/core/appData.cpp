@@ -18,11 +18,7 @@ void AppData::init(std::function<void(const Event&)> eventDispatcher, const Xeno
 		exit(EXIT_FAILURE);
 	}
 
-	const uint32_t width = config.defaultWindowWidth;
-	const uint32_t height = config.defaultWindowHeight;
-	const std::string name = config.defaultWindowName;
-
-	s_appData = std::make_unique<AppData>(ConstructorToken{}, width, height, name, config.buildFunctions);
+	s_appData = std::make_unique<AppData>(ConstructorToken{}, config);
 	getWindow().setEventDispatcher(eventDispatcher);
 
 	Input::init(getWindow().passPointer());
@@ -56,8 +52,8 @@ void AppData::terminate() {
 	XN_LOG_BR();
 }
 
-AppData::AppData([[maybe_unused]]ConstructorToken t, uint32_t width, uint32_t height, const std::string& title, const Xenon::BuildFunctions& buildFunctions)
-	:m_window(width, height, title), m_sceneManager(buildFunctions) {
+AppData::AppData([[maybe_unused]]ConstructorToken t, const Xenon::AppConfig& appConfig)
+	:m_window(appConfig.defaultWindowWidth, appConfig.defaultWindowHeight, appConfig.defaultWindowName) {
 	s_exists = true;
 }
 

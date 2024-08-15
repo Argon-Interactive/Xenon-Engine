@@ -17,7 +17,7 @@ private:
 	struct ConstructorToken {};
 
 public:
-	AppData(ConstructorToken t, uint32_t width, uint32_t height, const std::string& title, const Xenon::BuildFunctions& buildFunctions);
+	AppData(ConstructorToken t, const Xenon::AppConfig& appConfig);
 
 	static void init(std::function<void(const Event&)> eventDispatcher, const Xenon::AppConfig& config);
 	static void terminate();
