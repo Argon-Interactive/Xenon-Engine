@@ -27,7 +27,7 @@ public:
 	void setBuildIndex(uint64_t index);
 	[[nodiscard]] uint64_t getBuildIndex() const;
 
-	[[nodiscard]] bool runtimeCreated() const;
+	[[nodiscard]] bool isRuntimeCreated() const;
 
 private:
 	std::vector<uint64_t> m_entities;   // men titties

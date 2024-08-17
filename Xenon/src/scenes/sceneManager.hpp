@@ -19,14 +19,23 @@ public:
 	
 	Scene* createScene();
 	void purge();
+
 	void loadScene(uint64_t buildIndex);
-	void unloadScene(uint64_t buildIndex);
+	void unloadScene(uint64_t index);
+	void unloadScene(Scene* scene);
+
 	void loadSceneAsync(uint64_t buildIndex);
-	void unloadSceneAsync(uint64_t buildIndex);
-	void setActiveScene(uint64_t buildIndex);
-	[[nodiscard]] Scene* getActiveScene();
+	void unloadSceneAsync(uint64_t index);
+	void unloadSceneAsync(Scene* scene);
+
+	void setActiveScene(uint64_t index);
+
+	void moveEntity(Entity entity, uint64_t targetSceneIndex);
+	void moveEntity(Entity entity, Scene* targetScene);
+
 	[[nodiscard]] Scene* getScene(uint64_t index);
 	[[nodiscard]] Scene* getSceneByBuildIndex(uint64_t buildIndex);
+	[[nodiscard]] Scene* getActiveScene();
 	[[nodiscard]] uint64_t getActiveSceneIndex() const;
 
 	[[nodiscard]] uint64_t getSceneCount() const;
