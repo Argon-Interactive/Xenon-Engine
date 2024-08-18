@@ -1,12 +1,10 @@
-#include <functional>
-#include <glad.h>
 #include "appData.hpp"
 #include "input/input.hpp"
 #include "devTools/logger_core.hpp"
 
 namespace Core {
 
-void AppData::init(std::function<void(const Event&)> eventDispatcher, [[maybe_unused]] std::function<void(void*)> configFunction, std::vector<std::function<void(Xenon::Scene*)>> buildFunctions) {
+void AppData::init(std::function<void(const Event&)> eventDispatcher, const Xenon::AppConfig& config) {
 	if(s_exists) {
 		XN_LOG_ERR("AppData: Attempted to initialize already initialized AppData!!!");
 		return;
@@ -19,7 +17,8 @@ void AppData::init(std::function<void(const Event&)> eventDispatcher, [[maybe_un
 		XN_LOG_ERR("AppData: Failed to initialize GLFW"); 
 		exit(EXIT_FAILURE);
 	}
-	s_appData = std::make_unique<AppData>(ConstructorToken{}, 800, 600, "XENON APP", buildFunctions);
+
+	s_appData = std::make_unique<AppData>(ConstructorToken{}, config);
 	getWindow().setEventDispatcher(eventDispatcher);
 
 	Input::init(getWindow().passPointer());
@@ -53,8 +52,8 @@ void AppData::terminate() {
 	XN_LOG_BR();
 }
 
-AppData::AppData([[maybe_unused]]ConstructorToken t, uint32_t width, uint32_t height, const std::string& title, std::vector<std::function<void(Xenon::Scene*)>> buildFunctions)
-	:m_window(width, height, title), m_sceneManager(buildFunctions) {
+AppData::AppData([[maybe_unused]]ConstructorToken t, const Xenon::AppConfig& appConfig)
+	:m_window(appConfig.defaultWindowWidth, appConfig.defaultWindowHeight, appConfig.defaultWindowName) {
 	s_exists = true;
 }
 

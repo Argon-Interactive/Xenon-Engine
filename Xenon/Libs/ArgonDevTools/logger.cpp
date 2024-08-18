@@ -108,7 +108,9 @@ XNTools::Logger::~Logger() {
 	} catch (std::exception& e) {
 		try {
 			std::cout << "Logger couldn't save logs to file: " << e.what();
-		} catch (std::exception& e2) { /* Holy fuck that is even worse lol */ }
+		} catch (std::exception&) {
+			exit(-1); // This is never gonna happen basically
+		}
 	}
 }
 

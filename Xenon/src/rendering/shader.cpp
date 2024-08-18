@@ -25,13 +25,12 @@ uint32_t Core::Shader::compileShader(shaderType type, const char* src)
 	//error handling
 	int shaderCompiled = 0;
 	glGetShaderiv(id, GL_COMPILE_STATUS, &shaderCompiled);
-	if (shaderCompiled != GL_TRUE)
-	{
-	int logLength = 0;
+	if (shaderCompiled != GL_TRUE) {
+		int logLength = 0;
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &logLength);
-		const std::unique_ptr<char[]> message = std::make_unique<char[]>(static_cast<size_t>(logLength));
-		glGetShaderInfoLog(id, logLength, &logLength, message.get());
-		XN_LOG_ERR("Compilaton of a shader with a type of {q} failed. Error message:\n{0}", shaderNames.at(type), message.get());
+		std::string message(static_cast<size_t>(logLength), 0);
+		glGetShaderInfoLog(id, logLength, &logLength, message.data());
+		XN_LOG_ERR("Compilaton of a shader with a type of {q} failed. Error message:\n{0}", shaderNames.at(type), message);
 		return 0;
 	}
 	return id;
@@ -57,9 +56,9 @@ uint32_t Core::Shader::linkShader(uint32_t vertexID, uint32_t fragmentID, uint32
 	{
 		int logLength = 0;
 		glGetProgramiv(shaderID, GL_INFO_LOG_LENGTH, &logLength);
-		const std::unique_ptr<char[]> message = std::make_unique<char[]>(static_cast<size_t>(logLength));
-		glGetProgramInfoLog(shaderID, logLength, &logLength, message.get());
-		XN_LOG_ERR("Linking of a shader program failed. Error message:\n{0}", message.get());
+		std::string message(static_cast<size_t>(logLength), 0);
+		glGetProgramInfoLog(shaderID, logLength, &logLength, message.data());
+		XN_LOG_ERR("Linking of a shader program failed. Error message:\n{0}", message);
 		return 0;
 	}
 	return shaderID;

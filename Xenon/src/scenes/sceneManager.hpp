@@ -1,11 +1,9 @@
 #ifndef _XENON_SCENES_SCENEMANAGER_
 #define _XENON_SCENES_SCENEMANAGER_
 
-#include "Xenon/scene.hpp"
 #include "scene.hpp"
 
 #include <cstdint>
-#include <functional>
 #include <memory>
 #include <vector>
 
@@ -34,13 +32,11 @@ public:
 	[[nodiscard]] uint64_t getSceneCount() const;
 
 private:
-	explicit SceneManager(std::vector<std::function<void(Xenon::Scene*)>> buildFunctions);
+	SceneManager();
 
 	std::vector<std::unique_ptr<Scene>> m_scenes;
 	uint64_t m_activeSceneIndex = 0;
 	uint64_t m_loadedSceneCount = 0;
-
-	std::vector<std::function<void(Xenon::Scene*)>> m_buildFunctions;
 
 	void deleteScene(uint64_t index);
 	uint64_t findNearestScene(uint64_t buildIndex);

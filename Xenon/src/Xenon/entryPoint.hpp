@@ -1,22 +1,15 @@
 #ifndef _XENON_XENON_ENTRYPOINT_
 #define _XENON_XENON_ENTRYPOINT_
 
+#include "Xenon/appConfig.hpp"
 #include "application.hpp"
 #include "logger.hpp"
-#include "scene.hpp"
 
-#include <vector>
-#include <functional>
-
-std::function<void(void*)> defineConfig();
-std::vector<std::function<void(Xenon::Scene*)>> defineScenes();
+const Xenon::AppConfig& getConfig();
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 	XNTools::Logger::getInstance().setName("[CLIENT]");
-	Xenon::Application game;
-	game.addConfiguration(defineConfig());
-	game.addScenes(defineScenes());
-	game.create();
+	Xenon::Application game(getConfig());
 	int res = game.run();
 	return res;
 }

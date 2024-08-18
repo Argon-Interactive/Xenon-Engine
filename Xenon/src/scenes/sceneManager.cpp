@@ -1,14 +1,12 @@
 #include "sceneManager.hpp"
 #include "devTools/logger_core.hpp"
+#include "Xenon/scene.hpp"
 
-#include <cstddef>
 #include <cstdint>
-#include <utility>
 
 namespace Core {
 
-SceneManager::SceneManager(std::vector<std::function<void(Xenon::Scene*)>> buildFunctions)
-	: m_buildFunctions(std::move(buildFunctions)) {}
+SceneManager::SceneManager() = default;
 SceneManager::~SceneManager() = default;
 
 Scene* SceneManager::createScene() {
@@ -25,9 +23,8 @@ void SceneManager::purge() {
 
 void SceneManager::loadScene(uint64_t buildIndex) {
 	m_scenes.emplace_back(std::make_unique<Scene>(buildIndex));
-	auto clientScene = Xenon::Scene(m_scenes.back().get());
+	XN_LOG_DEB("Load the scene here. Scene build index: {0}", buildIndex);
 	m_scenes.back()->setBuildIndex(buildIndex);
-	m_buildFunctions[static_cast<size_t>(buildIndex)](&clientScene);
 }
 
 void SceneManager::unloadScene(uint64_t buildIndex) {
@@ -55,7 +52,7 @@ Scene* SceneManager::getActiveScene() {
 }
 
 Scene* SceneManager::getScene(uint64_t index) {
-	if(index < 0 || index >= m_scenes.size()) [[unlikely]]
+	if(index >= m_scenes.size()) [[unlikely]]
 		XN_LOG_ERR("Invalid scene manager index {0}.", index);
 	return m_scenes.at(index).get();
 }
@@ -79,7 +76,7 @@ uint64_t SceneManager::getSceneCount() const {
 
 
 void SceneManager::deleteScene(uint64_t index) {
-	if(index < 0 || index >= m_scenes.size()) [[unlikely]]
+	if(index >= m_scenes.size()) [[unlikely]]
 		XN_LOG_ERR("Invalid scene manager index {0}.", index);
 	m_scenes.erase(m_scenes.begin() + static_cast<int64_t>(index));
 }
