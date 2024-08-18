@@ -4,24 +4,37 @@
 #include <cstdint>
 #include <ios>
 namespace Core {
-struct Asset {
-	using AssetID = uint64_t;
+using assetID = uint32_t;
 
-	Asset();
-	~Asset();
-	Asset(Asset &&) = default;
-	Asset(const Asset &) = default;
-	Asset &operator=(Asset &&) = default;
-	Asset &operator=(const Asset &) = default;
+struct AssetHandle {
+	AssetHandle() = default;
+	~AssetHandle() = default;
+	AssetHandle(AssetHandle &&) = default;
+	AssetHandle(const AssetHandle &) = default;
+	AssetHandle &operator=(AssetHandle &&) = default;
+	AssetHandle &operator=(const AssetHandle &) = default;
+private:
+	std::streampos offset;
+	std::streamsize size{};
+	uint64_t flag{}; //yeah this is a massive flag but bcoz of padding it may as well be
+friend struct AssetMetadata;
+};
 
-	void load();
+struct AssetMetadata {
+	AssetMetadata() = default;
+	~AssetMetadata() = default;
+	AssetMetadata(AssetMetadata &&) = default;
+	AssetMetadata(const AssetMetadata &) = delete;
+	AssetMetadata &operator=(AssetMetadata &&) = default;
+	AssetMetadata &operator=(const AssetMetadata &) = delete;
+
+	bool load(std::ifstream& file, const AssetHandle& assetHandle);
 	void unload();
-	
-	AssetID ID;
-	char* data;
-	std::streamoff offset;
-	std::size_t size;
-	bool isloaded;
+	[[nodiscard]] uint8_t* getData() const;
+private:
+	uint8_t* m_data{};
+	uint64_t m_flag{};
+	uint64_t m_counter{};
 };
 }
 

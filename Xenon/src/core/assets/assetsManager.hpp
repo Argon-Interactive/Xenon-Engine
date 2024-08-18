@@ -3,14 +3,13 @@
 
 #include "asset.hpp"
 #include <fstream>
-#include <vector>
 
 namespace Core {
 
 class AssetsManager {
 public:
 	AssetsManager();
-	~AssetsManager();
+	~AssetsManager() = default;
 	AssetsManager(const AssetsManager &) = delete;
 	AssetsManager(AssetsManager &&)  noexcept = delete;
   	AssetsManager &operator=(const AssetsManager &) = delete;
@@ -18,14 +17,13 @@ public:
 
 	void init();
 	void terminate();
-	[[nodiscard]] char* getAssetData() const;
-	void ensureLoaded(const std::vector<Asset::AssetID>& assetIDs);
-	void ensureLoaded(const Asset::AssetID* assetIDs, uint64_t assetsAmmount);
-	void freeAssets(const std::vector<Asset::AssetID>& assetIDs);
-	void freeAssets(const Asset::AssetID* assetIDs, uint64_t assetsAmmount);
+	[[nodiscard]] uint8_t* getAssetData(assetID id) const;
+	void ensureLoaded(const assetID* assetIDs, uint64_t assetsAmmount);
+	void freeAssets(const assetID* assetIDs, uint64_t assetsAmmount);
 
 private:
-	Asset* m_assets;
+	AssetHandle* m_assetHandles;
+	AssetMetadata* m_assetsMetadata;
 	std::ifstream m_file;
 };
 }

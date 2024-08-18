@@ -1,47 +1,4 @@
-set(XENON_SRC 
-	Xenon/api.h
-
-	Xenon/entryPoint.hpp
-	Xenon/application.cpp
-	Xenon/application.hpp
-	Xenon/scene.cpp
-	Xenon/scene.hpp
-	Xenon/entity.cpp
-	Xenon/entity.hpp
-
-	core/application.cpp
-	core/application.hpp
-	core/appData.cpp
-	core/appData.hpp
-	core/event.cpp
-	core/event.hpp
-	core/input/input.hpp
-	core/input/input.cpp
-
-	rendering/shader.cpp
-	rendering/shader.hpp
-
-	window/window.cpp
-	window/window.hpp
-
-	scenes/scene.cpp
-	scenes/scene.hpp
-	scenes/sceneManager.cpp
-	scenes/sceneManager.hpp
-	
-	ECS/entity.hpp
-	ECS/componentManager.cpp
-	ECS/componentManager.hpp
-	ECS/componentCluster.hpp
-	ECS/componentCluster.cpp
-	ECS/componentPool.hpp
-	ECS/componentReferenceList.hpp
-	ECS/chunkedArray.hpp
-	ECS/systemImplementations/system.hpp
-
-	TEST/test.hpp
-	TEST/test.cpp
-)
+file(GLOB_RECURSE XENON_SRC "*.cpp" "*.hpp" "*.h")
 
 add_library(XenonEngine SHARED ${XENON_SRC})
 

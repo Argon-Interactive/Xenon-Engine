@@ -73,9 +73,9 @@ Core::Texture2D& Core::Texture2D::operator=(const Texture2D& oth)
 	return *this;
 }
 
-Core::Texture2D::Texture2D(Texture2D&& oth) :m_ID(oth.m_ID), m_width(oth.m_width), m_height(oth.m_height) { oth.m_ID = 0; }
+Core::Texture2D::Texture2D(Texture2D&& oth) noexcept :m_ID(oth.m_ID), m_width(oth.m_width), m_height(oth.m_height) { oth.m_ID = 0; }
 
-[[nodiscard]] Core::Texture2D& Core::Texture2D::operator=(Texture2D&& oth) { 
+[[nodiscard]] Core::Texture2D& Core::Texture2D::operator=(Texture2D&& oth) noexcept { 
 	m_ID = oth.m_ID; 
 	m_width = oth.m_width;
 	m_height = oth.m_height;
