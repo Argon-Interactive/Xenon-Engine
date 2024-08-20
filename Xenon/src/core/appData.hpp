@@ -6,6 +6,7 @@
 #include "scenes/sceneManager.hpp"
 #include "ECS/componentManager.hpp"
 #include "window/window.hpp"
+#include "core/assets/assetsManager.hpp"
 
 #include <functional>
 #include <memory>
@@ -26,6 +27,7 @@ public:
 	[[nodiscard]] static Core::Window& getWindow();
 	[[nodiscard]] static Core::SceneManager& getSceneManager();
 	[[nodiscard]] static Core::ComponentManager& getComponentManager();
+	[[nodiscard]] static Core::AssetsManager& getAssetManager();
 
 private:
 
@@ -35,6 +37,7 @@ private:
 	Core::Window m_window;
 	Core::SceneManager m_sceneManager;
 	Core::ComponentManager m_componentManager;
+	Core::AssetsManager m_assetManager;
 };
 
 }

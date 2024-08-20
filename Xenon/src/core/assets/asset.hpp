@@ -2,7 +2,9 @@
 #define _XENON_CORE_ASSETS_ASSET_
 
 #include <cstdint>
+#include <functional>
 #include <ios>
+#include <memory>
 namespace Core {
 using assetID = uint32_t;
 
@@ -28,11 +30,14 @@ struct AssetMetadata {
 	AssetMetadata &operator=(AssetMetadata &&) = default;
 	AssetMetadata &operator=(const AssetMetadata &) = delete;
 
-	bool load(std::ifstream& file, const AssetHandle& assetHandle);
+	bool load(const AssetHandle& assetHandle, std::function<bool(uint8_t*, uint64_t)> decryptionFunc);
 	void unload();
 	[[nodiscard]] uint8_t* getData() const;
+	[[nodiscard]] uint64_t getSize() const;
+
 private:
-	uint8_t* m_data{};
+	std::unique_ptr<uint8_t[]> m_data;
+	uint64_t m_size{};
 	uint64_t m_flag{};
 	uint64_t m_counter{};
 };

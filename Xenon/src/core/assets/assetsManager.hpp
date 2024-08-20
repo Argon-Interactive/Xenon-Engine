@@ -8,7 +8,7 @@ namespace Core {
 
 class AssetsManager {
 public:
-	AssetsManager();
+	AssetsManager() = default;
 	~AssetsManager() = default;
 	AssetsManager(const AssetsManager &) = delete;
 	AssetsManager(AssetsManager &&)  noexcept = delete;
@@ -18,13 +18,18 @@ public:
 	void init();
 	void terminate();
 	[[nodiscard]] uint8_t* getAssetData(assetID id) const;
+	[[nodiscard]] uint64_t getAssetSize(assetID id) const;
 	void ensureLoaded(const assetID* assetIDs, uint64_t assetsAmmount);
 	void freeAssets(const assetID* assetIDs, uint64_t assetsAmmount);
+	[[nodiscard]] std::ifstream* getFile();
 
 private:
-	AssetHandle* m_assetHandles;
-	AssetMetadata* m_assetsMetadata;
+	std::unique_ptr<AssetHandle[]> m_assetHandles;
+	std::unique_ptr<AssetMetadata[]> m_assetsMetadata;
 	std::ifstream m_file;
+
+	bool static p_versionCheck();
+	bool static p_decryption(uint8_t* data, uint64_t dataSize);
 };
 }
 
