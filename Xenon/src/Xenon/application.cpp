@@ -3,22 +3,11 @@
 
 namespace Xenon {
 
-Application::Application() :m_impl(nullptr) {}
+Application::Application(const AppConfig& config)
+	:m_impl(new Core::Application(config)) {}
 
 Application::~Application() {
 	delete m_impl;
-}
-
-void Application::create() {
-	m_impl = new Core::Application(m_configFunction, m_buildFunctions); // NOLINT yeah i fucking know
-}
-
-void Application::addConfiguration(std::function<void(void*)> configFunction) {
-	m_configFunction = configFunction;
-}
-
-void Application::addScenes(std::vector<std::function<void(Scene*)>> buildFunctions) {
-	m_buildFunctions = buildFunctions;
 }
 
 int Application::run() {

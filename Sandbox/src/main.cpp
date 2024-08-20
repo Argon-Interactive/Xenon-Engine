@@ -2,20 +2,15 @@
 
 #include "xenon.h"
 
-void config([[maybe_unused]]void* something) {
-	XN_LOG_BR(XNTools::Logger::logMode::info);
-	XN_LOG_DEB("Helo, I am under the water");
-}
+// void config([[maybe_unused]]void* something) {
+// 	XN_LOG_BR(XNTools::Logger::logMode::info);
+// 	XN_LOG_DEB("Helo, I am under the water");
+// }
 
-void scene1(Xenon::Scene* scene) {
-	XN_LOG_DEB(scene->getBuildIndex());
-	scene->createEntity();
-}
+const Xenon::AppConfig config{
+	800, 600, "Sandbox" 
+};
 
-std::function<void(void*)> defineConfig() {
+const Xenon::AppConfig& getConfig() {
 	return config;
-}
-
-std::vector<std::function<void(Xenon::Scene*)>> defineScenes() {
-	return {scene1};
 }

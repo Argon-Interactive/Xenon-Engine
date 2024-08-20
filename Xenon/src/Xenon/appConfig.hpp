@@ -1,15 +1,16 @@
 #ifndef _XENON_XENON_APPCONFIG_
 #define _XENON_XENON_APPCONFIG_
 
-#include <functional>
+#include "api.h"
+
+#include <cstdint>
 
 namespace Xenon {
 
-class Scene;
-
-struct AppConfig {
-	std::function<void(void*)> configFunction;
-	std::vector<std::function<void(Xenon::Scene*)>> buildFunctions;
+struct XAPI AppConfig {
+	uint32_t defaultWindowWidth;
+	uint32_t defaultWindowHeight;
+	const char* defaultWindowName;
 };
 
 
