@@ -8,12 +8,12 @@ DebugMemoryResource::DebugMemoryResource(std::pmr::memory_resource* upstream)
 
 void* DebugMemoryResource::do_allocate(size_t bytes, size_t alignment) {
 	void* ptr = upstream_->allocate(bytes, alignment);
-	XN_LOG_DEB("Allocating {0} bytes at {0}", bytes, ptr);
+	XN_LOG_DEB("MemoryTracker: Allocating {0} bytes at {0}", bytes, ptr);
 	return ptr;
 }
 
 void DebugMemoryResource::do_deallocate(void* ptr, size_t bytes, size_t alignment) {
-	XN_LOG_DEB("Deallocating {0} bytes from {0}", bytes, ptr);
+	XN_LOG_DEB("MemoryTracker: Deallocating {0} bytes from {0}", bytes, ptr);
 	upstream_->deallocate(ptr, bytes, alignment);
 }
 
