@@ -3,8 +3,10 @@
 
 #include "ECS/componentCluster.hpp"
 #include "ECS/entity.hpp"
+#include "memory/debugMemoryResource.hpp"
 
 #include <memory_resource>
+#include <string>
 #include <vector>
 #include <cstdint>
 #include <memory>
@@ -32,23 +34,22 @@ public:
 	[[nodiscard]] bool isRuntimeCreated() const;
 
 private:
-	class SceneMemory {
+	class StaticSceneMemory {
 	public:
-		SceneMemory();
-		void addMemoryResource(std::unique_ptr<std::pmr::memory_resource>& res);
-		[[nodiscard]] std::pmr::memory_resource* get() const noexcept;
-		std::pmr::memory_resource* m_mres;
-		std::vector<std::unique_ptr<std::pmr::memory_resource>> m_resourceChain;
+		explicit StaticSceneMemory(const std::string& name = "Scene");
+		[[nodiscard]] std::pmr::memory_resource* get();
+	private:
+		DebugMemoryResource debug0;
 	};
 
-	class StaticSceneMemory : public SceneMemory {
+	class DynamicSceneMemory {
 	public:
-		StaticSceneMemory();
-	};
-
-	class DynamicSceneMemory : public SceneMemory {
-	public:
-		DynamicSceneMemory();
+		explicit DynamicSceneMemory(const std::string& name = "Scene");
+		[[nodiscard]] std::pmr::memory_resource* get();
+	private:
+		DebugMemoryResource debug0;
+		std::pmr::unsynchronized_pool_resource pool;
+		DebugMemoryResource debug1;
 	};
 
 	StaticSceneMemory m_staticSceneMemory;

@@ -1,32 +1,23 @@
 #include "scene.hpp"
 #include "core/appData.hpp"
 #include "devTools/logger_core.hpp"
-#include "memory/debugMemoryResource.hpp"
 
 namespace Core {
 
-void Scene::SceneMemory::addMemoryResource(std::unique_ptr<std::pmr::memory_resource>& res) {
-	m_mres = res.get();
-	m_resourceChain.emplace_back(std::move(res));
+Scene::DynamicSceneMemory::DynamicSceneMemory(const std::string& name)
+	: debug0("DynamicUpstream-" + name),
+	  pool(&debug0),
+	  debug1("Dynamic-" + name, &pool) {}
+
+std::pmr::memory_resource* Scene::DynamicSceneMemory::get() {
+	return &debug1;
 }
 
-Scene::SceneMemory::SceneMemory() : m_mres(std::pmr::get_default_resource()) {}
+Scene::StaticSceneMemory::StaticSceneMemory(const std::string& name)
+	: debug0("Static-" + name) {}
 
-std::pmr::memory_resource* Scene::SceneMemory::get() const noexcept {
-	return m_mres;
-}
-
-Scene::DynamicSceneMemory::DynamicSceneMemory() {
-	const std::pmr::pool_options options = {};
-	std::unique_ptr<std::pmr::memory_resource> pool1 = std::make_unique<std::pmr::unsynchronized_pool_resource>(options, m_mres);
-	addMemoryResource(pool1);
-	std::unique_ptr<std::pmr::memory_resource> debugPool = std::make_unique<DebugMemoryResource>(m_mres);
-	addMemoryResource(debugPool);
-}
-
-Scene::StaticSceneMemory::StaticSceneMemory() {
-	std::unique_ptr<std::pmr::memory_resource> debugPool = std::make_unique<DebugMemoryResource>(m_mres);
-	addMemoryResource(debugPool);
+std::pmr::memory_resource* Scene::StaticSceneMemory::get() {
+	return &debug0;
 }
 
 Scene::Scene() 
@@ -35,7 +26,9 @@ Scene::Scene()
 	  m_runtimeCreated(true), m_buildIndex(0) {};
 
 Scene::Scene(uint64_t buildIndex) 
-	: m_staticComponentChunk(m_staticSceneMemory.get()),
+	: m_staticSceneMemory("Scene " + std::to_string(buildIndex)),
+	  m_dynamicSceneMemory("Scene " + std::to_string(buildIndex)),
+	  m_staticComponentChunk(m_staticSceneMemory.get()),
 	  m_dynamicComponentChunk(m_dynamicSceneMemory.get()),
 	  m_runtimeCreated(false), m_buildIndex(buildIndex) {
 	if(buildIndex != 0)
