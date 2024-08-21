@@ -39,6 +39,9 @@ set(XENON_SRC
 	ECS/chunkedArray.hpp
 	ECS/systemImplementations/system.hpp
 
+	memory/debugMemoryResource.cpp
+	memory/debugMemoryResource.hpp
+
 	TEST/test.hpp
 	TEST/test.cpp
 )
