@@ -4,84 +4,75 @@
 
 namespace Core {
 
-Scene::DynamicSceneMemory::DynamicSceneMemory(const std::string& name)
-	: debug0("DynamicUpstream-" + name),
-	  pool(&debug0),
-	  debug1("Dynamic-" + name, &pool) {}
+Scene::SceneMemory::SceneMemory(const std::string& name)
+	: debug0("[Upstream] " + name),
+	  pool({0, 4096}, &debug0),
+	  debug1(name, &pool) {}
 
-std::pmr::memory_resource* Scene::DynamicSceneMemory::get() {
+std::pmr::memory_resource* Scene::SceneMemory::get() {
 	return &debug1;
 }
 
-Scene::StaticSceneMemory::StaticSceneMemory(const std::string& name)
-	: debug0("Static-" + name) {}
-
-std::pmr::memory_resource* Scene::StaticSceneMemory::get() {
-	return &debug0;
-}
-
-Scene::Scene() 
-	: m_staticComponentChunk(m_staticSceneMemory.get()),
-	  m_dynamicComponentChunk(m_dynamicSceneMemory.get()),
+Scene::Scene()
+	: m_sceneMemory("Unnamed Scene"),
+	  m_components(m_sceneMemory.get()),
 	  m_runtimeCreated(true), m_buildIndex(0) {};
 
 Scene::Scene(uint64_t buildIndex) 
-	: m_staticSceneMemory("Scene " + std::to_string(buildIndex)),
-	  m_dynamicSceneMemory("Scene " + std::to_string(buildIndex)),
-	  m_staticComponentChunk(m_staticSceneMemory.get()),
-	  m_dynamicComponentChunk(m_dynamicSceneMemory.get()),
+	: m_sceneMemory("Scene " + std::to_string(buildIndex)),
+	  m_components(m_sceneMemory.get()),
 	  m_runtimeCreated(false), m_buildIndex(buildIndex) {
 	if(buildIndex != 0)
 		XN_LOG_WAR("Scene: the scene build number is {0}", buildIndex);
 
 	XN_LOG_DEB("Scene: Perform component cluster tests:");
 
-	m_staticComponentChunk.intComp.emplaceComponent(0, 1, m_staticComponentChunk.floatComp.emplaceComponent(0, 1.5f));
-	m_staticComponentChunk.intComp.emplaceComponent(1, 2, m_staticComponentChunk.floatComp.emplaceComponent(1, 2.5f));
-	m_staticComponentChunk.intComp.emplaceComponent(2, 3, m_staticComponentChunk.floatComp.emplaceComponent(2, 3.5f));
-	m_dynamicComponentChunk.intComp.emplaceComponent(3, 4, m_dynamicComponentChunk.floatComp.emplaceComponent(3, 4.5f));
-	m_staticComponentChunk.intComp.emplaceComponent(4, 5, m_staticComponentChunk.floatComp.emplaceComponent(4, 5.5f));
-	m_staticComponentChunk.intComp.emplaceComponent(5, 6, m_staticComponentChunk.floatComp.emplaceComponent(5, 6.5f));
-	m_dynamicComponentChunk.intComp.emplaceComponent(6, 7, m_dynamicComponentChunk.floatComp.emplaceComponent(6, 7.5f));
-	m_dynamicComponentChunk.intComp.emplaceComponent(7, 8, m_dynamicComponentChunk.floatComp.emplaceComponent(7, 8.5f));
-	m_dynamicComponentChunk.intComp.emplaceComponent(8, 9, m_dynamicComponentChunk.floatComp.emplaceComponent(8, 9.5f));
-	m_dynamicComponentChunk.intComp.emplaceComponent(9, 10, m_dynamicComponentChunk.floatComp.emplaceComponent(9, 10.5f));
-	m_staticComponentChunk.intComp.emplaceComponent(10, 11, m_staticComponentChunk.floatComp.emplaceComponent(10, 11.5f));
-	m_staticComponentChunk.intComp.emplaceComponent(11, 12, m_staticComponentChunk.floatComp.emplaceComponent(11, 12.5f));
-	m_staticComponentChunk.intComp.emplaceComponent(12, 13, m_staticComponentChunk.floatComp.emplaceComponent(12, 13.5f));
-	m_staticComponentChunk.intComp.emplaceComponent(13, 14, m_staticComponentChunk.floatComp.emplaceComponent(13, 14.5f));
-	m_dynamicComponentChunk.intComp.emplaceComponent(14, 15, m_dynamicComponentChunk.floatComp.emplaceComponent(14, 15.5f));
-	m_dynamicComponentChunk.intComp.emplaceComponent(15, 16, m_dynamicComponentChunk.floatComp.emplaceComponent(15, 16.5f));
-	m_dynamicComponentChunk.intComp.emplaceComponent(16, 17, m_dynamicComponentChunk.floatComp.emplaceComponent(16, 17.5f));
-	m_dynamicComponentChunk.intComp.emplaceComponent(17, 18, m_dynamicComponentChunk.floatComp.emplaceComponent(17, 18.5f));
+	m_components.intComp.emplaceComponent(0, 1, m_components.floatComp.emplaceComponent(0, 1.5f));
+	m_components.intComp.emplaceComponent(1, 2, m_components.floatComp.emplaceComponent(1, 2.5f));
+	m_components.intComp.emplaceComponent(2, 3, m_components.floatComp.emplaceComponent(2, 3.5f));
+	m_components.intComp.emplaceComponent(3, 4, m_components.floatComp.emplaceComponent(3, 4.5f));
+	m_components.intComp.emplaceComponent(4, 5, m_components.floatComp.emplaceComponent(4, 5.5f));
+	m_components.intComp.emplaceComponent(5, 6, m_components.floatComp.emplaceComponent(5, 6.5f));
+	m_components.intComp.emplaceComponent(6, 7, m_components.floatComp.emplaceComponent(6, 7.5f));
+	m_components.intComp.emplaceComponent(7, 8, m_components.floatComp.emplaceComponent(7, 8.5f));
+	m_components.intComp.emplaceComponent(8, 9, m_components.floatComp.emplaceComponent(8, 9.5f));
+	m_components.intComp.emplaceComponent(9, 10, m_components.floatComp.emplaceComponent(9, 10.5f));
+	m_components.intComp.emplaceComponent(10, 11, m_components.floatComp.emplaceComponent(10, 11.5f));
+	m_components.intComp.emplaceComponent(11, 12, m_components.floatComp.emplaceComponent(11, 12.5f));
+	m_components.intComp.emplaceComponent(12, 13, m_components.floatComp.emplaceComponent(12, 13.5f));
+	m_components.intComp.emplaceComponent(13, 14, m_components.floatComp.emplaceComponent(13, 14.5f));
+	m_components.intComp.emplaceComponent(14, 15, m_components.floatComp.emplaceComponent(14, 15.5f));
+	m_components.intComp.emplaceComponent(15, 16, m_components.floatComp.emplaceComponent(15, 16.5f));
+	m_components.intComp.emplaceComponent(16, 17, m_components.floatComp.emplaceComponent(16, 17.5f));
+	m_components.intComp.emplaceComponent(17, 18, m_components.floatComp.emplaceComponent(17, 18.5f));
 
-	m_staticComponentChunk.load();
-	m_dynamicComponentChunk.load();
+	m_components.load();
+	m_components.load();
 
 	XN_LOG_ENT("1, 2, 3");
 	for(auto a : AppData::getComponentManager().intCRL) {
 		XN_LOG_INF("int: {0}, float: {0}", a.val, *a.ref);
 	}
 	XN_LOG_DEB("print succesfull");
-	m_staticComponentChunk.intComp.removeComponent(1);
-	m_staticComponentChunk.floatComp.removeComponent(1);
-	m_staticComponentChunk.intComp.removeComponent(5);
-	m_staticComponentChunk.floatComp.removeComponent(5);
-	m_dynamicComponentChunk.intComp.removeComponent(14);
-	m_dynamicComponentChunk.floatComp.removeComponent(14);
-	m_staticComponentChunk.floatComp.addComponent(19, 20.5f);
-	m_staticComponentChunk.intComp.addComponent(19, {20, nullptr});
-	m_staticComponentChunk.syncComponentData();
-	m_dynamicComponentChunk.syncComponentData();
+	m_components.intComp.removeComponent(1);
+	m_components.floatComp.removeComponent(1);
+	m_components.intComp.removeComponent(5);
+	m_components.floatComp.removeComponent(5);
+	m_components.intComp.removeComponent(14);
+	m_components.floatComp.removeComponent(14);
+	m_components.floatComp.addComponent(19, 20.5f);
+	m_components.intComp.addComponent(19, {20, nullptr});
+	m_components.syncComponentData();
+	m_components.syncComponentData();
 	XN_LOG_ENT("1, 3");
 	for(auto a : AppData::getComponentManager().intCRL) {
 		XN_LOG_INF("int: {0}, float: {0}", a.val, *a.ref);
 	}
 	XN_LOG_DEB("print succesfull");
-	m_dynamicComponentChunk.floatComp.addComponent(5, 6.5f);
-	m_dynamicComponentChunk.intComp.addComponent(5, {6, nullptr});
-	m_staticComponentChunk.syncComponentData();
-	m_dynamicComponentChunk.syncComponentData();
+	m_components.floatComp.addComponent(5, 6.5f);
+	m_components.intComp.addComponent(5, {6, nullptr});
+	m_components.syncComponentData();
+	m_components.syncComponentData();
 	XN_LOG_ENT("1, 3, 4");
 	for(auto a : AppData::getComponentManager().intCRL) {
 		XN_LOG_INF("int: {0}, float: {0}", a.val, *a.ref);
@@ -91,12 +82,12 @@ Scene::Scene(uint64_t buildIndex)
 	for(auto &a : AppData::getComponentManager().floatCRL) {
 		a += 1.0f;
 	}
-	m_dynamicComponentChunk.unload();
+	m_components.unload();
 	XN_LOG_ENT("1, 3");
 	for(auto a : AppData::getComponentManager().intCRL) {
 		XN_LOG_INF("int: {0}, float: {0}", a.val, *a.ref);
 	}
-	m_staticComponentChunk.unload();
+	m_components.unload();
 
 	XN_LOG_DEB("Scene: component cluster test completed");
 };

@@ -9,7 +9,6 @@
 #include <string>
 #include <vector>
 #include <cstdint>
-#include <memory>
 
 namespace Core {
 
@@ -34,17 +33,9 @@ public:
 	[[nodiscard]] bool isRuntimeCreated() const;
 
 private:
-	class StaticSceneMemory {
+	class SceneMemory {
 	public:
-		explicit StaticSceneMemory(const std::string& name = "Scene");
-		[[nodiscard]] std::pmr::memory_resource* get();
-	private:
-		DebugMemoryResource debug0;
-	};
-
-	class DynamicSceneMemory {
-	public:
-		explicit DynamicSceneMemory(const std::string& name = "Scene");
+		explicit SceneMemory(const std::string& name = "Scene");
 		[[nodiscard]] std::pmr::memory_resource* get();
 	private:
 		DebugMemoryResource debug0;
@@ -52,13 +43,11 @@ private:
 		DebugMemoryResource debug1;
 	};
 
-	StaticSceneMemory m_staticSceneMemory;
-	DynamicSceneMemory m_dynamicSceneMemory;
+	SceneMemory m_sceneMemory;
+	ComponentCluster m_components;
 
 	std::vector<uint64_t> m_entities;   // men titties
 
-	ComponentCluster m_staticComponentChunk;
-	ComponentCluster m_dynamicComponentChunk;
 	
 	bool m_runtimeCreated;
 	uint64_t m_buildIndex;
