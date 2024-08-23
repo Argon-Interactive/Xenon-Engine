@@ -8,6 +8,10 @@
 namespace Core {
 using assetID = uint32_t;
 
+enum assetType : uint32_t {
+
+};
+
 struct AssetHandle {
 	AssetHandle() = default;
 	~AssetHandle() = default;
@@ -18,7 +22,8 @@ struct AssetHandle {
 private:
 	std::streampos offset;
 	std::streamsize size{};
-	uint64_t flag{}; //yeah this is a massive flag but bcoz of padding it may as well be
+	assetType type{};
+	uint32_t flag{};
 friend struct AssetMetadata;
 };
 
@@ -37,8 +42,8 @@ struct AssetMetadata {
 
 private:
 	std::unique_ptr<uint8_t[]> m_data;
-	uint64_t m_size{};
 	uint64_t m_flag{};
+	uint64_t m_size{};
 	uint64_t m_counter{};
 };
 }

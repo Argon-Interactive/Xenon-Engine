@@ -5,6 +5,7 @@
 #include <fstream>
 
 namespace Core {
+class Scene;
 
 class AssetsManager {
 public:
@@ -19,7 +20,9 @@ public:
 	void terminate();
 	[[nodiscard]] uint8_t* getAssetData(assetID id) const;
 	[[nodiscard]] uint64_t getAssetSize(assetID id) const;
-	void ensureLoaded(const assetID* assetIDs, uint64_t assetsAmmount);
+	void loadScene(Scene* scene, assetID sceneID);
+	void unloadScene(assetID sceneID);
+	void ensureLoaded(const assetID* assetIDs, uint64_t assetsAmmount); //This functions are for all assets excluding scenes
 	void freeAssets(const assetID* assetIDs, uint64_t assetsAmmount);
 	[[nodiscard]] std::ifstream* getFile();
 
