@@ -1,6 +1,7 @@
 #ifndef _XENON_SCENES_SCENE_
 #define _XENON_SCENES_SCENE_
 
+#include "memory/chunkedPMR.hpp"
 #include "ECS/componentCluster.hpp"
 #include "ECS/entity.hpp"
 
@@ -40,10 +41,10 @@ private:
 	private:
 #ifdef __DEBUG__
 		DebugMemoryResource mem2;
-		std::pmr::unsynchronized_pool_resource mem1;
+		ChunkedPMR mem1;
 		DebugMemoryResource mem0;
 #else
-		std::pmr::unsynchronized_pool_resource mem0;
+		ChunkedPMR mem0;
 #endif // !__DEBUG__
 	};
 

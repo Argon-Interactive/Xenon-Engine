@@ -44,7 +44,7 @@ uint64_t Scene::getBuildIndex() const {
 #ifdef __DEBUG__
 Scene::SceneMemory::SceneMemory(const std::string& name)
 	: mem2("[Upstream] " + name),
-	  mem1({0, 4096}, &mem2),
+	  mem1(&mem2),
 	  mem0(name, &mem1) {}
 #else 
 Scene::SceneMemory::SceneMemory(const std::string& name)
