@@ -10,22 +10,19 @@
 namespace Core {
 template<typename T>
 class ChunkedArray {
+	static constexpr uint16_t ALLOCATION_SIZE = 4096;
 public:
 	class iterator;
 	class const_iterator;
 
-	explicit ChunkedArray(std::pmr::memory_resource* memoryRsrc = std::pmr::get_default_resource()) : m_resource(memoryRsrc), m_allocationSize(4096) { 
-		//To change the default chunk size change the m_allocationSize value above, it is the only place where it needs to be changed
-		uint16_t maxSize = m_allocationSize / sizeof(T);
-		while(maxSize == 0) {
-			m_allocationSize *= 4;
-			maxSize = m_allocationSize / sizeof(T);
-		}
+	explicit ChunkedArray(std::pmr::memory_resource* memoryRsrc = std::pmr::get_default_resource()) : m_resource(memoryRsrc) { 
+		uint16_t maxSize = ALLOCATION_SIZE / sizeof(T);
+		if(maxSize == 0) { XN_LOG_ERR("Single element size exceedes chunk size of 4kB. Creation of chunked array failed"); return; }
 		m_maxPartitionSize = maxSize;
-		auto* newData = static_cast<T*>(m_resource->allocate(m_allocationSize));
+		auto* newData = static_cast<T*>(m_resource->allocate(ALLOCATION_SIZE));
 		m_dataPtrs.push_back(newData);
 	}
-	~ChunkedArray() { for(auto ptr : m_dataPtrs) { m_resource->deallocate(ptr, m_allocationSize); } }
+	~ChunkedArray() { for(auto ptr : m_dataPtrs) { m_resource->deallocate(ptr, ALLOCATION_SIZE); } }
 	ChunkedArray(ChunkedArray &&) = delete;
 	ChunkedArray(const ChunkedArray &) = delete;
 	ChunkedArray &operator=(ChunkedArray &&) = delete;
@@ -42,6 +39,7 @@ public:
 	///////////////////////////////////////
 	/// Modifiers 
 	///////////////////////////////////////
+	///
 	template<typename ...Args>
 	T* emplace_back(Args&&... args) {
 		T* ptr = &m_dataPtrs[m_indexMajor][m_indexMinor];
@@ -55,16 +53,30 @@ public:
 		if(m_indexMinor == 0) {
 			m_indexMajor--;
 			m_indexMinor = m_maxPartitionSize - 1;
-			m_resource->deallocate(m_dataPtrs.back(), m_allocationSize);
+			m_resource->deallocate(m_dataPtrs.back(), ALLOCATION_SIZE);
 			m_dataPtrs.pop_back();
 		}
 		else { m_indexMinor--; }
 	}
 	void clear() { 
-		for(auto ptr : m_dataPtrs) { m_resource->deallocate(ptr, m_allocationSize); }
+		for(auto ptr : m_dataPtrs) { m_resource->deallocate(ptr, ALLOCATION_SIZE); }
 		m_dataPtrs.clear();
 		m_indexMinor = 0;
 		m_indexMajor = 0;
+	}
+	void push_chunk(T* ptr) {
+		T* last = m_dataPtrs.back();
+		m_dataPtrs.pop_back();
+		m_dataPtrs.push_back(ptr);
+		m_dataPtrs.push_back(last);
+		m_indexMajor++;
+	}
+	void push_chunk(const std::vector<T*> ptrs) {
+		T* last = m_dataPtrs.back();
+		m_dataPtrs.pop_back();
+		m_dataPtrs.append_range(ptrs);
+		m_dataPtrs.push_back(last);
+		m_indexMajor += ptrs.size();
 	}
 	///////////////////////////////////////
 	/// Capacity 
@@ -83,15 +95,14 @@ public:
 	T& front() { return m_dataPtrs.front()[0]; }
 	T& back() { return m_dataPtrs[m_indexMajor][m_indexMinor - 1]; }
 private:
-	std::pmr::memory_resource* m_resource;
-	uint16_t m_allocationSize; //NOLINT
 	uint16_t m_maxPartitionSize{};
-	size_t m_indexMajor{};
 	uint16_t m_indexMinor{};
+	std::pmr::memory_resource* m_resource;
+	size_t m_indexMajor{};
 	std::pmr::vector<T*> m_dataPtrs{m_resource};
 
 	void resize() {
-		auto* newData = static_cast<T*>(m_resource->allocate(m_allocationSize));
+		auto* newData = static_cast<T*>(m_resource->allocate(ALLOCATION_SIZE));
 		m_dataPtrs.push_back(newData);
 		m_indexMajor++;
 		m_indexMinor = 0;
