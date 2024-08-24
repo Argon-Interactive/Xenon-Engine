@@ -19,36 +19,41 @@ public:
 	
 	Scene* createScene();
 	void purge();
+	[[nodiscard]] Scene* getScene(uint64_t index) const;
+	[[nodiscard]] Scene* getSceneByBuildIndex(uint64_t buildIndex) const;
+	[[nodiscard]] uint64_t getSceneCount() const;
 
 	void loadScene(uint64_t buildIndex);
-	void unloadScene(uint64_t index);
+	void unloadSceneAt(uint64_t index);
 	void unloadScene(Scene* scene);
+	void unloadScene(uint64_t buildIndex);
 
 	void loadSceneAsync(uint64_t buildIndex);
-	void unloadSceneAsync(uint64_t index);
+	void unloadSceneAsyncAt(uint64_t index);
 	void unloadSceneAsync(Scene* scene);
+	void unloadSceneAsync(uint64_t buildIndex);
 
-	void setActiveScene(uint64_t index);
+	void setActiveSceneAt(uint64_t index);
+	void setActiveScene(Scene* scene);
+	void setActiveScene(uint64_t buildIndex);
+	[[nodiscard]] Scene* getActiveScene() const;
+	[[nodiscard]] uint64_t getActiveSceneIndex() const;
 
 	void moveEntity(Entity entity, uint64_t targetSceneIndex);
 	void moveEntity(Entity entity, Scene* targetScene);
 
-	[[nodiscard]] Scene* getScene(uint64_t index);
-	[[nodiscard]] Scene* getSceneByBuildIndex(uint64_t buildIndex);
-	[[nodiscard]] Scene* getActiveScene();
-	[[nodiscard]] uint64_t getActiveSceneIndex() const;
-
-	[[nodiscard]] uint64_t getSceneCount() const;
-
 private:
 	SceneManager();
 
+	std::vector<std::unique_ptr<Scene>> m_scenesBuffer;
 	std::vector<std::unique_ptr<Scene>> m_scenes;
 	uint64_t m_activeSceneIndex = 0;
-	uint64_t m_loadedSceneCount = 0;
 
+	void moveLoaded(uint64_t index);
+	void moveUnloaded(uint64_t index);
 	void deleteScene(uint64_t index);
-	uint64_t findNearestScene(uint64_t buildIndex);
+	uint64_t getSceneIndex(uint64_t buildIndex);
+	uint64_t getSceneIndex(Scene* scene);
 
 	friend class AppData;
 };
