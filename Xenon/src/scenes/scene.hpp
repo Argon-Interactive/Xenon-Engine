@@ -10,7 +10,6 @@
 
 #include <memory_resource>
 #include <string>
-#include <vector>
 #include <cstdint>
 
 namespace Core {
@@ -52,8 +51,6 @@ private:
 	ComponentCluster m_components;
 
 	inline static Entity s_entityID = std::numeric_limits<uint64_t>::max();
-
-	std::vector<uint64_t> m_entities;   // men titties
 	
 	bool m_runtimeCreated;
 	uint64_t m_buildIndex;
