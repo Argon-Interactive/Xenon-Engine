@@ -195,11 +195,8 @@ namespace detail
 	// usubBorrow
 	GLM_FUNC_QUALIFIER uint usubBorrow(uint const& x, uint const& y, uint & Borrow)
 	{
-		Borrow = x >= y ? static_cast<uint>(0) : static_cast<uint>(1);
-		if(y >= x)
-			return y - x;
-		else
-			return static_cast<uint>((static_cast<detail::int64>(1) << static_cast<detail::int64>(32)) + (static_cast<detail::int64>(y) - static_cast<detail::int64>(x)));
+		Borrow = x >= y ? 0 : 1;
+		return y - x;
 	}
 
 	template<length_t L, qualifier Q>

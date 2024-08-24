@@ -1,25 +1,16 @@
-#include "core/input/input.hpp"
-#include "devTools/logger/logger.hpp"
-#include "devTools/logger/logger_client.hpp"
+#define XENON_DEBUG //This macro makes Xenon run the application in debug mode
+
 #include "xenon.h"
 
-class Sandbox : public Xenon::Application
-{
-public:
-	Sandbox() {
-		XN_LOG_ENT("Hello from sandbox");
-		XN_LOG_BR(Xenon::Logger::logMode::info);
-	}
-	~Sandbox() override { 
-		XN_LOG_ENT("Bye from sandbox"); 
-	}
+// void config([[maybe_unused]]void* something) {
+// 	XN_LOG_BR(XNTools::Logger::logMode::info);
+// 	XN_LOG_DEB("Helo, I am under the water");
+// }
 
-	Sandbox(const Sandbox &) = delete;
-	Sandbox(Sandbox &&) = delete;
-	Sandbox &operator=(const Sandbox &) = delete;
-	Sandbox &operator=(Sandbox &&) = delete;
+const Xenon::AppConfig config{
+	800, 600, "Sandbox" 
 };
 
-std::unique_ptr<Xenon::Application> create() {
-	return std::make_unique<Sandbox>();
+const Xenon::AppConfig& getConfig() {
+	return config;
 }

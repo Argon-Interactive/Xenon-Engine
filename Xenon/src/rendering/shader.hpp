@@ -14,10 +14,16 @@ namespace Core
 	class Shader
 	{
 	public:
-		Shader(const Shader&) = delete;
-		Shader(const std::string& FilePath);
-		Shader(const std::string& VertexFilePath, const std::string& FragmentFilePath, const std::string& GeometryFilePath = "");
+		explicit Shader(const std::string& filePath);
+		Shader(const std::string& vertexSrc, const std::string& fragmentSrc, const std::string& geometrySrc = "", 
+		 const std::string& computeSrc = "", const std::string& tessControlSrc = "", const std::string& tessEvalSrc = "");
 		~Shader();
+		// It is deleted for now to not couse stupid bugs but it probaly should be implemented at some point
+		Shader(const Shader& oth) = delete;
+		Shader& operator=(const Shader& oth) = delete;
+		Shader(Shader&& oth) = delete;
+		Shader& operator=(Shader&& oth) = delete;
+
 		void bind() const;
 		static void unbind();
 		static void enableBlending();
@@ -58,12 +64,13 @@ namespace Core
 		void setUniformMatrix4(const std::string& varName, glm::mat4 v0);
 	private:
 		unsigned int m_ID;
-		static unsigned int s_currBind;
+		static unsigned int s_currentBind;
 		std::unordered_map<std::string, int> uniformLocs;
-		enum shaderType
-		{ vertex, fragment, geometry, none };
+		enum shaderType // "none" should alweys be last, else it may couse bugs
+		{ vertex, fragment, geometry, compute, tessControl, tessEval, none };
 		bool getUniformLoc(const std::string& varName, uint32_t id);
-		static unsigned int CompileShader(unsigned int type, const std::string& src);
+		static uint32_t compileShader(shaderType type, const char* src);
+		static uint32_t linkShader(uint32_t vertexID, uint32_t fragmentID, uint32_t geometryID, uint32_t computeID, uint32_t tessControlID, uint32_t tessEvalID);
 	};
 }
 

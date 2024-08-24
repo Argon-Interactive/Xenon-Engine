@@ -1,47 +1,47 @@
-#ifndef _XENON_APPLICATION_
-#define _XENON_APPLICATION_
+#ifndef _XENON_CORE_APPLICATION_
+#define _XENON_CORE_APPLICATION_
 
-#include "api.h"
-#include "core/input/input.hpp"
-#include "event/event.hpp"
+#include "Xenon/appConfig.hpp"
+#include "event.hpp"
+
 #include <queue>
 #include <mutex>
 #include <condition_variable>
 
-extern int main(int argc, char** argv);
+namespace Xenon { class Application; }
 
-namespace Xenon
-{
-	class XAPI Application
-	{
-	public:
-		Application();
-		virtual ~Application();
-		Application(const Application&) = delete;
-		Application(Application&&) noexcept = delete;
-		Application& operator=(const Application&) = delete;
-		Application& operator=(Application&&) = delete;
+namespace Core {
 
-		void pushEvent(const Core::Event& event) noexcept;
+class Application {
+public:
+	explicit Application(const Xenon::AppConfig& config);
+	~Application();
+	Application(const Application&) = delete;
+	Application(Application&&) noexcept = delete;
+	Application& operator=(const Application&) = delete;
+	Application& operator=(Application&&) = delete;
 
-	private:
-		int run();
-		void handleEvents();
-		void render();
-		void update();
+	void pushEvent(const Core::Event& event);
 
-		bool m_running = true;
+private:
+	int run();
+	void handleEvents();
+	void update(double deltaT);
+	void fixedUpdate();
+	void render();
 
-		Core::Event popEvent() noexcept;
-		bool emptyEventQueue() const noexcept;
+	bool m_running = true;
 
-		std::queue<Core::Event> m_eventQueue;
-		mutable std::mutex m_mutex;
-		std::condition_variable m_cond;
+	Core::Event popEvent() noexcept;
+	bool emptyEventQueue() const noexcept;
 
-		friend int ::main(int argc, char** argv);
-	};
+	std::queue<Core::Event> m_eventQueue;
+	mutable std::mutex m_mutex;
+	std::condition_variable m_cond;
+
+	friend class Xenon::Application;
+};
 
 }
 
-#endif // !_XENON_APPLICATION_
+#endif // !_XENON_CORE_APPLICATION_

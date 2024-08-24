@@ -1,5 +1,5 @@
 #include "texture_core.hpp" 
-#include "devTools/logger/logger_core.hpp"
+#include "devTools/logger_core.hpp"
 #include <stb_image.h>
 #include <glad/glad.h>
 
@@ -33,7 +33,7 @@ Core::Texture2D::Texture2D(const Texture2D& oth)
 {
 	glGenTextures(1, &m_ID);
 	glBindTexture(GL_TEXTURE_2D, m_ID);
-	int32_t param;
+	int32_t param = 0;
 	glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, &param);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, param);
 	glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, &param);
@@ -42,11 +42,11 @@ Core::Texture2D::Texture2D(const Texture2D& oth)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, param);
 	glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, &param);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, param);
-	uint8_t* data = new uint8_t[static_cast<uint32_t>(m_width * m_height) * 4 * sizeof(uint8_t)];
+	auto* data = new uint8_t[static_cast<uint32_t>(m_width * m_height) * 4 * sizeof(uint8_t)];
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, &data);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	delete[] data;
-	//TODO This look kinda wrong but i have no way of testing this right now
+	//NOTE: This look kinda wrong but i have no way of testing this right now
 }
 
 Core::Texture2D& Core::Texture2D::operator=(const Texture2D& oth)
@@ -56,7 +56,7 @@ Core::Texture2D& Core::Texture2D::operator=(const Texture2D& oth)
 	m_height = oth.m_height;
 	glGenTextures(1, &m_ID);
 	glBindTexture(GL_TEXTURE_2D, m_ID);
-	int32_t param;
+	int32_t param = 0;
 	glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, &param);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, param);
 	glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, &param);
@@ -69,13 +69,13 @@ Core::Texture2D& Core::Texture2D::operator=(const Texture2D& oth)
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, &data);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	delete[] data;
-	//TODO This look kinda wrong but i have no way of testing this right now
+	//NOTE: This look kinda wrong but i have no way of testing this right now
 	return *this;
 }
 
-Core::Texture2D::Texture2D(Texture2D&& oth) :m_ID(oth.m_ID), m_width(oth.m_width), m_height(oth.m_height) { oth.m_ID = 0; }
+Core::Texture2D::Texture2D(Texture2D&& oth) noexcept :m_ID(oth.m_ID), m_width(oth.m_width), m_height(oth.m_height) { oth.m_ID = 0; }
 
-[[nodiscard]] Core::Texture2D& Core::Texture2D::operator=(Texture2D&& oth) { 
+[[nodiscard]] Core::Texture2D& Core::Texture2D::operator=(Texture2D&& oth) noexcept { 
 	m_ID = oth.m_ID; 
 	m_width = oth.m_width;
 	m_height = oth.m_height;
@@ -83,8 +83,8 @@ Core::Texture2D::Texture2D(Texture2D&& oth) :m_ID(oth.m_ID), m_width(oth.m_width
 	return *this; 
 }
 
-int32_t Core::Texture2D::getWidth() { return m_width; }
-int32_t Core::Texture2D::getHeigth() { return m_height; }
+int32_t Core::Texture2D::getWidth() const { return m_width; }
+int32_t Core::Texture2D::getHeigth() const { return m_height; }
 
 void Core::Texture2D::bind(uint32_t slot) { glActiveTexture(GL_TEXTURE0 + slot); glBindTexture(GL_TEXTURE_2D, m_ID); }
 void Core::Texture2D::unbind() { glBindTexture(GL_TEXTURE_2D, 0); }

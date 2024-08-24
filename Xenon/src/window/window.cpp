@@ -4,7 +4,7 @@
 #include<numeric>
 #include <utility>
 #include"window.hpp"
-#include"devTools/logger/logger_core.hpp"
+#include "devTools/logger_core.hpp"
 #include "glfw3.h"
 
 Core::Window::Window(uint32_t width, uint32_t height, std::string title)

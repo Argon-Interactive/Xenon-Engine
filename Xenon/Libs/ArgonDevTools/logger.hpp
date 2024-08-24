@@ -7,7 +7,6 @@
 #include<vector>
 #include<mutex>
 #include<format>
-#include"api.h"
 
 #define XN_LOG_BLACK		"\033[0;30m"
 #define XN_LOG_DARK_GRAY	"\033[1;30m"
@@ -29,31 +28,45 @@
 
 using XN_COLOR = std::string;
 
-namespace Xenon {
+namespace XNTools {
 	class Logger
 	{
 	public:
-		~Logger() noexcept;
+		~Logger();
 		Logger(Logger &&) = delete;
 		Logger &operator=(Logger &&) = delete;
 		Logger(const Logger &) = delete;
 		Logger& operator = (const Logger&) = delete;
 
-		enum logMode { degub, trace, entry, info, warning, error};
+		enum logMode { debug, trace, entry, info, warning, error};
 		//===============================================================================
 		// logging
 		//===============================================================================
 
-		static XAPI Logger& getInstance();
-		static Logger& getInstanceCore();
-		
+		static Logger& getInstance();
+
+		/*
+		0 - default
+		Numbers:
+		b - base 2
+		o - base 8
+		x - base 16
+		s - scientific notation
+		Strings:
+		q - quote
+		Vectors and Arrays:
+		0 - horizontal
+		i - indexed, horizontal
+		s - vertical
+		l - indexed, vertical  
+		*/
 		template<typename T, typename ...Types>
 		void log(logMode mode, T first, Types&& ... args)
 		{
 			const std::lock_guard<std::mutex> lg(m_mutex);
 			if (!m_toFile) m_msg << m_colors[mode];
 			m_msg << getTime();
-			m_msg << s_labels[m_isCore] << s_labels[mode] << " ";
+			m_msg << m_name << s_labels[mode] << " ";
 			output(first, args...);
 			m_msg << '\n';
 			if (!m_toFile) { 
@@ -64,20 +77,21 @@ namespace Xenon {
 			}
 		}
 
-		void XAPI breakLine(logMode mode = logMode::entry);
+		void breakLine(logMode mode = logMode::entry);
 
 		//===============================================================================
 		// settings
 		//===============================================================================
 
-		void XAPI setColors(XN_COLOR entryColor, XN_COLOR infoColor, XN_COLOR warningColor, XN_COLOR errorColor, XN_COLOR debugColor, XN_COLOR traceColor);
-		void XAPI setFilePath(const std::string& filePath);
+		void setColors(XN_COLOR entryColor, XN_COLOR infoColor, XN_COLOR warningColor, XN_COLOR errorColor, XN_COLOR debugColor, XN_COLOR traceColor);
+		void setFilePath(const std::string& filePath);
+		void setName(const char* name);
 	private:
-		explicit Logger(bool isCore) :m_timeStart(std::chrono::steady_clock::now()), m_isCore(isCore) {}
+		explicit Logger() :m_timeStart(std::chrono::steady_clock::now()) {}
 		const std::chrono::steady_clock::time_point m_timeStart;
 		bool m_toFile = false;
-		bool m_isCore;
-		static constexpr const char* s_source[2] = { "[CLIENT]", "[ENGINE]" };
+		std::string m_name = "[ENGINE]";
+		bool m_namechange = true;
 		static constexpr const char* s_labels[6] = { "[DEB]", "[TRC]", "[ENT]", "[INF]", "[WAR]", "[ERR]" };
 		std::string m_colors[6] = { XN_LOG_CYAN, XN_LOG_LIGHT_GRAY,	XN_LOG_WHITE, XN_LOG_GREEN, XN_LOG_YELLOW, XN_LOG_RED};
 		std::string m_filepath;
@@ -87,8 +101,8 @@ namespace Xenon {
 		// helper funcions
 		//===============================================================================
 
-		std::string XAPI getTime();
-		static size_t XAPI findToken(const char* string);
+		std::string getTime();
+		static size_t findToken(const char* string);
 		//===============================================================================
 		// recursive output
 		//===============================================================================
@@ -102,11 +116,11 @@ namespace Xenon {
 		template<typename T, typename ...Types>
 		void output(const char* text, T&& arg, Types&& ...args)
 		{
-			const size_t tlc = findToken(text);
-			if (tlc == std::string::npos) { m_msg << text; return; }
-			m_msg.write(text, static_cast<int64_t>(tlc));	
-			proccesToken(text[tlc + 1], arg);
-			output(&text[tlc+3], args...);
+			const size_t tokenLocation = findToken(text);
+			if (tokenLocation == std::string::npos) { m_msg << text; return; }
+			m_msg.write(text, static_cast<int64_t>(tokenLocation));	
+			proccesToken(text[tokenLocation + 1], arg);
+			output(&text[tokenLocation + 3], args...);
 		}
 		template<typename T, typename ...Types>
 		void output(T&& arg, Types&& ...args)
@@ -118,8 +132,11 @@ namespace Xenon {
 		// tokens processing
 		//===============================================================================
 
-		void XAPI proccesToken(char token, const std::string& arg);
-		void XAPI proccesToken(char token, const char* arg);
+		void proccesToken(char token, const std::string& arg);
+		void proccesToken(char token, const char* arg);
+		void proccesToken(char token, char* arg);
+		template<typename T>
+		void proccesToken(char /*token*/, T* arg) { m_msg << std::hex << arg << std::dec; }
 		template<typename T>
 		void proccesToken(char token, T arg)
 		{ 
@@ -133,6 +150,24 @@ namespace Xenon {
 				m_msg << std::uppercase << std::hex << arg << std::dec << std::nouppercase;
 			else if (token == 'b')
 				m_msg << std::setfill('0') << std::setw(sizeof(T) * 8) << std::format("{:b}", arg);
+			else
+				m_msg << '{' << token << '}';
+		}
+		void proccesToken(char token, float arg)
+		{ 
+			if(token == '0')
+				m_msg << arg;
+			else if (token == 's')
+				m_msg << std::scientific << arg;
+			else
+				m_msg << '{' << token << '}';
+		}
+		void proccesToken(char token, double arg)
+		{ 
+			if(token == '0')
+				m_msg << arg;
+			else if (token == 's')
+				m_msg << std::scientific << arg;
 			else
 				m_msg << '{' << token << '}';
 		}
@@ -157,6 +192,31 @@ namespace Xenon {
 			else if (token == 'l') {
 				m_msg << "\n";
 				for (int i = 0; i < arg.size(); ++i) 
+				{ m_msg << i << ". " << arg[i] << "\n"; }
+			}
+			else m_msg << '{' << token << '}';
+		}
+		template<typename T, size_t S>
+		void proccesToken(char token, const std::array<T, S>& arg)
+		{
+			if (token == '0') {
+				for (int i = 0; i < S - 1; ++i) 
+				{ m_msg << arg[i] << ", "; } 
+				m_msg << arg[S - 1];
+			}
+			else if (token == 'i') {
+				for (int i = 0; i < S - 1; ++i) 
+				{ m_msg << i << ": " << arg[i] << ", "; }
+				m_msg << S - 1 << ": " << arg[S - 1];
+			}
+			else if (token == 's') {
+				m_msg << "\n";
+				for (int i = 0; i < S; ++i) 
+				{ m_msg << arg[i] << "\n"; }
+			}
+			else if (token == 'l') {
+				m_msg << "\n";
+				for (int i = 0; i < S; ++i) 
 				{ m_msg << i << ". " << arg[i] << "\n"; }
 			}
 			else m_msg << '{' << token << '}';

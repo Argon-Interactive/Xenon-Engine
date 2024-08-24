@@ -15,6 +15,9 @@ include(cmake/PreventInSourceBuild.cmake)
 
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
+if(NOT DEFINED CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
+endif()
 if(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
 endif()
@@ -43,6 +46,7 @@ endif()
 add_compile_definitions(GLM_FORCE_CXX11)
 add_compile_definitions(GLM_FORCE_SILENT_WARNINGS)
 
+include_directories(Libs/ArgonDevTools)
 include_directories(Xenon/include)
 include_directories(Xenon/vendor/all)
 
@@ -55,4 +59,5 @@ xenon_apply_options()
 target_compile_features(xenon_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
 
 add_subdirectory(Xenon)
+add_subdirectory(Xenon/Libs/ArgonDevTools)
 add_subdirectory(Sandbox)

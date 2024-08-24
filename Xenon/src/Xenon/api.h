@@ -1,5 +1,5 @@
-#ifndef _XENON_CORE_H_
-#define _XENON_CORE_H_
+#ifndef _XENON_CORE_
+#define _XENON_CORE_
 
 
 #if defined _WIN32
@@ -10,7 +10,7 @@
 	#endif
 #elif defined __linux__
 	#ifdef XENON_DLL_BUILD
-		#define XAPI __attribute__((visibility("default"))) 
+		#define XAPI __attribute__((visibility("default")))
 	#else
 		#define XAPI
 	#endif
@@ -19,4 +19,4 @@
 #endif
 
 
-#endif // !_XENON_CORE_H_
+#endif // !_XENON_CORE_
