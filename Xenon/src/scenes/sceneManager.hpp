@@ -49,11 +49,11 @@ private:
 	std::vector<std::unique_ptr<Scene>> m_scenes;
 	uint64_t m_activeSceneIndex = 0;
 
-	void moveLoaded(uint64_t index);
-	void moveUnloaded(uint64_t index);
-	void deleteScene(uint64_t index);
-	uint64_t getSceneIndex(uint64_t buildIndex);
-	uint64_t getSceneIndex(Scene* scene);
+	void p_moveLoaded(uint64_t index);
+	void p_moveUnloaded(uint64_t index);
+	void p_deleteScene(uint64_t index);
+	uint64_t p_getSceneIndex(uint64_t buildIndex);
+	uint64_t p_getSceneIndex(Scene* scene);
 
 	friend class AppData;
 };

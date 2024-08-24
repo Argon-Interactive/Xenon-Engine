@@ -27,14 +27,10 @@ public:
 	Entity createEntity();
 	void deleteEntity(Entity uuid);
 
-	void setBuildIndex(uint64_t index);
 	[[nodiscard]] uint64_t getBuildIndex() const;
-
 	[[nodiscard]] bool isRuntimeCreated() const;
 
 private:
-	inline static Entity s_entityID = std::numeric_limits<uint64_t>::max();
-
 	class SceneMemory {
 	public:
 		explicit SceneMemory(const std::string& name = "Scene");
@@ -47,6 +43,8 @@ private:
 
 	SceneMemory m_sceneMemory;
 	ComponentCluster m_components;
+
+	inline static Entity s_entityID = std::numeric_limits<uint64_t>::max();
 
 	std::vector<uint64_t> m_entities;   // men titties
 	

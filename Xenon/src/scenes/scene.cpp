@@ -4,15 +4,6 @@
 
 namespace Core {
 
-Scene::SceneMemory::SceneMemory(const std::string& name)
-	: debug0("[Upstream] " + name),
-	  pool({0, 4096}, &debug0),
-	  debug1(name, &pool) {}
-
-std::pmr::memory_resource* Scene::SceneMemory::get() {
-	return &debug1;
-}
-
 Scene::Scene()
 	: m_sceneMemory("Unnamed Scene"),
 	  m_components(m_sceneMemory.get()),
@@ -108,13 +99,22 @@ void Scene::deleteEntity(uint64_t uuid) {
 	XN_LOG_DEB("Scene {0}: Deleting entity {0}", p_debugIndex(), uuid);
 }
 
-void Scene::setBuildIndex(uint64_t index) {
-	m_buildIndex = index;
-}
-
 uint64_t Scene::getBuildIndex() const {
 	return m_buildIndex;
 }
+
+
+
+
+Scene::SceneMemory::SceneMemory(const std::string& name)
+	: debug0("[Upstream] " + name),
+	  pool({0, 4096}, &debug0),
+	  debug1(name, &pool) {}
+
+std::pmr::memory_resource* Scene::SceneMemory::get() {
+	return &debug1;
+}
+
 
 
 }

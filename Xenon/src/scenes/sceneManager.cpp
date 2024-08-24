@@ -55,18 +55,18 @@ void SceneManager::unloadSceneAt(uint64_t index) {
 	if(index == m_scenes.size() - 1)
 		m_activeSceneIndex--;
 	getScene(index)->unload();
-	deleteScene(index);
+	p_deleteScene(index);
 }
 
 void SceneManager::unloadScene(Scene* scene) {
 	XN_LOG_DEB("SceneManager: Unloading scene {0}", scene);
-	const uint64_t index = getSceneIndex(scene);
+	const uint64_t index = p_getSceneIndex(scene);
 	unloadSceneAt(index);
 }
 
 void SceneManager::unloadScene(uint64_t buildIndex) {
 	XN_LOG_DEB("SceneManager: Unloading scene {0}", buildIndex);
-	const uint64_t index = getSceneIndex(buildIndex);
+	const uint64_t index = p_getSceneIndex(buildIndex);
 	unloadSceneAt(index);
 }
 
@@ -95,11 +95,11 @@ void SceneManager::setActiveSceneAt(uint64_t index) {
 }
 
 void SceneManager::setActiveScene(Scene* scene) {
-	m_activeSceneIndex = getSceneIndex(scene);
+	m_activeSceneIndex = p_getSceneIndex(scene);
 }
 
 void SceneManager::setActiveScene(uint64_t buildIndex) {
-	m_activeSceneIndex = getSceneIndex(buildIndex);
+	m_activeSceneIndex = p_getSceneIndex(buildIndex);
 }
 
 Scene* SceneManager::getActiveScene() const {
@@ -129,19 +129,19 @@ void SceneManager::moveEntity([[maybe_unused]] Entity entity, [[maybe_unused]] S
 /*------------------------------------------------------------------------------------------------*/
 
 
-void SceneManager::moveLoaded([[maybe_unused]] uint64_t index) {
+void SceneManager::p_moveLoaded([[maybe_unused]] uint64_t index) {
 
 }
 
-void SceneManager::moveUnloaded([[maybe_unused]] uint64_t index) {
+void SceneManager::p_moveUnloaded([[maybe_unused]] uint64_t index) {
 
 }
 
-void SceneManager::deleteScene(uint64_t index) {
+void SceneManager::p_deleteScene(uint64_t index) {
 	m_scenes.erase(m_scenes.begin() + static_cast<int64_t>(index));
 }
 
-uint64_t SceneManager::getSceneIndex(uint64_t buildIndex) {
+uint64_t SceneManager::p_getSceneIndex(uint64_t buildIndex) {
 	const uint64_t max = m_scenes.size();
 	for(uint64_t i = 0; i < max; i++)
 		if(getScene(i)->getBuildIndex() == buildIndex)
@@ -150,7 +150,7 @@ uint64_t SceneManager::getSceneIndex(uint64_t buildIndex) {
 	return 0;
 }
 
-uint64_t SceneManager::getSceneIndex(Scene* scene) {
+uint64_t SceneManager::p_getSceneIndex(Scene* scene) {
 	const uint64_t max = m_scenes.size();
 	for(uint64_t i = 0; i < max; i++)
 		if(getScene(i) == scene)
