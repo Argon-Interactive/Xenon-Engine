@@ -9,7 +9,7 @@
 
 namespace Core {
 struct ComponentCluster {
-	ComponentCluster() = default;
+	ComponentCluster(std::pmr::memory_resource* resource) : m_resource(resource) {}
 	~ComponentCluster();
 
 	ComponentCluster(ComponentCluster &&) = delete;
@@ -17,8 +17,8 @@ struct ComponentCluster {
 	ComponentCluster &operator=(ComponentCluster &&) = delete;
 	ComponentCluster &operator=(const ComponentCluster &) = delete;
 
-	ComponentPool<Comp> intComp{&m_resource};
-	ComponentPool<float> floatComp{&m_resource};
+	ComponentPool<Comp> intComp{m_resource};
+	ComponentPool<float> floatComp{m_resource};
 
 	void load();
 	void unload();
@@ -31,7 +31,7 @@ struct ComponentCluster {
 	}
 private:
 	bool m_isLoaded = false;
-	Core::ChunkedPMR m_resource;
+	std::pmr::memory_resource* m_resource;
 
 	void p_performeRemovals();
 	void p_resolveDependencies();
