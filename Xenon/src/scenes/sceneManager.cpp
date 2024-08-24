@@ -342,12 +342,20 @@ void SceneManager::p_cleanupFutures() {
 }
 
 void SceneManager::close() {
-	const std::lock_guard<std::mutex> lock1(m_futuresMutex);
-	const std::lock_guard<std::mutex> lock2(m_mutex);
-	m_closing = true;
-	for (auto &future : m_futures) {
-		future.wait();
-	};
+	try {
+		const std::lock_guard<std::mutex> lock1(m_futuresMutex);
+		const std::lock_guard<std::mutex> lock2(m_mutex);
+		m_closing = true;
+		for (auto &future : m_futures) {
+			future.wait();
+		};
+	} catch (std::exception& e) {
+		try {
+			XN_LOG_ERR("SceneManager: Exception in SceneManager::close(): {0}", e.what());
+		} catch (std::exception& e2) { 
+			exit(-1); // This is never gonna happen basically
+		}
+	}
 }
 
 
