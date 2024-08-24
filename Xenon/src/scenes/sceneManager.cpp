@@ -6,10 +6,6 @@
 
 namespace Core {
 
-void SceneManager::debug() const {
-	XN_LOG_DEB("Scenes: {0}, Futures: {0}", m_scenes.size(), m_futures.size());
-}
-
 SceneManager::SceneManager() = default;
 
 SceneManager::~SceneManager() {

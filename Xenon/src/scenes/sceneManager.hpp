@@ -50,8 +50,6 @@ public:
 	void moveEntity(Entity entity, uint64_t targetSceneIndex);
 	void moveEntity(Entity entity, Scene* targetScene);
 
-	void debug() const;
-
 private:
 	SceneManager();
 
