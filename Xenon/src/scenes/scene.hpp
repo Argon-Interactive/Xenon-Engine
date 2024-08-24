@@ -3,7 +3,10 @@
 
 #include "ECS/componentCluster.hpp"
 #include "ECS/entity.hpp"
+
+#ifdef __DEBUG__
 #include "memory/debugMemoryResource.hpp"
+#endif // !__DEBUG__
 
 #include <memory_resource>
 #include <string>
@@ -36,9 +39,13 @@ private:
 		explicit SceneMemory(const std::string& name = "Scene");
 		[[nodiscard]] std::pmr::memory_resource* get();
 	private:
-		DebugMemoryResource debug0;
-		std::pmr::unsynchronized_pool_resource pool;
-		DebugMemoryResource debug1;
+#ifdef __DEBUG__
+		DebugMemoryResource mem2;
+		std::pmr::unsynchronized_pool_resource mem1;
+		DebugMemoryResource mem0;
+#else
+		std::pmr::unsynchronized_pool_resource mem0;
+#endif // !__DEBUG__
 	};
 
 	SceneMemory m_sceneMemory;

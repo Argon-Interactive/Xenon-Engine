@@ -54,34 +54,7 @@ void Application::update([[maybe_unused]] double deltaT) {
 }
 
 void Application::fixedUpdate() {
-	if(Input::getKeyPress(Input::Np1))
-		AppData::getSceneManager().loadScene(1);
-	if(Input::getKeyPress(Input::Np2))
-		AppData::getSceneManager().unloadScene(1);
-	if(Input::getKeyPress(Input::Np3))
-		AppData::getSceneManager().loadSceneAsync(1);
-	if(Input::getKeyPress(Input::Np4))
-		AppData::getSceneManager().unloadSceneAsync(1);
-	if(Input::getKeyPress(Input::Np5))
-		AppData::getSceneManager().switchScene(1);
-	if(Input::getKeyPress(Input::Np6))
-		AppData::getSceneManager().switchSceneImmediate(2);
-	if(Input::getKeyPress(Input::Np7))
-		AppData::getSceneManager().switchSceneAsync(3);
-	if(Input::getKeyPress(Input::Np8)) {
-		AppData::getSceneManager().loadSceneAsync(10);
-		AppData::getSceneManager().loadSceneAsync(11);
-		AppData::getSceneManager().loadSceneAsync(12);
-		AppData::getSceneManager().loadSceneAsync(13);
-		AppData::getSceneManager().loadSceneAsync(14);
-		AppData::getSceneManager().loadSceneAsync(15);
-	}
-	if(Input::getKeyPress(Input::Np9))
-		AppData::getSceneManager().switchSceneAsync(0);
-	if(Input::getKeyPress(Input::Np0))
-		AppData::getSceneManager().purgeAsync();
-	if(Input::getKeyPress(Input::Enter))
-		AppData::getSceneManager().debug();
+
 }
 
 void Application::handleEvents() {
