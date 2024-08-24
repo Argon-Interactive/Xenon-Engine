@@ -48,7 +48,7 @@ Scene::SceneMemory::SceneMemory(const std::string& name)
 	  mem0(name, &mem1) {}
 #else 
 Scene::SceneMemory::SceneMemory(const std::string& name)
-	: mem0({0, 4096}, std::pmr::get_default_resource()) {}
+	: mem0(std::pmr::get_default_resource()) {}
 #endif //!__DEBUG__
 
 std::pmr::memory_resource* Scene::SceneMemory::get() {
