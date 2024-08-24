@@ -26,14 +26,14 @@ void Core::AssetsManager::terminate() {
 
 void Core::AssetsManager::ensureLoaded(const assetID* assetIDs, uint64_t assetsAmmount) {
 	for(uint64_t i = 0; i < assetsAmmount; ++i) {
-		assetID id = assetIDs[i];
+		const assetID id = assetIDs[i];
 		m_assetsMetadata[id].load(m_assetHandles[id], p_decryption);
 	}
 }
 
 void Core::AssetsManager::freeAssets(const assetID* assetIDs, uint64_t assetsAmmount) {
 	for(uint64_t i = 0; i < assetsAmmount; ++i) {
-		assetID id = assetIDs[i];
+		const assetID id = assetIDs[i];
 		m_assetsMetadata[id].unload();
 	}
 }
@@ -43,7 +43,7 @@ std::ifstream* Core::AssetsManager::getFile() { return &m_file; }
 uint8_t* Core::AssetsManager::getAssetData(assetID id) const { return m_assetsMetadata[id].getData(); }
 uint64_t Core::AssetsManager::getAssetSize(assetID id) const { return m_assetsMetadata[id].getSize(); }
 
-bool Core::AssetsManager::p_decryption(uint8_t* data [[maybe_unused]], uint64_t size [[maybe_unused]]) {
+bool Core::AssetsManager::p_decryption([[maybe_unused]] uint8_t* data, [[maybe_unused]] uint64_t size) {
 	return true;
 }
 

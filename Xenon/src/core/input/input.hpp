@@ -173,8 +173,8 @@ public:
 
 private:
 	Input();
-	// 0th bit - press, 1st bit - relese, 2nd bit - hold, 3rd bit - resetPress, 4th bit - resetRelese 
-	inline static std::array<uint8_t, 125> s_keyStateMap; //changeing the size of whis array, change it also in cpp
+	// 0th bit - press, 1st bit - release, 2nd bit - hold, 3rd bit - resetPress, 4th bit - resetRelease 
+	inline static std::array<uint8_t, 125> s_keyStateMap; //changing the size of this array, change it also in cpp
 	inline static void* s_window = nullptr;
 	inline static float s_xMousePosition = 0.0f;
 	inline static float s_yMousePosition = 0.0f;
