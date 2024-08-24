@@ -4,6 +4,7 @@
 #include "scene.hpp"
 
 #include <cstdint>
+#include <list>
 #include <memory>
 #include <vector>
 #include <mutex>
@@ -21,6 +22,7 @@ public:
 	
 	Scene* createScene();
 	void purge();
+	void purgeAsync();
 	[[nodiscard]] Scene* getScene(uint64_t index) const;
 	[[nodiscard]] Scene* getSceneByBuildIndex(uint64_t buildIndex) const;
 	[[nodiscard]] uint64_t getSceneCount() const;
@@ -35,6 +37,10 @@ public:
 	void unloadSceneAsync(Scene* scene);
 	void unloadSceneAsync(uint64_t buildIndex);
 
+	void switchScene(uint64_t buildIndex);
+	void switchSceneImmediate(uint64_t buildIndex);
+	void switchSceneAsync(uint64_t buildIndex);
+
 	void setActiveSceneAt(uint64_t index);
 	void setActiveScene(Scene* scene);
 	void setActiveScene(uint64_t buildIndex);
@@ -44,13 +50,18 @@ public:
 	void moveEntity(Entity entity, uint64_t targetSceneIndex);
 	void moveEntity(Entity entity, Scene* targetScene);
 
+	void debug() const;
+
 private:
 	SceneManager();
 
+	constexpr inline static uint64_t s_invalid = std::numeric_limits<uint64_t>::max();
+
 	std::vector<std::unique_ptr<Scene>> m_scenes;
 	uint64_t m_activeSceneIndex = 0;
+	bool m_closing = false;
 
-	std::vector<std::future<void>> m_futures;
+	std::list<std::future<void>> m_futures;
 	std::mutex m_mutex;
 	std::mutex m_futuresMutex;
 
@@ -59,6 +70,8 @@ private:
 	std::unique_ptr<Scene> p_popScene(uint64_t index);
 	uint64_t p_getSceneIndex(uint64_t buildIndex);
 	uint64_t p_getSceneIndex(Scene* scene);
+	void p_syncFutures();
+	void p_cleanupFutures();
 
 	friend class AppData;
 };
