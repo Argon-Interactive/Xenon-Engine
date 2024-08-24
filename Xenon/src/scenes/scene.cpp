@@ -89,23 +89,23 @@ Scene::Scene(uint64_t buildIndex)
 	}
 	m_components.unload();
 
-	XN_LOG_DEB("Scene: component cluster test completed");
+	XN_LOG_DEB("Scene {0}: component cluster test completed", p_debugIndex());
 };
 
 Scene::~Scene() {
-	XN_LOG_DEB("Scene: Scene destroyed");
+	XN_LOG_DEB("Scene {0}: Scene destroyed", p_debugIndex());
 }
 
 void Scene::unload() {
-	XN_LOG_DEB("Scene: Unloading scene {0}", m_buildIndex);
+	XN_LOG_DEB("Scene {0}: Unloading scene", p_debugIndex());
 }
 
-uint64_t Scene::createEntity() {
-	return 0;
+Entity Scene::createEntity() {
+	return s_entityID--;
 }
 
 void Scene::deleteEntity(uint64_t uuid) {
-	XN_LOG_DEB("Scene: Deleting entity {0} from scene {0}", uuid, m_buildIndex);
+	XN_LOG_DEB("Scene {0}: Deleting entity {0}", p_debugIndex(), uuid);
 }
 
 void Scene::setBuildIndex(uint64_t index) {

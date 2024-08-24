@@ -33,6 +33,8 @@ public:
 	[[nodiscard]] bool isRuntimeCreated() const;
 
 private:
+	inline static Entity s_entityID = std::numeric_limits<uint64_t>::max();
+
 	class SceneMemory {
 	public:
 		explicit SceneMemory(const std::string& name = "Scene");
@@ -47,11 +49,13 @@ private:
 	ComponentCluster m_components;
 
 	std::vector<uint64_t> m_entities;   // men titties
-
 	
 	bool m_runtimeCreated;
 	uint64_t m_buildIndex;
 
+	inline std::string p_debugIndex() const {
+		return m_runtimeCreated ? "" : std::to_string(m_buildIndex);
+	}
 
 	friend class SceneManager;
 };
