@@ -60,4 +60,4 @@ private:
 
 }
 
-#endif // _XENON_SCENES_SCENE_
+#endif // !_XENON_SCENES_SCENE_

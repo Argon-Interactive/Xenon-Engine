@@ -78,4 +78,4 @@ private:
 
 }
 
-#endif // _XENON_SCENES_SCENEMANAGER_
+#endif // !_XENON_SCENES_SCENEMANAGER_
