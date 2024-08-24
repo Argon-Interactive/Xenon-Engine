@@ -6,6 +6,8 @@
 #include <cstdint>
 #include <memory>
 #include <vector>
+#include <mutex>
+#include <future>
 
 namespace Core {
 
@@ -45,13 +47,16 @@ public:
 private:
 	SceneManager();
 
-	std::vector<std::unique_ptr<Scene>> m_scenesBuffer;
 	std::vector<std::unique_ptr<Scene>> m_scenes;
 	uint64_t m_activeSceneIndex = 0;
 
-	void p_moveLoaded(uint64_t index);
-	void p_moveUnloaded(uint64_t index);
+	std::vector<std::future<void>> m_futures;
+	std::mutex m_mutex;
+	std::mutex m_futuresMutex;
+
+	void p_unloadScene(uint64_t index);
 	void p_deleteScene(uint64_t index);
+	std::unique_ptr<Scene> p_popScene(uint64_t index);
 	uint64_t p_getSceneIndex(uint64_t buildIndex);
 	uint64_t p_getSceneIndex(Scene* scene);
 

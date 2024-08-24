@@ -13,8 +13,11 @@ Scene::Scene(uint64_t buildIndex)
 	: m_sceneMemory("Scene " + std::to_string(buildIndex)),
 	  m_components(m_sceneMemory.get()),
 	  m_runtimeCreated(false), m_buildIndex(buildIndex) {
-	if(buildIndex != 0)
+	XN_LOG_INF("Scene {0} : Loaded", p_debugIndex());
+	if(buildIndex != 0) {
 		XN_LOG_WAR("Scene: the scene build number is {0}", buildIndex);
+		return;
+	}
 
 	XN_LOG_DEB("Scene: Perform component cluster tests:");
 
@@ -80,15 +83,15 @@ Scene::Scene(uint64_t buildIndex)
 	}
 	m_components.unload();
 
-	XN_LOG_DEB("Scene {0}: component cluster test completed", p_debugIndex());
+	XN_LOG_INF("Scene {0}: component cluster test completed", p_debugIndex());
 };
 
 Scene::~Scene() {
-	XN_LOG_DEB("Scene {0}: Scene destroyed", p_debugIndex());
+	XN_LOG_INF("Scene {0}: Scene destroyed", p_debugIndex());
 }
 
 void Scene::unload() {
-	XN_LOG_DEB("Scene {0}: Unloading scene", p_debugIndex());
+	XN_LOG_INF("Scene {0}: Unloading scene", p_debugIndex());
 }
 
 Entity Scene::createEntity() {
@@ -96,13 +99,12 @@ Entity Scene::createEntity() {
 }
 
 void Scene::deleteEntity(uint64_t uuid) {
-	XN_LOG_DEB("Scene {0}: Deleting entity {0}", p_debugIndex(), uuid);
+	XN_LOG_INF("Scene {0}: Deleting entity {0}", p_debugIndex(), uuid);
 }
 
 uint64_t Scene::getBuildIndex() const {
 	return m_buildIndex;
 }
-
 
 
 
