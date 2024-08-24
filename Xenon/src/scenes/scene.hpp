@@ -1,13 +1,18 @@
 #ifndef _XENON_SCENES_SCENE_
 #define _XENON_SCENES_SCENE_
 
-#include <vector>
-#include <cstdint>
+#include "ECS/componentCluster.hpp"
 #include "ECS/entity.hpp"
 
-namespace Core {
+#ifdef __DEBUG__
+#include "memory/debugMemoryResource.hpp"
+#endif // !__DEBUG__
 
-// class SceneManager;
+#include <memory_resource>
+#include <string>
+#include <cstdint>
+
+namespace Core {
 
 class Scene {
 public:
@@ -24,20 +29,39 @@ public:
 	Entity createEntity();
 	void deleteEntity(Entity uuid);
 
-	void setBuildIndex(uint64_t index);
 	[[nodiscard]] uint64_t getBuildIndex() const;
-
-	[[nodiscard]] bool runtimeCreated() const;
+	[[nodiscard]] bool isRuntimeCreated() const;
 
 private:
-	std::vector<uint64_t> m_entities;   // men titties
+	class SceneMemory {
+	public:
+		explicit SceneMemory(const std::string& name = "Scene");
+		[[nodiscard]] std::pmr::memory_resource* get();
+	private:
+#ifdef __DEBUG__
+		DebugMemoryResource mem2;
+		std::pmr::unsynchronized_pool_resource mem1;
+		DebugMemoryResource mem0;
+#else
+		std::pmr::unsynchronized_pool_resource mem0;
+#endif // !__DEBUG__
+	};
+
+	SceneMemory m_sceneMemory;
+	ComponentCluster m_components;
+
+	inline static Entity s_entityID = std::numeric_limits<uint64_t>::max();
 	
 	bool m_runtimeCreated;
 	uint64_t m_buildIndex;
+
+	inline std::string p_debugIndex() const {
+		return m_runtimeCreated ? "" : std::to_string(m_buildIndex);
+	}
 
 	friend class SceneManager;
 };
 
 }
 
-#endif // _XENON_SCENES_SCENE_
+#endif // !_XENON_SCENES_SCENE_

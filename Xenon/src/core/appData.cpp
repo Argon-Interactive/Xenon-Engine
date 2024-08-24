@@ -37,7 +37,7 @@ void AppData::terminate() {
 	XN_LOG_BR();
 	XN_LOG_TRC("AppData: Game cleanup...");
 
-	s_appData->getSceneManager().purge();
+	s_appData->getSceneManager().close();
 
 	XN_LOG_TRC("AppData: Game clened up successfully");
 
