@@ -16,9 +16,6 @@ struct ComponentCluster {
 	ComponentCluster &operator=(ComponentCluster &&) = delete;
 	ComponentCluster &operator=(const ComponentCluster &) = delete;
 
-	ComponentPool<Comp> intComp{m_resource};
-	ComponentPool<float> floatComp{m_resource};
-
 	void load();
 	void unload();
 
@@ -36,6 +33,9 @@ private:
 	void p_resolveDependencies();
 	void p_performeResolvingCleaup();
 	void p_performeAdditions();
+public:
+	ComponentPool<Comp> intComp{m_resource};
+	ComponentPool<float> floatComp{m_resource};
 };
 }
 #endif // !_XENON_SRC_ECS_COMPOENNTSCLUSTER_
