@@ -1,8 +1,6 @@
 #include "scene.hpp"
 #include "devTools/logger_core.hpp"
 
-#include <thread>
-
 namespace Core {
 
 Scene::Scene()
@@ -14,12 +12,10 @@ Scene::Scene(uint64_t buildIndex)
 	: m_sceneMemory("Scene " + std::to_string(buildIndex)),
 	  m_components(m_sceneMemory.get()),
 	  m_runtimeCreated(false), m_buildIndex(buildIndex) {
-	std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	XN_LOG_TRC("Scene {0}: Loaded", p_debugIndex());
 };
 
 Scene::~Scene() {
-	std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	XN_LOG_TRC("Scene {0}: Scene destroyed", p_debugIndex());
 }
 
