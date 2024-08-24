@@ -45,15 +45,15 @@ public:
 	}
 private:
 	explicit ComponentPool(std::pmr::memory_resource* memRes = std::pmr::get_default_resource())
-	: m_data(memRes), m_ptrLookupTable(memRes), m_entLookupTable(memRes), m_entitiesToRemove(memRes), m_entitiesToAdd(memRes), m_movedEnts(memRes) {}
+	: m_data(memRes) {}
 
 	ChunkedArray<T> m_data;
 	//PERF: get rid of std::unordered_map, and maybe std::vector, for something more performent
-	std::pmr::unordered_map<Entity, T*> m_ptrLookupTable;
-	std::pmr::unordered_map<T*, Entity> m_entLookupTable;
-	std::pmr::vector<Entity> m_entitiesToRemove;
-	std::pmr::vector<std::pair<Entity, T>> m_entitiesToAdd;
-	std::pmr::vector<std::pair<Entity, T*>> m_movedEnts;
+	std::unordered_map<Entity, T*> m_ptrLookupTable;
+	std::unordered_map<T*, Entity> m_entLookupTable;
+	std::vector<Entity> m_entitiesToRemove;
+	std::vector<std::pair<Entity, T>> m_entitiesToAdd;
+	std::vector<std::pair<Entity, T*>> m_movedEnts;
 	
 	void p_resolveRemovals() {
 		m_movedEnts.reserve(m_entitiesToRemove.size());
@@ -74,7 +74,7 @@ private:
 		m_entitiesToRemove.clear();
 	}
 	template<typename DT>
-	void p_resolveDependencies(const std::pmr::vector<std::pair<Entity, DT*>>& movedEnts, std::function<void(T&, DT*)> resolveFunc ) {
+	void p_resolveDependencies(const std::vector<std::pair<Entity, DT*>>& movedEnts, std::function<void(T&, DT*)> resolveFunc ) {
 		for(auto pair : movedEnts) {
 			resolveFunc(getComponent(pair.first), pair.second);
 		}

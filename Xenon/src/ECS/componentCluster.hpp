@@ -4,11 +4,12 @@
 //TEST: temp
 #include "componentPool.hpp"
 #include "ECS/componentImplementations/TestComp.hpp"
+#include "chunkedPMR.hpp"
 
 
 namespace Core {
 struct ComponentCluster {
-	explicit ComponentCluster(std::pmr::memory_resource* memres = std::pmr::get_default_resource());
+	ComponentCluster() = default;
 	~ComponentCluster();
 
 	ComponentCluster(ComponentCluster &&) = delete;
@@ -16,8 +17,8 @@ struct ComponentCluster {
 	ComponentCluster &operator=(ComponentCluster &&) = delete;
 	ComponentCluster &operator=(const ComponentCluster &) = delete;
 
-	ComponentPool<Comp> intComp;
-	ComponentPool<float> floatComp;
+	ComponentPool<Comp> intComp{&m_resource};
+	ComponentPool<float> floatComp{&m_resource};
 
 	void load();
 	void unload();
@@ -30,6 +31,7 @@ struct ComponentCluster {
 	}
 private:
 	bool m_isLoaded = false;
+	Core::ChunkedPMR m_resource;
 
 	void p_performeRemovals();
 	void p_resolveDependencies();

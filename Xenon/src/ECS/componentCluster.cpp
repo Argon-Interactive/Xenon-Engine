@@ -3,9 +3,6 @@
 
 //TEST:
 
-Core::ComponentCluster::ComponentCluster(std::pmr::memory_resource* memres)
-: intComp(memres), floatComp(memres) {}
-
 Core::ComponentCluster::~ComponentCluster() { if(m_isLoaded) unload(); }
 
 void Core::ComponentCluster::load() { 

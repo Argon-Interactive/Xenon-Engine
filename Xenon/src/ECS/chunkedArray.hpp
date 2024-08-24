@@ -1,11 +1,11 @@
 #ifndef _XENON_SRC_ECS_CHUNKEDARRAY_
 #define _XENON_SRC_ECS_CHUNKEDARRAY_
 
+#include "devTools/logger_core.hpp"
+
 #include <memory_resource>
 #include <cmath>
 #include <vector>
-
-#include "devTools/logger_core.hpp"
 
 namespace Core {
 template<typename T>
@@ -39,7 +39,7 @@ public:
 	///////////////////////////////////////
 	/// Modifiers 
 	///////////////////////////////////////
-	///
+	
 	template<typename ...Args>
 	T* emplace_back(Args&&... args) {
 		T* ptr = &m_dataPtrs[m_indexMajor][m_indexMinor];
@@ -99,7 +99,7 @@ private:
 	uint16_t m_indexMinor{};
 	std::pmr::memory_resource* m_resource;
 	size_t m_indexMajor{};
-	std::pmr::vector<T*> m_dataPtrs{m_resource};
+	std::vector<T*> m_dataPtrs;
 
 	void resize() {
 		auto* newData = static_cast<T*>(m_resource->allocate(ALLOCATION_SIZE));
