@@ -4,7 +4,7 @@
 
 Core::ChunkedPMR::ChunkedPMR(std::pmr::memory_resource* upstream) : m_upstream(upstream) {}
 
-Core::ChunkedPMR::~ChunkedPMR() { for(void* ptr : m_dealocationList) ::operator delete(ptr); }
+Core::ChunkedPMR::~ChunkedPMR() { for(void* ptr : m_dealocationList) m_upstream->deallocate(ptr, s_CHUNK_SIZE, s_CHUNK_SIZE); }
 
 void* Core::ChunkedPMR::do_allocate(std::size_t bytes, std::size_t alignment) { 
 	assert(bytes % s_CHUNK_SIZE == 0 && "Memory allocation in ChunkedPMR must be a multiple of 4096 bytes");
