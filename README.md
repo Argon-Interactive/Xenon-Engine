@@ -1,13 +1,11 @@
-# Xenon Engine (0.1.0)
+# Xenon Engine (0.1.9)
 
 A Game Engine 
 
-
-
 ## Supported platforms
 
-- Windows
-- Linux
+- [Windows](ReadmeAssets/README_BuildW.md)
+- [Linux](ReadmeAssets/README_BuildL.md)
 
 ## Features
 
@@ -20,11 +18,6 @@ A Game Engine
 - [GLFW](https://github.com/glfw/glfw)
 - [STB](https://github.com/nothings/stb)
 - [GLM](https://github.com/g-truc/glm)
-
-## How to build the project
-
-- [Windows](ReadmeAssets/README_BuildW.md)
-- [Linux](ReadmeAssets/README_BuildL.md)
 
 ## Authors
 
