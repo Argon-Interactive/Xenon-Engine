@@ -62,8 +62,8 @@ private:
 	bool m_closing = false;
 
 	std::list<std::future<void>> m_futures;
-	std::mutex m_mutex;
-	std::mutex m_futuresMutex;
+	mutable std::mutex m_mutex;
+	mutable std::mutex m_futuresMutex;
 
 	void p_unloadScene(uint64_t index);
 	void p_deleteScene(uint64_t index);
@@ -72,6 +72,7 @@ private:
 	uint64_t p_getSceneIndex(Scene* scene);
 	void p_syncFutures();
 	void p_cleanupFutures();
+	void close();
 
 	friend class AppData;
 };
