@@ -1,8 +1,16 @@
 #include "assetsManager.hpp"
 #include "devTools/logger_core.hpp"
-#include <cstring>
 
-void Core::AssetsManager::init() {
+#ifdef _WIN32
+	#include<windows.h>
+#elif __linux__
+	
+#else
+	#error Only Linux and Windows are supported.
+#endif
+
+
+void Core::ResourceManager::init() {
 	m_file.open("assets.ap", std::ios::binary);
 	if(!m_file.is_open()) {XN_LOG_ERR("Failed to open AssetPack"); return;}
 	struct AssetPackMetadata {
@@ -20,32 +28,32 @@ void Core::AssetsManager::init() {
 	m_file.read(reinterpret_cast<char*>(m_assetHandles.get()), static_cast<std::streamsize>(apm.assetsAmmount * sizeof(AssetHandle)));
 }
 
-void Core::AssetsManager::terminate() {
+void Core::ResourceManager::terminate() {
 	m_file.close();
 }
 
-void Core::AssetsManager::ensureLoaded(const assetID* assetIDs, uint64_t assetsAmmount) {
+void Core::ResourceManager::ensureLoaded(const assetID* assetIDs, uint64_t assetsAmmount) {
 	for(uint64_t i = 0; i < assetsAmmount; ++i) {
 		const assetID id = assetIDs[i];
 		m_assetsMetadata[id].load(m_assetHandles[id], p_decryption);
 	}
 }
 
-void Core::AssetsManager::freeAssets(const assetID* assetIDs, uint64_t assetsAmmount) {
+void Core::ResourceManager::freeAssets(const assetID* assetIDs, uint64_t assetsAmmount) {
 	for(uint64_t i = 0; i < assetsAmmount; ++i) {
 		const assetID id = assetIDs[i];
 		m_assetsMetadata[id].unload();
 	}
 }
 
-std::ifstream* Core::AssetsManager::getFile() { return &m_file; }
+std::ifstream* Core::ResourceManager::getFile() { return &m_file; }
 
-uint8_t* Core::AssetsManager::getAssetData(assetID id) const { return m_assetsMetadata[id].getData(); }
-uint64_t Core::AssetsManager::getAssetSize(assetID id) const { return m_assetsMetadata[id].getSize(); }
+uint8_t* Core::ResourceManager::getAssetData(assetID id) const { return m_assetsMetadata[id].getData(); }
+uint64_t Core::ResourceManager::getAssetSize(assetID id) const { return m_assetsMetadata[id].getSize(); }
 
-bool Core::AssetsManager::p_decryption([[maybe_unused]] uint8_t* data, [[maybe_unused]] uint64_t size) {
+bool Core::ResourceManager::p_decryption([[maybe_unused]] uint8_t* data, [[maybe_unused]] uint64_t size) {
 	return true;
 }
 
-bool Core::AssetsManager::p_versionCheck() { return true; }
+bool Core::ResourceManager::p_versionCheck() { return true; }
 

@@ -1,5 +1,5 @@
-#ifndef _XENON_CORE_ASSETS_ASSET_
-#define _XENON_CORE_ASSETS_ASSET_
+#ifndef _XENON_CORE_RESOURCESMANAGMENT_ASSET_
+#define _XENON_CORE_RESOURCESMANAGMENT_ASSET_
 
 #include <cstdint>
 #include <functional>
@@ -48,4 +48,4 @@ private:
 };
 }
 
-#endif // !_XENON_CORE_ASSETS_ASSET_
+#endif // !_XENON_CORE_RESOURCESMANAGMENT_ASSET_

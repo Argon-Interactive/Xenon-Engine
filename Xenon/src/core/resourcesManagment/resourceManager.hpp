@@ -1,5 +1,5 @@
-#ifndef _XENON_CORE_ASSETS_ASSETSMANAGER_
-#define _XENON_CORE_ASSETS_ASSETSMANAGER_
+#ifndef _XENON_CORE_RESOURCESMANAGMENT_RESOURCEMANAGER_
+#define _XENON_CORE_RESOURCESMANAGMENT_RESOURCEMANAGER_
 
 #include "asset.hpp"
 #include <fstream>
@@ -7,14 +7,14 @@
 namespace Core {
 class Scene;
 
-class AssetsManager {
+class ResourceManager {
 public:
-	AssetsManager() = default;
-	~AssetsManager() = default;
-	AssetsManager(const AssetsManager &) = delete;
-	AssetsManager(AssetsManager &&)  noexcept = delete;
-  	AssetsManager &operator=(const AssetsManager &) = delete;
-  	AssetsManager &operator=(AssetsManager &&)  noexcept = delete;
+	ResourceManager() = default;
+	~ResourceManager() = default;
+	ResourceManager(const ResourceManager &) = delete;
+	ResourceManager(ResourceManager &&)  noexcept = delete;
+	ResourceManager &operator=(const ResourceManager &) = delete;
+	ResourceManager &operator=(ResourceManager &&)  noexcept = delete;
 
 	void init();
 	void terminate();
@@ -29,11 +29,11 @@ public:
 private:
 	std::unique_ptr<AssetHandle[]> m_assetHandles;
 	std::unique_ptr<AssetMetadata[]> m_assetsMetadata;
-	std::ifstream m_file;
+	uint8_t* m_memoryMap;
 
 	bool static p_versionCheck();
 	bool static p_decryption(uint8_t* data, uint64_t dataSize);
 };
 }
 
-#endif // !_XENON_CORE_ASSETS_ASSETSMANAGER_
+#endif // !_XENON_CORE_RESOURCESMANAGMENT_RESOURCEMANAGER_
