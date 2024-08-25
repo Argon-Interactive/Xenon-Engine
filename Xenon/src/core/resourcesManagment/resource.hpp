@@ -2,6 +2,8 @@
 #define _XNENON_CORE_RESOURCESMANAGMENT_RESOURCE_
 
 #include <cstdint>
+#include <future>
+#include <ios>
 #include <vector>
 #include <memory_resource>
 #include <functional>
@@ -26,21 +28,21 @@ namespace Core {
 		void setCompressed() { p_setBit(2); p_resetBit(1); }
 		void resetCompressed() { p_resetBit(2); if (!isEncrypted()) p_setBit(1); }
 
-		[[nodiscard]] bool isEncrypted() { return p_getBit(4); }
-		void setEncrypted() { p_setBit(4); p_resetBit(1); }
-		void resetEncrypted() { p_resetBit(4); if (!isCompressed()) p_setBit(1); }
+		[[nodiscard]] bool isEncrypted() { return p_getBit(3); }
+		void setEncrypted() { p_setBit(3); p_resetBit(1); }
+		void resetEncrypted() { p_resetBit(3); if (!isCompressed()) p_setBit(1); }
 
 	private:
 		/* flag bits
-		* 1st - valid			mask 1
-		* 2nd - compressed		mask 2
-		* 3rd - encrypted		mask 4
+		* 1st - valid
+		* 2nd - compressed
+		* 3rd - encrypted
 		*/
 		uint32_t m_flag;
 
-		[[nodiscard]] bool p_getBit(uint8_t bitmask) { return static_cast<bool>(m_flag & bitmask); }
-		void p_setBit(uint8_t bitmask) { m_flag | bitmask; }
-		void p_resetBit(uint8_t bitmask) { m_flag & (~bitmask); }
+		[[nodiscard]] bool p_getBit(uint8_t bitmask) const { return static_cast<bool>(m_flag & (1u << bitmask)); }
+		void p_setBit(uint8_t bitmask) { m_flag |= (1u << bitmask); }
+		void p_resetBit(uint8_t bitmask) { m_flag &= ~(1u << bitmask); }
 	};
 
 	struct ResourceHandle {
@@ -53,7 +55,7 @@ namespace Core {
 	class ResourceMetadata {
 		static constexpr const char* s_FILE_NAME = "gamedata.rp";
 	public:
-		ResourceMetadata(std::pmr::memory_resource* memRes) : m_data(memRes) {}
+		explicit ResourceMetadata(std::pmr::memory_resource* memRes) : m_data(memRes) {}
 		~ResourceMetadata();
 		ResourceMetadata(ResourceMetadata&&) = delete;
 		ResourceMetadata(const ResourceMetadata&) = delete;
@@ -70,14 +72,15 @@ namespace Core {
 
 	private:
 		static std::list<std::future<void>> sm_futures;
+		static std::mutex sm_futuresMutex;
 
 		ResourceType m_type{};
-		ResourceFlag m_flag;
+		ResourceFlag m_flag{};
 		uint64_t m_referenceCounter{};
 		std::mutex m_mutex;
 		std::pmr::vector<uint8_t> m_data;
 
-		bool p_asyncLoad(const Core::ResourceHandle& handle, std::function<bool(std::pmr::vector<uint8_t>)> decryptionFunc);
+		void p_asyncLoad(const Core::ResourceHandle& handle, std::function<bool(std::pmr::vector<uint8_t>)> decryptionFunc);
 		void p_asyncUnload();
 	};
 }

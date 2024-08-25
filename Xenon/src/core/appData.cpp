@@ -61,6 +61,6 @@ AppData::AppData([[maybe_unused]]ConstructorToken t, const Xenon::AppConfig& app
 Window& AppData::getWindow() { return s_appData->m_window; }
 SceneManager& AppData::getSceneManager() { return s_appData->m_sceneManager; }
 ComponentManager& AppData::getComponentManager() { return s_appData->m_componentManager; }
-AssetsManager& AppData::getAssetManager() { return s_appData->m_assetManager; }
+ResourceManager& AppData::getAssetManager() { return s_appData->m_resourceManager; }
 
 }

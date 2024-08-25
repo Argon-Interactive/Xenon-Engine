@@ -3,12 +3,12 @@
 #include "devTools/logger_core.hpp"
 
 #include <fstream>
-#include <future>
 
 std::list<std::future<void>> Core::ResourceMetadata::sm_futures;
+std::mutex Core::ResourceMetadata::sm_futuresMutex;
 
 Core::ResourceMetadata::~ResourceMetadata() {
-
+	p_asyncUnload();
 }
 void Core::ResourceMetadata::load(const Core::ResourceHandle& handle, std::function<bool(std::pmr::vector<uint8_t>)> decryptionFunc) {
 	if (m_referenceCounter++ == 0) p_asyncLoad(handle, decryptionFunc);
@@ -20,7 +20,7 @@ void Core::ResourceMetadata::unload() {
 
 uint8_t* Core::ResourceMetadata::getRawData() {
 	const std::lock_guard<std::mutex> lock(m_mutex);
-	return m_data().data();
+	return m_data.data();
 }
 
 size_t Core::ResourceMetadata::getSize() {
@@ -34,7 +34,7 @@ void Core::ResourceMetadata::sync() {
 	}
 }
 
-bool Core::ResourceMetadata::p_asyncLoad(const Core::ResourceHandle& handle, std::function<bool(std::pmr::vector<uint8_t>)> decryptionFunc) {
+void Core::ResourceMetadata::p_asyncLoad(const Core::ResourceHandle& handle, std::function<bool(std::pmr::vector<uint8_t>)> decryptionFunc) {
 	{
 		const std::lock_guard<std::mutex> lock(m_mutex);
 		m_type = handle.type;
@@ -55,11 +55,12 @@ bool Core::ResourceMetadata::p_asyncLoad(const Core::ResourceHandle& handle, std
 			m_flag.resetEncrypted();
 		}
 	});
-	const std::lock_guard<std::mutex> lock(m_mutex);
+	const std::lock_guard<std::mutex> lock(sm_futuresMutex);
 	sm_futures.push_back(std::move(future));
 }
 
 void Core::ResourceMetadata::p_asyncUnload() {
+	//I know this isn't async but i don't think it needs to be (for now at least)
 	const std::lock_guard<std::mutex> lock(m_mutex);
 	m_data.clear();
 	m_data.shrink_to_fit();
