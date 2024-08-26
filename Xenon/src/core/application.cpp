@@ -10,6 +10,15 @@ Application::Application(const Xenon::AppConfig& config) {
 	XN_LOG_TO_FILE("Xenon-log");
 	Core::AppData::init([this](auto && a) { pushEvent(std::forward<decltype(a)>(a)); }, config); // what the fuck?
 	XN_LOG_TRC("Application: created");
+	//TEST: we need to write testing infrastructure
+	AppData::getResourceManager().loadAsync({ 0, 1, 2 });
+	std::string str;
+	auto res0 = AppData::getResourceManager().getResource(0);
+	auto res1 = AppData::getResourceManager().getResource(1);
+	auto res2 = AppData::getResourceManager().getResource(2);
+	XN_LOG_DEB(res0.data);
+	XN_LOG_DEB(*(reinterpret_cast<int*>(res1.data)));
+	XN_LOG_DEB(*(reinterpret_cast<float*>(res2.data)));
 }
 
 Application::~Application() {

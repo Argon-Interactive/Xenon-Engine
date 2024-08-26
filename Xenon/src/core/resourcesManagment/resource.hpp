@@ -35,9 +35,9 @@ struct ResourceFlag {
 
 private:
 	/* flag bits
-	* 1st - valid
-	* 2nd - compressed
-	* 3rd - encrypted
+	* 0 - valid
+	* 1 - compressed
+	* 2 - encrypted
 	*/
 	uint32_t m_flag;
 	std::mutex m_mutex;
@@ -68,7 +68,7 @@ public:
 
 	[[nodiscard]] uint8_t* getRawData();
 	[[nodiscard]] size_t getSize();
-	[[nodiscard]] ResourceFlag& getFlag();
+	[[nodiscard]] ResourceFlag* getFlag();
 
 private:
 	ResourceType m_type{};

@@ -2,10 +2,12 @@
 #include "devTools/logger_core.hpp"
 
 #include <fstream>
+#include <cassert>
 
-Core::ResourceManager::ResourceManager(std::filesystem::path path) : m_rpPath(std::move(path)) {
-	std::ifstream file(path, std::ios::binary);
-	if(!file.is_open()) {XN_LOG_ERR("{q} cannot be opened.", path.string()); return; }
+Core::ResourceManager::ResourceManager(std::filesystem::path path) : m_rpPath(path) {
+	std::ifstream file(m_rpPath, std::ios::binary);
+	//TODO: This should be an elegant exception and not "this"
+	if(!file.is_open()) {XN_LOG_ERR("{q} cannot be opened.", m_rpPath.string()); exit(1); }
 	struct ResourcePackHeader {
 		char header[4];
 		int64_t version;
@@ -13,18 +15,23 @@ Core::ResourceManager::ResourceManager(std::filesystem::path path) : m_rpPath(st
 	};
 	ResourcePackHeader rph{};
 	file.read(reinterpret_cast<char*>(&rph), sizeof(ResourcePackHeader));
-	if(rph.header[0] != 'X' || rph.header[1] != 'e' || rph.header[2] != 'A' || rph.header[3] != 'P') {XN_LOG_ERR("The Resource Pack {q} is not valid", path.string()); return;}
-	if(!p_versionCheck(rph.version)) {XN_LOG_ERR("The Resource Packs {q} version is no longer supported", path.string()); return;}
+	if(rph.header[0] != 'X' || rph.header[1] != 'e' || rph.header[2] != 'R' || rph.header[3] != 'P') {XN_LOG_ERR("The Resource Pack {q} is not valid", m_rpPath.string()); exit(1);}
+	if(!p_versionCheck(rph.version)) {XN_LOG_ERR("The Resource Packs {q} version is no longer supported", m_rpPath.string()); exit(1);}
 	m_handles.resize(static_cast<size_t>(rph.resourcesAmount));
-	m_metadatas = std::vector<Core::ResourceMetadata>(static_cast<size_t>(rph.resourcesAmount), ResourceMetadata(m_memoryResource));
+	m_rawData = operator new[](static_cast<size_t>(rph.resourcesAmount) * sizeof(ResourceMetadata));
+	m_metadatas = static_cast<Core::ResourceMetadata*>(m_rawData);
+	for (uint64_t i = 0; i < rph.resourcesAmount; ++i) {
+		new (&m_metadatas[i]) ResourceMetadata(m_memoryResource);
+	}
 	file.read(reinterpret_cast<char*>(m_handles.data()), static_cast<std::streamsize>(rph.resourcesAmount * sizeof(ResourceHandle)));
 	file.close();
 }
 
 Core::ResourceManager::~ResourceManager() {
 	sync();
+	delete[] m_rawData;
 }
-
+//TODO: This should make sure to use maximum of 256 threads at one time
 void Core::ResourceManager::load(const ResourceID* IDs, size_t amount) {
 	std::list<std::future<void>> list;
 	for(size_t i = 0; i < amount; ++i) { 
@@ -101,8 +108,9 @@ void Core::ResourceManager::sync() {
 }
 
 Core::ResourceManager::Resource Core::ResourceManager::getResource(ResourceID ID) {
+	//TODO: This should wait untill this is loaded.
 	ResourceMetadata& metadata = m_metadatas[ID];
-	if (metadata.getFlag().isValid()) {
+	if (metadata.getFlag()->isValid()) {
 		return { metadata.getRawData(), metadata.getSize(), true };
 	}
 	return { nullptr, 0, false };
