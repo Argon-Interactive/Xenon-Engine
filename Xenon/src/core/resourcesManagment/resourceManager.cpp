@@ -2,14 +2,6 @@
 #include "devTools/logger_core.hpp"
 
 
-void Core::ResourceManager::init() {
-	//TODO: 
-}
-
-void Core::ResourceManager::terminate() {
-	//TODO: 
-}
-
 void Core::ResourceManager::ensureLoaded(const assetID* assetIDs, uint64_t assetsAmmount) {
 	//TODO: 
 }
