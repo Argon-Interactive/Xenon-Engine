@@ -48,6 +48,8 @@ private:
 	std::list<std::future<void>> m_futureList;
 	const std::filesystem::path m_rpPath;
 	std::mutex m_futuresMutex;
+	//temp
+	std::pmr::memory_resource* m_memoryResource = std::pmr::get_default_resource();
 
 	bool static p_versionCheck(int64_t version);
 	bool static p_decryption(std::pmr::vector<uint8_t>& data);
