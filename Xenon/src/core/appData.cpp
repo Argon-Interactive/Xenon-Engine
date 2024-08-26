@@ -54,7 +54,7 @@ void AppData::terminate() {
 }
 
 AppData::AppData([[maybe_unused]]ConstructorToken t, const Xenon::AppConfig& appConfig)
-	:m_window(appConfig.defaultWindowWidth, appConfig.defaultWindowHeight, appConfig.defaultWindowName) {
+	:m_window(appConfig.defaultWindowWidth, appConfig.defaultWindowHeight, appConfig.defaultWindowName), m_resourceManager("gameadata.rp") {
 	s_exists = true;
 }
 

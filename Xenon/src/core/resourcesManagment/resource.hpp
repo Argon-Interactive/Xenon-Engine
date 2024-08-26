@@ -15,30 +15,23 @@ namespace Core {
 
 using ResourceID = uint64_t;
 
-enum ResourceType : uint32_t {
+enum class ResourceType : uint32_t {
 	Scene, 
-};
-
-struct Resource {
-	Resource(uint8_t* d, size_t s) : data(d), size(s) {}
-
-	uint8_t* data;
-	size_t size;
 };
 
 struct ResourceFlag {
 
-	void setFlag(uint32_t flag) { m_flag = flag; }
+	void inline setFlag(uint32_t flag) { m_flag = flag; }
 
-	[[nodiscard]] bool isValid() { return p_getBit(1); }
+	[[nodiscard]] bool isValid();
 
-	[[nodiscard]] bool isCompressed() { return p_getBit(2); }
-	void setCompressed() { p_setBit(2); p_resetBit(1); }
-	void resetCompressed() { p_resetBit(2); if (!isEncrypted()) p_setBit(1); }
+	[[nodiscard]] bool isCompressed();
+	void setCompressed();
+	void resetCompressed();
 
-	[[nodiscard]] bool isEncrypted() { return p_getBit(3); }
-	void setEncrypted() { p_setBit(3); p_resetBit(1); }
-	void resetEncrypted() { p_resetBit(3); if (!isCompressed()) p_setBit(1); }
+	[[nodiscard]] bool isEncrypted();
+	void setEncrypted();
+	void resetEncrypted();
 
 private:
 	/* flag bits
@@ -47,6 +40,7 @@ private:
 	* 3rd - encrypted
 	*/
 	uint32_t m_flag;
+	std::mutex m_mutex;
 
 	[[nodiscard]] bool p_getBit(uint8_t bitmask) const { return static_cast<bool>(m_flag & (1u << bitmask)); }
 	void p_setBit(uint8_t bitmask) { m_flag |= (1u << bitmask); }
@@ -61,7 +55,6 @@ struct ResourceHandle {
 };
 
 class ResourceMetadata {
-	static constexpr const char* s_FILE_NAME = "gamedata.rp";
 public:
 	explicit ResourceMetadata(std::pmr::memory_resource* memRes) : m_data(memRes) {}
 	~ResourceMetadata();
@@ -70,26 +63,21 @@ public:
 	ResourceMetadata& operator=(ResourceMetadata&&) = delete;
 	ResourceMetadata& operator=(const ResourceMetadata&) = delete;
 
-	void load(const Core::ResourceHandle& handle, const std::filesystem::path& path, std::function<bool(std::pmr::vector<uint8_t>)>& decryptionFunc);
+	void load(const Core::ResourceHandle& handle, std::list<std::future<void>>& futureList, std::function<bool(std::pmr::vector<uint8_t>&)> decryptionFunc);
 	void unload();
 
 	[[nodiscard]] uint8_t* getRawData();
 	[[nodiscard]] size_t getSize();
-
-	static void sync();
+	[[nodiscard]] ResourceFlag& getFlag();
 
 private:
-	static std::list<std::future<void>> sm_futures;
-	static std::mutex sm_futuresMutex;
-
 	ResourceType m_type{};
 	ResourceFlag m_flag{};
 	uint64_t m_referenceCounter{};
 	std::mutex m_mutex;
 	std::pmr::vector<uint8_t> m_data;
 
-	void p_asyncLoad(const Core::ResourceHandle& handle, std::function<bool(std::pmr::vector<uint8_t>)> decryptionFunc);
-	void p_asyncUnload();
+	std::future<void> p_asyncLoad(const Core::ResourceHandle& handle, std::function<bool(std::pmr::vector<uint8_t>&)> decryptionFunc);
 };
 }
 
