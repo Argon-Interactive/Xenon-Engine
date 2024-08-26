@@ -26,7 +26,7 @@ public:
 	[[nodiscard]] static Core::Window& getWindow();
 	[[nodiscard]] static Core::SceneManager& getSceneManager();
 	[[nodiscard]] static Core::ComponentManager& getComponentManager();
-	[[nodiscard]] static Core::ResourceManager& getAssetManager();
+	[[nodiscard]] static Core::ResourceManager& getResourceManager();
 
 private:
 

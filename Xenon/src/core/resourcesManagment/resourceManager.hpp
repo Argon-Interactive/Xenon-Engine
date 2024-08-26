@@ -44,7 +44,8 @@ public:
 
 private:
 	std::vector<Core::ResourceHandle> m_handles;
-	std::vector<Core::ResourceMetadata> m_metadatas;
+	Core::ResourceMetadata* m_metadatas;
+	void* m_rawData; //This is very bad
 	std::list<std::future<void>> m_futureList;
 	const std::filesystem::path m_rpPath;
 	std::mutex m_futuresMutex;

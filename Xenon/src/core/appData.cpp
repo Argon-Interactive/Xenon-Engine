@@ -54,13 +54,13 @@ void AppData::terminate() {
 }
 
 AppData::AppData([[maybe_unused]]ConstructorToken t, const Xenon::AppConfig& appConfig)
-	:m_window(appConfig.defaultWindowWidth, appConfig.defaultWindowHeight, appConfig.defaultWindowName), m_resourceManager("gameadata.rp") {
+	:m_window(appConfig.defaultWindowWidth, appConfig.defaultWindowHeight, appConfig.defaultWindowName), m_resourceManager("assets/gamedata.rp") {
 	s_exists = true;
 }
 
 Window& AppData::getWindow() { return s_appData->m_window; }
 SceneManager& AppData::getSceneManager() { return s_appData->m_sceneManager; }
 ComponentManager& AppData::getComponentManager() { return s_appData->m_componentManager; }
-ResourceManager& AppData::getAssetManager() { return s_appData->m_resourceManager; }
+ResourceManager& AppData::getResourceManager() { return s_appData->m_resourceManager; }
 
 }
