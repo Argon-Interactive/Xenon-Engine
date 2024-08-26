@@ -64,7 +64,6 @@ private:
 	mutable std::mutex m_futuresMutex;
 
 	void p_unloadScene(uint64_t index);
-	void p_deleteScene(uint64_t index);
 	std::unique_ptr<Scene> p_popScene(uint64_t index);
 	uint64_t p_getSceneIndex(uint64_t buildIndex);
 	uint64_t p_getSceneIndex(Scene* scene);

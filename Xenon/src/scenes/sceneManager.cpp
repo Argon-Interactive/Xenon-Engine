@@ -20,8 +20,8 @@ Scene* SceneManager::createScene() {
 	XN_LOG_TRC("SceneManager: Creating scene");
 	const std::lock_guard<std::mutex> lock(m_mutex);
 	if(m_closing) return nullptr;
-	m_scenes.emplace_back(std::make_unique<Scene>());
-	return m_scenes.back().get();
+	m_activeSceneIndex++;
+	return m_scenes.emplace_back(std::make_unique<Scene>()).get();
 }
 
 void SceneManager::purge() {
@@ -46,18 +46,16 @@ void SceneManager::purgeAsync() {
 		toDelete = std::move(m_scenes);
 		m_activeSceneIndex = 0;
 	}
-	std::future<void> future = std::async(std::launch::async, [toDelete = std::move(toDelete)]() mutable {
+		const std::lock_guard<std::mutex> lock(m_futuresMutex);
+		if(m_closing) return;
+		m_futures.push_back(std::async(std::launch::async, [toDelete = std::move(toDelete)]() mutable {
 		XN_LOG_TRC("SceneManager: Purging scenes asynchronously");
 		while(!toDelete.empty()) {
 			toDelete.back()->unload();
 			toDelete.pop_back();
 		}
 		XN_LOG_TRC("SceneManager: Purging scenes complete");
-	});
-	{
-		const std::lock_guard<std::mutex> lock(m_futuresMutex);
-		m_futures.push_back(std::move(future));
-	}
+	}));
 }
 
 Scene* SceneManager::getScene(uint64_t index) const {
@@ -87,6 +85,7 @@ void SceneManager::loadScene(uint64_t buildIndex) {
 	XN_LOG_TRC("SceneManager: Loading scene {0}", buildIndex);
 	const std::lock_guard<std::mutex> lock(m_mutex);
 	if(m_closing) return;
+	m_activeSceneIndex++;
 	m_scenes.emplace_back(std::make_unique<Scene>(buildIndex));
 }
 
@@ -101,116 +100,75 @@ void SceneManager::unloadScene(Scene* scene) {
 	XN_LOG_TRC("SceneManager: Unloading scene {0}", scene);
 	const std::lock_guard<std::mutex> lock(m_mutex);
 	if(m_closing) return;
-	const uint64_t index = p_getSceneIndex(scene);
-	p_unloadScene(index);
+	p_unloadScene(p_getSceneIndex(scene));
 }
 
 void SceneManager::unloadScene(uint64_t buildIndex) {
 	XN_LOG_TRC("SceneManager: Unloading scene {0}", buildIndex);
 	const std::lock_guard<std::mutex> lock(m_mutex);
 	if(m_closing) return;
-	const uint64_t index = p_getSceneIndex(buildIndex);
-	p_unloadScene(index);
+	p_unloadScene(p_getSceneIndex(buildIndex));
 }
 
 void SceneManager::loadSceneAsync([[maybe_unused]] uint64_t buildIndex) {
-	{
-		const std::lock_guard<std::mutex> lock(m_mutex);
-		if(m_closing) return;
-	}
-	std::future<void> future = std::async(std::launch::async, [this, buildIndex]() {
+	const std::lock_guard<std::mutex> lock(m_futuresMutex);
+	if(m_closing) return;
+	m_futures.push_back(std::async(std::launch::async, [this, buildIndex]() {
 		XN_LOG_TRC("SceneManager: Loading scene {0} asynchronously", buildIndex);
 		auto scene = std::make_unique<Scene>(buildIndex);
-		{
-			const std::lock_guard<std::mutex> lock(m_mutex);
-			m_scenes.push_back(std::move(scene));
-		}
-	});
-	{
-		const std::lock_guard<std::mutex> lock(m_futuresMutex);
-		m_futures.push_back(std::move(future));
-		p_cleanupFutures();
-	}
+		const std::lock_guard<std::mutex> lock(m_mutex);
+		if(m_closing) return;
+		m_activeSceneIndex++;
+		m_scenes.push_back(std::move(scene));
+	}));
+	p_cleanupFutures();
 }
 
 void SceneManager::unloadSceneAsyncAt([[maybe_unused]] uint64_t index) {
-	{
-		const std::lock_guard<std::mutex> lock(m_mutex);
-		if(m_closing) return;
-	}
 	std::future<void> future = std::async(std::launch::async, [this, index]() {
 		XN_LOG_TRC("SceneManager: Unloading scene at {0} asynchronously", index);
-		std::unique_ptr<Scene> s;
-		{
-			const std::lock_guard<std::mutex> lock(m_mutex);
-			s = p_popScene(index);
-		}
+		std::unique_ptr<Scene> s = p_popScene(index);
 	});
-	{
-		const std::lock_guard<std::mutex> lock(m_futuresMutex);
-		m_futures.push_back(std::move(future));
-		p_cleanupFutures();
-	}
+	const std::lock_guard<std::mutex> lock(m_futuresMutex);
+	if(m_closing) return;
+	m_futures.push_back(std::move(future));
+	p_cleanupFutures();
 }
 
 void SceneManager::unloadSceneAsync([[maybe_unused]] Scene* scene) {
-	{
-		const std::lock_guard<std::mutex> lock(m_mutex);
-		if(m_closing) return;
-	}
 	std::future<void> future = std::async(std::launch::async, [this, scene]() {
 		XN_LOG_TRC("SceneManager: Unloading scene {0} asynchronously", scene);
-		std::unique_ptr<Scene> s;
-		{
-			const std::lock_guard<std::mutex> lock(m_mutex);
-			s = p_popScene(p_getSceneIndex(scene));
-		}
+		std::unique_ptr<Scene> s = p_popScene(p_getSceneIndex(scene));
 	});
-	{
-		const std::lock_guard<std::mutex> lock(m_futuresMutex);
-		m_futures.push_back(std::move(future));
-		p_cleanupFutures();
-	}
+	const std::lock_guard<std::mutex> lock(m_futuresMutex);
+	if(m_closing) return;
+	m_futures.push_back(std::move(future));
+	p_cleanupFutures();
 }
 
 void SceneManager::unloadSceneAsync([[maybe_unused]] uint64_t buildIndex) {
-	{
-		const std::lock_guard<std::mutex> lock(m_mutex);
-		if(m_closing) return;
-	}
 	std::future<void> future = std::async(std::launch::async, [this, buildIndex]() {
 		XN_LOG_TRC("SceneManager: Unloading scene {0} asynchronously", buildIndex);
-		std::unique_ptr<Scene> s;
-		{
-			const std::lock_guard<std::mutex> lock(m_mutex);
-			s = p_popScene(p_getSceneIndex(buildIndex));
-		}
+		std::unique_ptr<Scene> s = p_popScene(p_getSceneIndex(buildIndex));
 	});
-	{
-		const std::lock_guard<std::mutex> lock(m_futuresMutex);
-		m_futures.push_back(std::move(future));
-		p_cleanupFutures();
-	}
+	const std::lock_guard<std::mutex> lock(m_futuresMutex);
+	if(m_closing) return;
+	m_futures.push_back(std::move(future));
+	p_cleanupFutures();
 }
 
 void SceneManager::switchScene(uint64_t buildIndex) {
-	p_syncFutures();
 	purge();
 	loadScene(buildIndex);
 }
 
 void SceneManager::switchSceneImmediate(uint64_t buildIndex) {
-	p_syncFutures();
 	purgeAsync();
 	loadScene(buildIndex);
 }
 
 void SceneManager::switchSceneAsync(uint64_t buildIndex) {
 	p_syncFutures();
-	{
-		const std::lock_guard<std::mutex> lock(m_mutex);
-		if(m_closing) return;
-	}
 	std::future<void> future = std::async(std::launch::async, [this, buildIndex]() {
 		XN_LOG_TRC("SceneManager: Loading scene {0} asynchronously", buildIndex);
 		auto scene = std::make_unique<Scene>(buildIndex);
@@ -227,10 +185,9 @@ void SceneManager::switchSceneAsync(uint64_t buildIndex) {
 		}
 		XN_LOG_TRC("SceneManager: Purging scenes complete");
 	});
-	{
-		const std::lock_guard<std::mutex> lock(m_futuresMutex);
-		m_futures.push_back(std::move(future));
-	}
+	const std::lock_guard<std::mutex> lock(m_futuresMutex);
+	if(m_closing) return;
+	m_futures.push_back(std::move(future));
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -254,11 +211,13 @@ void SceneManager::setActiveScene(uint64_t buildIndex) {
 
 Scene* SceneManager::getActiveScene() const {
 	const std::lock_guard<std::mutex> lock(m_mutex);
+	if(m_closing) return nullptr;
 	return m_scenes[m_activeSceneIndex].get();
 }
 
 uint64_t SceneManager::getActiveSceneIndex() const {
 	const std::lock_guard<std::mutex> lock(m_mutex);
+	if(m_closing) return s_invalid;
 	return m_activeSceneIndex;
 }
 
@@ -281,25 +240,25 @@ void SceneManager::moveEntity([[maybe_unused]] Entity entity, [[maybe_unused]] S
 /*------------------------------------------------------------------------------------------------*/
 
 void SceneManager::p_unloadScene(uint64_t index) {
-	if(index == s_invalid) [[unlikely]] return;
-	if(index == m_scenes.size() - 1)
-		m_activeSceneIndex--;
-	getScene(index)->unload();
-	p_deleteScene(index);
-}
-
-void SceneManager::p_deleteScene(uint64_t index) {
 	if(index >= m_scenes.size()) [[unlikely]] {
 		XN_LOG_ERR("SceneManager: Trying to delete scene at {0}. It does not exist", index);
 		return;
 	}
+	if(index == m_scenes.size() - 1)
+		m_activeSceneIndex--;
+	m_scenes[index]->unload();
 	m_scenes.erase(m_scenes.begin() + static_cast<int64_t>(index));
 }
 
 std::unique_ptr<Scene> SceneManager::p_popScene(uint64_t index) {
+	const std::lock_guard<std::mutex> lock(m_mutex);
+	if(m_closing) return nullptr;
 	if(index >= m_scenes.size()) [[unlikely]] {
+		XN_LOG_ERR("SceneManager: Trying to delete scene at {0}. It does not exist", index);
 		return nullptr;
 	}
+	if(index == m_scenes.size() - 1)
+		m_activeSceneIndex--;
 	auto it = m_scenes.begin() + static_cast<int64_t>(index);
 	auto scene = std::move(*it);
 	m_scenes.erase(it);
@@ -326,9 +285,8 @@ uint64_t SceneManager::p_getSceneIndex(Scene* scene) {
 
 void SceneManager::p_syncFutures() {
 	const std::lock_guard<std::mutex> lock(m_futuresMutex);
-	for (auto &future : m_futures) {
+	for (auto &future : m_futures)
 		future.get();
-	};
 	m_futures.clear();
 }
 
@@ -346,9 +304,9 @@ void SceneManager::close() {
 		const std::lock_guard<std::mutex> lock1(m_futuresMutex);
 		const std::lock_guard<std::mutex> lock2(m_mutex);
 		m_closing = true;
-		for (auto &future : m_futures) {
+		for (auto &future : m_futures)
 			future.wait();
-		};
+		m_futures.clear();
 	} catch (std::exception& e) {
 		try {
 			XN_LOG_ERR("SceneManager: Exception in SceneManager::close(): {0}", e.what());
