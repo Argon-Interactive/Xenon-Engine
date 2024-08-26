@@ -24,6 +24,9 @@ void Scene::unload() {
 }
 
 Entity Scene::createEntity() {
+	if(s_entityID == 0) [[unlikely]]
+		s_entityID = s_entityStartID;
+	XN_LOG_TRC("Scene {0}: creating entity {0}", p_debugIndex(), static_cast<Entity>(s_entityID));
 	return s_entityID--;
 }
 
@@ -33,6 +36,10 @@ void Scene::deleteEntity(uint64_t uuid) {
 
 uint64_t Scene::getBuildIndex() const {
 	return m_buildIndex;
+}
+
+void Scene::setEntityStartID(Entity id) {
+	s_entityStartID = id++;
 }
 
 

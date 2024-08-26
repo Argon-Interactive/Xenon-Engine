@@ -12,6 +12,7 @@
 #include <memory_resource>
 #include <string>
 #include <cstdint>
+#include <atomic>
 
 namespace Core {
 
@@ -33,6 +34,8 @@ public:
 	[[nodiscard]] uint64_t getBuildIndex() const;
 	[[nodiscard]] bool isRuntimeCreated() const;
 
+	static void setEntityStartID(Entity id);
+
 private:
 	class SceneMemory {
 	public:
@@ -51,10 +54,11 @@ private:
 	SceneMemory m_sceneMemory;
 	ComponentCluster m_components;
 
-	inline static Entity s_entityID = std::numeric_limits<uint64_t>::max();
-	
 	bool m_runtimeCreated;
 	uint64_t m_buildIndex;
+
+	inline static std::atomic<Entity> s_entityID = 0;
+	inline static Entity s_entityStartID = std::numeric_limits<uint64_t>::max();
 
 	inline std::string p_debugIndex() const {
 		return m_runtimeCreated ? "" : std::to_string(m_buildIndex);

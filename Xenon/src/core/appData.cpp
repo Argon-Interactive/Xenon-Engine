@@ -28,6 +28,7 @@ void AppData::init(std::function<void(const Event&)> eventDispatcher, const Xeno
 	XN_LOG_BR();
 
 	XN_LOG_INF("AppData: Initializing game");
+	Scene::setEntityStartID(2137);
 	s_appData->getSceneManager().loadScene(0);
 	XN_LOG_BR();
 }
@@ -54,13 +55,13 @@ void AppData::terminate() {
 }
 
 AppData::AppData([[maybe_unused]]ConstructorToken t, const Xenon::AppConfig& appConfig)
-	:m_window(appConfig.defaultWindowWidth, appConfig.defaultWindowHeight, appConfig.defaultWindowName) {
+	:m_window(appConfig.defaultWindowWidth, appConfig.defaultWindowHeight, appConfig.defaultWindowName), m_resourceManager("gameadata.rp") {
 	s_exists = true;
 }
 
 Window& AppData::getWindow() { return s_appData->m_window; }
 SceneManager& AppData::getSceneManager() { return s_appData->m_sceneManager; }
 ComponentManager& AppData::getComponentManager() { return s_appData->m_componentManager; }
-AssetsManager& AppData::getAssetManager() { return s_appData->m_assetManager; }
+ResourceManager& AppData::getAssetManager() { return s_appData->m_resourceManager; }
 
 }

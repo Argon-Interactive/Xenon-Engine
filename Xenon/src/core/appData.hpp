@@ -5,7 +5,7 @@
 #include "scenes/sceneManager.hpp"
 #include "ECS/componentManager.hpp"
 #include "window/window.hpp"
-#include "core/assets/assetsManager.hpp"
+#include "core/resourcesManagment/resourceManager.hpp"
 #include "Xenon/appConfig.hpp"
 
 #include <functional>
@@ -26,7 +26,7 @@ public:
 	[[nodiscard]] static Core::Window& getWindow();
 	[[nodiscard]] static Core::SceneManager& getSceneManager();
 	[[nodiscard]] static Core::ComponentManager& getComponentManager();
-	[[nodiscard]] static Core::AssetsManager& getAssetManager();
+	[[nodiscard]] static Core::ResourceManager& getAssetManager();
 
 private:
 
@@ -36,7 +36,7 @@ private:
 	Core::Window m_window;
 	Core::SceneManager m_sceneManager;
 	Core::ComponentManager m_componentManager;
-	Core::AssetsManager m_assetManager;
+	Core::ResourceManager m_resourceManager;
 };
 
 }
