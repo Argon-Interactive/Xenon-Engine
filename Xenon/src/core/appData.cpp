@@ -28,6 +28,7 @@ void AppData::init(std::function<void(const Event&)> eventDispatcher, const Xeno
 	XN_LOG_BR();
 
 	XN_LOG_INF("AppData: Initializing game");
+	Scene::setEntityStartID(2137);
 	s_appData->getSceneManager().loadScene(0);
 	XN_LOG_BR();
 }
