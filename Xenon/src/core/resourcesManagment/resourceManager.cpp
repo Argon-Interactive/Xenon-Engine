@@ -1,8 +1,24 @@
 #include "resourceManager.hpp"
 #include "devTools/logger_core.hpp"
 
-Core::ResourceManager::ResourceManager(std::filesystem::path path) : m_rpPath(std::move(path)) {
+#include <fstream>
 
+Core::ResourceManager::ResourceManager(std::filesystem::path path) : m_rpPath(std::move(path)) {
+	std::ifstream file(path, std::ios::binary);
+	if(!file.is_open()) {XN_LOG_ERR("{q} cannot be opened.", path.string()); return; }
+	struct ResourcePackHeader {
+		char header[4];
+		int64_t version;
+		uint64_t resourcesAmount;
+	};
+	ResourcePackHeader rph{};
+	file.read(reinterpret_cast<char*>(&rph), sizeof(ResourcePackHeader));
+	if(rph.header[0] != 'X' || rph.header[1] != 'e' || rph.header[2] != 'A' || rph.header[3] != 'P') {XN_LOG_ERR("The Resource Pack {q} is not valid", path.string()); return;}
+	if(!p_versionCheck(rph.version)) {XN_LOG_ERR("The Resource Packs {q} version is no longer supported", path.string()); return;}
+	m_handles.resize(static_cast<size_t>(rph.resourcesAmount));
+	m_metadatas = std::vector<Core::ResourceMetadata>(static_cast<size_t>(rph.resourcesAmount), ResourceMetadata(m_memoryResource));
+	file.read(reinterpret_cast<char*>(m_handles.data()), static_cast<std::streamsize>(rph.resourcesAmount * sizeof(ResourceHandle)));
+	file.close();
 }
 
 Core::ResourceManager::~ResourceManager() {

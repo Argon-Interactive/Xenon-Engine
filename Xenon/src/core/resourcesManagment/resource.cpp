@@ -111,6 +111,7 @@ std::future<void> Core::ResourceMetadata::p_asyncLoad(const Core::ResourceHandle
 			if(!decryptionFunc(m_data)) {XN_LOG_ERR("Decryption of an asset failed"); return;}
 			m_flag.resetEncrypted();
 		}
+		file.close();
 	});
 }
 
