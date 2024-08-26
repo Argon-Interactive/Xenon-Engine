@@ -105,7 +105,7 @@ void SceneManager::unloadScene(uint64_t buildIndex) {
 	p_unloadScene(p_getSceneIndex(buildIndex));
 }
 
-void SceneManager::loadSceneAsync([[maybe_unused]] uint64_t buildIndex) {
+void SceneManager::loadSceneAsync(uint64_t buildIndex) {
 	const std::lock_guard<std::mutex> lock(m_mutex);
 	const std::lock_guard<std::mutex> lockf(m_futuresMutex);
 	if(m_closing) return;
@@ -119,7 +119,7 @@ void SceneManager::loadSceneAsync([[maybe_unused]] uint64_t buildIndex) {
 	p_cleanupFutures();
 }
 
-void SceneManager::unloadSceneAsyncAt([[maybe_unused]] uint64_t index) {
+void SceneManager::unloadSceneAsyncAt(uint64_t index) {
 	const std::lock_guard<std::mutex> lock(m_mutex);
 	const std::lock_guard<std::mutex> lockf(m_futuresMutex);
 	if(m_closing) return;
@@ -130,7 +130,7 @@ void SceneManager::unloadSceneAsyncAt([[maybe_unused]] uint64_t index) {
 	p_cleanupFutures();
 }
 
-void SceneManager::unloadSceneAsync([[maybe_unused]] Scene* scene) {
+void SceneManager::unloadSceneAsync(Scene* scene) {
 	const std::lock_guard<std::mutex> lock(m_mutex);
 	const std::lock_guard<std::mutex> lockf(m_futuresMutex);
 	if(m_closing) return;
@@ -141,7 +141,7 @@ void SceneManager::unloadSceneAsync([[maybe_unused]] Scene* scene) {
 	p_cleanupFutures();
 }
 
-void SceneManager::unloadSceneAsync([[maybe_unused]] uint64_t buildIndex) {
+void SceneManager::unloadSceneAsync(uint64_t buildIndex) {
 	const std::lock_guard<std::mutex> lock(m_mutex);
 	const std::lock_guard<std::mutex> lockf(m_futuresMutex);
 	if(m_closing) return;
