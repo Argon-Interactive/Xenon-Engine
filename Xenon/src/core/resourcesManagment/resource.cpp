@@ -55,13 +55,19 @@ Core::ResourceMetadata::~ResourceMetadata() {
 	m_flag.setFlag(0);
 }
 
-void Core::ResourceMetadata::load(const Core::ResourceHandle& handle, std::list<std::future<void>>& futureList, std::function<bool(std::pmr::vector<uint8_t>&)> decryptionFunc) {
+void Core::ResourceMetadata::changePMR(std::pmr::memory_resource* newMemRes) {
+	std::pmr::vector<uint8_t> newData{ std::move(m_data), newMemRes };
+	m_data = newData;
+}
+
+std::optional<std::future<void>> Core::ResourceMetadata::load(const Core::ResourceHandle& handle, std::function<bool(std::pmr::vector<uint8_t>&)> decryptionFunc) {
 	bool doNeedToLoad = false;
 	{
 		const std::lock_guard<std::mutex> lock(m_mutex);
 		doNeedToLoad = m_referenceCounter++ == 0;
 	}
-	if (doNeedToLoad) futureList.push_back(p_asyncLoad(handle, decryptionFunc));
+	if (doNeedToLoad) return p_asyncLoad(handle, decryptionFunc);
+	return std::nullopt;
 }
 
 void Core::ResourceMetadata::unload() {
