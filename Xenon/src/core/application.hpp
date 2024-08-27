@@ -32,9 +32,6 @@ private:
 
 	bool m_running = true;
 
-	Core::Event popEvent() noexcept;
-	bool emptyEventQueue() const noexcept;
-
 	std::queue<Core::Event> m_eventQueue;
 	mutable std::mutex m_mutex;
 	std::condition_variable m_cond;

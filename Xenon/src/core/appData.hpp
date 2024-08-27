@@ -1,5 +1,5 @@
-#ifndef _XENON_CORE_APPDATA_H_
-#define _XENON_CORE_APPDATA_H_
+#ifndef _XENON_CORE_APPDATA_
+#define _XENON_CORE_APPDATA_
 
 #include "event.hpp"
 #include "scenes/sceneManager.hpp"
@@ -41,4 +41,4 @@ private:
 
 }
 
-#endif // !_XENON_CORE_APPDATA_H_
+#endif // !_XENON_CORE_APPDATA_

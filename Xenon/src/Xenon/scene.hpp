@@ -14,8 +14,6 @@ class XAPI Scene {
 public:
 	explicit Scene(Core::Scene* ptr);
 
-	void unload();
-
 	Entity createEntity();
 
 	uint64_t getBuildIndex();

@@ -58,8 +58,10 @@ void Application::fixedUpdate() {
 }
 
 void Application::handleEvents() {
-	while(!emptyEventQueue()) {
-		const Core::Event e = popEvent();
+	const std::lock_guard<std::mutex> lock(m_mutex);
+	while(!m_eventQueue.empty()) {
+		const Core::Event e = m_eventQueue.front();
+		m_eventQueue.pop();
 		switch (e.getType()) {
 			case Core::Event::Type::WINDOW_CLOSE:
 				XN_LOG_INF("Window close");
@@ -87,20 +89,6 @@ void Application::handleEvents() {
 void Application::pushEvent(const Core::Event& event) {
 	const std::lock_guard<std::mutex> lock(m_mutex);
 	m_eventQueue.push(event);
-	m_cond.notify_one();
-}
-
-Core::Event Application::popEvent() noexcept {
-	std::unique_lock<std::mutex> lock(m_mutex);
-	m_cond.wait(lock, [this] { return !m_eventQueue.empty(); } );
-	Core::Event e = m_eventQueue.front();
-	m_eventQueue.pop();
-	return e;
-}
-
-bool Application::emptyEventQueue() const noexcept {
-	const std::lock_guard<std::mutex> lock(m_mutex);
-	return m_eventQueue.empty();
 }
 
 }
