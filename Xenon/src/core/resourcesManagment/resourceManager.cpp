@@ -31,16 +31,19 @@ Core::ResourceManager::~ResourceManager() {
 }
 //TODO: This should make sure to use maximum of 256 threads at one time
 void Core::ResourceManager::load(const ResourceID* IDs, size_t amount) {
+	p_futuresCleanup();
 	for(size_t i = 0; i < amount; ++i) { 
 		const ResourceID id = IDs[i];
 		auto opt = m_metadatas[id].load(m_handles[id], p_decryption);
 		if (opt.has_value()) {
+			const std::lock_guard<std::mutex> lock(m_futuresMutex);
 			m_futuresMap[id] = std::move(opt.value());
 		}
 	}
 }
 
 void Core::ResourceManager::free(const ResourceID* IDs, size_t amount) {
+	p_futuresCleanup();
 	for(size_t i = 0; i < amount; ++i) { 
 		const ResourceID id = IDs[i];
 		m_metadatas[id].unload();
@@ -48,29 +51,34 @@ void Core::ResourceManager::free(const ResourceID* IDs, size_t amount) {
 }
 
 void Core::ResourceManager::load(const std::vector<ResourceID>& IDs) {
-	std::list<std::future<void>> list;
+	p_futuresCleanup();
 	for (auto id : IDs) {
 		auto opt = m_metadatas[id].load(m_handles[id], p_decryption);
 		if (opt.has_value()) {
+			const std::lock_guard<std::mutex> lock(m_futuresMutex);
 			m_futuresMap[id] = std::move(opt.value());
 		}
 	}
 }
 
 void Core::ResourceManager::free(const std::vector<ResourceID>& IDs) {
+	p_futuresCleanup();
 	for (auto id : IDs) {
 		m_metadatas[id].unload();
 	}
 }
 
 void Core::ResourceManager::load(const ResourceID ID) {
+	p_futuresCleanup();
 	auto opt = m_metadatas[ID].load(m_handles[ID], p_decryption);
 	if (opt.has_value()) {
+		const std::lock_guard<std::mutex> lock(m_futuresMutex);
 		m_futuresMap[ID] = std::move(opt.value());
 	}
 }
 
 void Core::ResourceManager::free(const ResourceID ID) {
+	p_futuresCleanup();
 	m_metadatas[ID].unload();
 }
 
@@ -81,34 +89,55 @@ void Core::ResourceManager::sync() {
 	}
 	m_futuresMap.clear();
 }
-
+//TODO: out of bounds exceptions should be made here
 std::optional<Core::ResourceManager::Resource> Core::ResourceManager::getResource(ResourceID ID) {
 	using namespace std::chrono_literals;
 	ResourceMetadata& metadata = m_metadatas[ID];
-	auto result = m_futuresMap.at(ID).wait_for(0s);
-	switch (result) {
-	case std::future_status::ready:
-		XN_LOG_DEB("ready");
-		break;
-	case std::future_status::deferred:
-		XN_LOG_DEB("deferred");
-		break;
-	case std::future_status::timeout:
-		XN_LOG_DEB("timeout");
-		break;
+	auto it = m_futuresMap.find(ID);
+	if (it != m_futuresMap.end()) {
+		auto result = it->second.wait_for(0s);
+		if (result == std::future_status::ready) {
+			m_futuresMap.erase(ID);
+			return Resource(metadata.getRawData(), metadata.getSize());
+		}
+		return std::nullopt;
 	}
-	if (result == std::future_status::ready) {
-		m_futuresMap.erase(ID);
+	#ifdef __DEBUG__
+		if (metadata.getFlag()->isValid())
+			return Resource(metadata.getRawData(), metadata.getSize());
+		XN_LOG_ERR("Trying to acces a resource that is not loaded.");
+		return std::nullopt;
+	#else
 		return Resource(metadata.getRawData(), metadata.getSize());
-	}
-	return std::nullopt;
+	#endif // !__DEBUG__
 }
 
 Core::ResourceManager::Resource Core::ResourceManager::getSyncedResource(ResourceID ID) {
 	ResourceMetadata& metadata = m_metadatas[ID];
-	m_futuresMap.at(ID).wait();
-	m_futuresMap.erase(ID);
-	return { metadata.getRawData(), metadata.getSize() };
+	auto it = m_futuresMap.find(ID);
+	if (it != m_futuresMap.end()) {
+		it->second.wait();
+		m_futuresMap.erase(ID);
+		return { metadata.getRawData(), metadata.getSize() };
+	}
+	#ifdef __DEBUG__
+		if (metadata.getFlag()->isValid()) 
+			return { metadata.getRawData(), metadata.getSize() };
+		XN_LOG_ERR("Trying to acces a resource that is not loaded.");
+		return { nullptr, 0 };
+	#else
+		return { metadata.getRawData(), metadata.getSize() };
+	#endif // !__DEBUG__
+}
+
+void Core::ResourceManager::p_futuresCleanup() {
+	using namespace std::chrono_literals;
+	for (auto it = m_futuresMap.begin(); it != m_futuresMap.end(); ) {
+		if (it->second.wait_for(0s) == std::future_status::ready) {
+			it = m_futuresMap.erase(it);
+		}
+		else { ++it; }
+	}
 }
 
 bool Core::ResourceManager::p_versionCheck([[maybe_unused]] int64_t version) {

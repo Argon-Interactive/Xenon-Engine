@@ -49,6 +49,8 @@ private:
 	//temp
 	std::pmr::memory_resource* m_memoryResource = std::pmr::get_default_resource();
 
+	void p_futuresCleanup();
+
 	bool static p_versionCheck(int64_t version);
 	bool static p_decryption(std::pmr::vector<uint8_t>& data);
 };

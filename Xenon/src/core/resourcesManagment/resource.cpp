@@ -72,6 +72,7 @@ std::optional<std::future<void>> Core::ResourceMetadata::load(const Core::Resour
 }
 
 void Core::ResourceMetadata::unload() {
+	//TODO: This should throw an exception if i is called when reference counter is 0
 	const std::lock_guard<std::mutex> lock(m_mutex);
 	if (--m_referenceCounter == 0) {
 		m_data.clear();
