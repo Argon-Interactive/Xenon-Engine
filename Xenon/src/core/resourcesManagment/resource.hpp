@@ -56,6 +56,7 @@ struct ResourceHandle {
 
 class ResourceMetadata {
 public:
+	ResourceMetadata() = default;
 	explicit ResourceMetadata(std::pmr::memory_resource* memRes) : m_data(memRes) {}
 	~ResourceMetadata();
 	ResourceMetadata(ResourceMetadata&&) = delete;
@@ -63,7 +64,9 @@ public:
 	ResourceMetadata& operator=(ResourceMetadata&&) = delete;
 	ResourceMetadata& operator=(const ResourceMetadata&) = delete;
 
-	void load(const Core::ResourceHandle& handle, std::list<std::future<void>>& futureList, std::function<bool(std::pmr::vector<uint8_t>&)> decryptionFunc);
+	void changePMR(std::pmr::memory_resource* newMemRes);
+
+	std::optional<std::future<void>> load(const Core::ResourceHandle& handle, std::function<bool(std::pmr::vector<uint8_t>&)> decryptionFunc);
 	void unload();
 
 	[[nodiscard]] uint8_t* getRawData();

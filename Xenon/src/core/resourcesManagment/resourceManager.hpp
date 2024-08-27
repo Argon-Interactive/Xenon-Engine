@@ -5,6 +5,7 @@
 
 #include <memory_resource>
 #include <filesystem>
+#include <map>
 
 namespace Core {
 class ResourceManager {
@@ -18,35 +19,31 @@ public:
 
 	struct Resource {
 	private:
-		inline Resource(uint8_t* d, size_t s, bool l) : data(d), size(s), isLoaded(l) {}
+		inline Resource(uint8_t* d, size_t s) : data(d), size(s) {}
 	public:
 		uint8_t* data;
 		size_t size;
-		bool isLoaded;
 		friend class Core::ResourceManager;
 	};
 
 
 	void load(const ResourceID* IDs, size_t amount); 
-	void loadAsync(const ResourceID* IDs, size_t amount);
 	void free(const ResourceID* IDs, size_t amount);
 	void load(const std::vector<ResourceID>& IDs); 
-	void loadAsync(const std::vector<ResourceID>& IDs); 
 	void free(const std::vector<ResourceID>& IDs);
 	void load(const ResourceID ID); 
-	void loadAsync(const ResourceID ID); 
 	void free(const ResourceID ID);
 
 	void sync();
 
 	[[nodiscard]] inline const std::filesystem::path* getFilepathPtr() const { return &m_rpPath; }
-	[[nodiscard]] Resource getResource(ResourceID ID);
+	[[nodiscard]] std::optional<Resource> getResource(ResourceID ID);
+	[[nodiscard]] Resource getSyncedResource(ResourceID ID);
 
 private:
 	std::vector<Core::ResourceHandle> m_handles;
-	Core::ResourceMetadata* m_metadatas;
-	void* m_rawData; //This is very bad
-	std::list<std::future<void>> m_futureList;
+	std::vector<Core::ResourceMetadata> m_metadatas;
+	std::map<ResourceID, std::future<void>> m_futuresMap; //map will probably be faster then unordered_map here but still map acces will not be a bottleneck in assets loading
 	const std::filesystem::path m_rpPath;
 	std::mutex m_futuresMutex;
 	//temp
