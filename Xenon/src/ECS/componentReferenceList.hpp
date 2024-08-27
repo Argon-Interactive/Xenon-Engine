@@ -1,5 +1,5 @@
-#ifndef _XENON_SRC_ECS_COMPONENTLIST_
-#define _XENON_SRC_ECS_COMPONENTLIST_
+#ifndef _XENON_ECS_COMPONENTLIST_
+#define _XENON_ECS_COMPONENTLIST_
 
 #include "chunkedArray.hpp"
 #include "devTools/logger_core.hpp"
@@ -40,7 +40,7 @@ private:
 	std::pmr::memory_resource* m_resource;
 	Node* m_head;
 	Node* m_tail;
-	//PERF: size probably won't be used in the dist but might be usefull for debugging 
+	//PERF: size probably won't be used in the dist but might be useful for debugging 
 	uint32_t m_size{};
 	void push(ChunkedArray<T>* elem) {
 		Node* newNode = static_cast<Node*>(m_resource->allocate(sizeof(Node)));
@@ -88,7 +88,7 @@ private:
 				}
 			}
 		}
-		else XN_LOG_WAR("Trying to delete an element form ComponentReferenceList which it doesn't contain");
+		else XN_LOG_ERR("Trying to delete an element form ComponentReferenceList which it doesn't contain");
 	}
 
 	friend class ComponentManager;
@@ -190,4 +190,4 @@ private:
 	ChunkedArray<T>::const_iterator m_caIt;
 };
 }
-#endif // !_XENON_SRC_ECS_COMPONENTLIST_
+#endif // !_XENON_ECS_COMPONENTLIST_

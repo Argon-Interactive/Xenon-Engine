@@ -1,5 +1,5 @@
-#ifndef _XENON_SRC_ECS_COMPOENNTSCLUSTER_
-#define _XENON_SRC_ECS_COMPOENNTSCLUSTER_
+#ifndef _XENON_ECS_COMPOENNTSCLUSTER_
+#define _XENON_ECS_COMPOENNTSCLUSTER_
 
 //TEST: temp
 #include "componentPool.hpp"
@@ -7,8 +7,9 @@
 
 
 namespace Core {
+
 struct ComponentCluster {
-	ComponentCluster(std::pmr::memory_resource* resource) : m_resource(resource) {}
+	explicit ComponentCluster(std::pmr::memory_resource* resource) : m_resource(resource) {}
 	~ComponentCluster();
 
 	ComponentCluster(ComponentCluster &&) = delete;
@@ -20,22 +21,24 @@ struct ComponentCluster {
 	void unload();
 
 	void syncComponentData() {
-		p_performeRemovals(); 
-		p_performeAdditions();
+		p_performRemovals(); 
+		p_performAdditions();
 		p_resolveDependencies(); 
-		p_performeResolvingCleaup();
+		p_performResolvingCleaup();
 	}
 private:
 	bool m_isLoaded = false;
 	std::pmr::memory_resource* m_resource;
 
-	void p_performeRemovals();
+	void p_performRemovals();
 	void p_resolveDependencies();
-	void p_performeResolvingCleaup();
-	void p_performeAdditions();
+	void p_performResolvingCleaup();
+	void p_performAdditions();
 public:
 	ComponentPool<Comp> intComp{m_resource};
 	ComponentPool<float> floatComp{m_resource};
 };
+
 }
-#endif // !_XENON_SRC_ECS_COMPOENNTSCLUSTER_
+
+#endif // !_XENON_ECS_COMPOENNTSCLUSTER_

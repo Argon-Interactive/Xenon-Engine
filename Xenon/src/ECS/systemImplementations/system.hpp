@@ -1,5 +1,5 @@
-#ifndef _XENON_SRC_ECS_SYSTEM_
-#define _XENON_SRC_ECS_SYSTEM_
+#ifndef _XENON_ECS_SYSTEM_
+#define _XENON_ECS_SYSTEM_
 
 
 #endif

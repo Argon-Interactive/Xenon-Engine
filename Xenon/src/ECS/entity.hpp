@@ -7,4 +7,3 @@ namespace Core {
 }
 
 #endif // !_XENON_ECS_ENTITY_
-

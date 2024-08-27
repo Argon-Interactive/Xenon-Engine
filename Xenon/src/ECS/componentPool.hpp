@@ -1,5 +1,5 @@
-#ifndef _XENON_SRC_ECS_COMPONENTPOOL_
-#define _XENON_SRC_ECS_COMPONENTPOOL_
+#ifndef _XENON_ECS_COMPONENTPOOL_
+#define _XENON_ECS_COMPONENTPOOL_
 
 #include <functional>
 #include <memory_resource>
@@ -90,4 +90,4 @@ private:
 	friend struct ComponentCluster;
 };	
 }
-#endif
+#endif // !_XENON_ECS_COMPONENTPOOL_

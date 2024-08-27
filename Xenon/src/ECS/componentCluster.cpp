@@ -21,15 +21,15 @@ void Core::ComponentCluster::p_resolveDependencies() {
 	intComp.p_resolveDependencies<float>(floatComp.m_movedEnts, [](Comp& comp, float* dep) { comp.ref = dep; });
 }
 
-void Core::ComponentCluster::p_performeRemovals() {
+void Core::ComponentCluster::p_performRemovals() {
 	intComp.p_resolveRemovals();
 	floatComp.p_resolveRemovals();
 }
-void Core::ComponentCluster::p_performeResolvingCleaup() {
+void Core::ComponentCluster::p_performResolvingCleaup() {
 	intComp.m_movedEnts.clear();
 	floatComp.m_movedEnts.clear();
 }
-void Core::ComponentCluster::p_performeAdditions() {
+void Core::ComponentCluster::p_performAdditions() {
 	intComp.p_resolveAdditions();
 	intComp.m_entitiesToAdd.clear();
 	floatComp.p_resolveAdditions();

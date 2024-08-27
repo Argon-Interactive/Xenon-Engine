@@ -1,5 +1,5 @@
-#ifndef _XENON_SRC_ECS_CHUNKEDARRAY_
-#define _XENON_SRC_ECS_CHUNKEDARRAY_
+#ifndef _XENON_ECS_CHUNKEDARRAY_
+#define _XENON_ECS_CHUNKEDARRAY_
 
 #include "devTools/logger_core.hpp"
 
@@ -17,7 +17,7 @@ public:
 
 	explicit ChunkedArray(std::pmr::memory_resource* memoryRsrc = std::pmr::get_default_resource()) : m_resource(memoryRsrc) { 
 		uint16_t maxSize = ALLOCATION_SIZE / sizeof(T);
-		if(maxSize == 0) { XN_LOG_ERR("Single element size exceedes chunk size of 4kB. Creation of chunked array failed"); return; }
+		if(maxSize == 0) { XN_LOG_ERR("Single element size exceeds chunk size of 4kB. Creation of chunked array failed"); return; }
 		m_maxPartitionSize = maxSize;
 		auto* newData = static_cast<T*>(m_resource->allocate(ALLOCATION_SIZE));
 		m_dataPtrs.push_back(newData);
@@ -241,4 +241,4 @@ class ChunkedArray<T>::const_iterator {
 		const ChunkedArray<T>* m_itCArr;
 };
 }
-#endif
+#endif // !_XENON_ECS_CHUNKEDARRAY_

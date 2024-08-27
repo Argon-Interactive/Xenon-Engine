@@ -1,5 +1,5 @@
-#ifndef _XENON_CORE_
-#define _XENON_CORE_
+#ifndef _XENON_XENON_API_
+#define _XENON_XENON_API_
 
 
 #if defined _WIN32
@@ -19,4 +19,4 @@
 #endif
 
 
-#endif // !_XENON_CORE_
+#endif // !_XENON_XENON_API_
