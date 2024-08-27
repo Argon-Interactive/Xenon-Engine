@@ -8,7 +8,7 @@ namespace Core {
 
 Application::Application(const Xenon::AppConfig& config) {
 	XN_LOG_TO_FILE("Xenon-log");
-	Core::AppData::init([this](auto && a) { pushEvent(std::forward<decltype(a)>(a)); }, config); // what the fuck?
+	Core::AppData::init([this](auto && a) { pushEvent(std::forward<decltype(a)>(a)); }, config);
 	XN_LOG_TRC("Application: created");
 }
 
