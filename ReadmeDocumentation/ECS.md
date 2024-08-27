@@ -66,7 +66,7 @@ when the scene no longer needs to be updated.
 - [ComponentReferenceList](#componentreferencelist)
 - [ComponentManager](#componentmanager)
 - [Scene](SceneManagement.md#scene)
-- [AppData]( )
+- [AppData](AppCore.md#appdata)
 ## <a id="componentreferencelist"></a>ComponentReferenceList
 #### Maybe referred to as CRL
 #### Defined in header `<ComponentReferenceList.hpp>`
@@ -89,5 +89,5 @@ will iterate over all loaded components and not the nodes of the underlying data
 This class should only have exactly one instance inside AppData. It is used as "global" way to access all loaded components for systems.  
 When adding a new component, a new CRL of a type of new component should be added as its public field;
 ### References
-- [AppData]( )
+- [AppData](AppCore.md#appdata)
 - [ComponentReferenceList](#componentreferencelist)
