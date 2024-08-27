@@ -29,10 +29,7 @@ void SceneManager::purge() {
 	XN_LOG_TRC("SceneManager: Purging scenes");
 	const std::lock_guard<std::mutex> lock(m_mutex);
 	if(m_closing) return;
-	while(!m_scenes.empty()) {
-		m_scenes.back()->unload();
-		m_scenes.pop_back();
-	}
+	m_scenes.clear();
 	m_activeSceneIndex = 0;
 	XN_LOG_TRC("SceneManager: Purging scenes complete");
 }
@@ -45,10 +42,7 @@ void SceneManager::purgeAsync() {
 	m_activeSceneIndex = 0;
 	m_futures.push_back(std::async(std::launch::async, [toDelete = std::move(m_scenes)]() mutable {
 		XN_LOG_TRC("SceneManager: Purging scenes asynchronously");
-		while(!toDelete.empty()) {
-			toDelete.back()->unload();
-			toDelete.pop_back();
-		}
+		toDelete.clear();
 		XN_LOG_TRC("SceneManager: Purging scenes complete");
 	}));
 }
@@ -125,7 +119,7 @@ void SceneManager::unloadSceneAsyncAt(uint64_t index) {
 	if(m_closing) return;
 	m_futures.push_back(std::async(std::launch::async, [this, index]() {
 		XN_LOG_TRC("SceneManager: Unloading scene at {0} asynchronously", index);
-		std::unique_ptr<Scene> s = p_popScene(index);
+		const std::unique_ptr<Scene> s = p_popScene(index);
 	}));
 	p_cleanupFutures();
 }
@@ -136,7 +130,7 @@ void SceneManager::unloadSceneAsync(Scene* scene) {
 	if(m_closing) return;
 	m_futures.push_back(std::async(std::launch::async, [this, scene]() {
 		XN_LOG_TRC("SceneManager: Unloading scene {0} asynchronously", scene);
-		std::unique_ptr<Scene> s = p_popScene(p_getSceneIndex(scene));
+		const std::unique_ptr<Scene> s = p_popScene(p_getSceneIndex(scene));
 	}));
 	p_cleanupFutures();
 }
@@ -147,7 +141,7 @@ void SceneManager::unloadSceneAsync(uint64_t buildIndex) {
 	if(m_closing) return;
 	m_futures.push_back(std::async(std::launch::async, [this, buildIndex]() {
 		XN_LOG_TRC("SceneManager: Unloading scene {0} asynchronously", buildIndex);
-		std::unique_ptr<Scene> s = p_popScene(p_getSceneIndex(buildIndex));
+		const std::unique_ptr<Scene> s = p_popScene(p_getSceneIndex(buildIndex));
 	}));
 	p_cleanupFutures();
 }
@@ -177,10 +171,7 @@ void SceneManager::switchSceneAsync(uint64_t buildIndex) {
 			m_scenes.push_back(std::move(scene));
 		}
 		XN_LOG_TRC("SceneManager: Purging scenes asynchronously");
-		while(!toDelete.empty()) {
-			toDelete.back()->unload();
-			toDelete.pop_back();
-		}
+		toDelete.clear();
 		XN_LOG_TRC("SceneManager: Purging scenes complete");
 	}));
 }
@@ -239,7 +230,6 @@ void SceneManager::p_unloadScene(uint64_t index) {
 	}
 	if(index == m_scenes.size() - 1)
 		m_activeSceneIndex--;
-	m_scenes[index]->unload();
 	m_scenes.erase(m_scenes.begin() + static_cast<int64_t>(index));
 }
 
