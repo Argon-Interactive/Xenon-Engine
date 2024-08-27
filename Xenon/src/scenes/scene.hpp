@@ -26,8 +26,6 @@ public:
 	Scene &operator=(const Scene &) = delete;
 	Scene &operator=(Scene &&) = delete;
 
-	void unload();
-
 	Entity createEntity();
 	void deleteEntity(Entity uuid);
 
