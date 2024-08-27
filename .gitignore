@@ -23,6 +23,8 @@
 
 *.sh
 
+stats
+
 build/
 out/
 cmake-build/
