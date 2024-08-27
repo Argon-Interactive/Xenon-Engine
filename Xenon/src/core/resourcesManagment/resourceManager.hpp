@@ -10,7 +10,7 @@
 namespace Core {
 class ResourceManager {
 public:
-	ResourceManager(std::filesystem::path path);
+	explicit ResourceManager(std::filesystem::path path);
 	~ResourceManager();
 	ResourceManager(const ResourceManager &) = delete;
 	ResourceManager(ResourceManager &&)  noexcept = delete;
@@ -31,8 +31,8 @@ public:
 	void free(const ResourceID* IDs, size_t amount);
 	void load(const std::vector<ResourceID>& IDs); 
 	void free(const std::vector<ResourceID>& IDs);
-	void load(const ResourceID ID); 
-	void free(const ResourceID ID);
+	void load(ResourceID ID); 
+	void free(ResourceID ID);
 
 	void sync();
 

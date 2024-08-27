@@ -2,14 +2,13 @@
 #define _XNENON_CORE_RESOURCESMANAGMENT_RESOURCE_
 
 #include <cstdint>
-#include <filesystem>
+#include <optional>
 #include <future>
 #include <ios>
 #include <vector>
 #include <memory_resource>
 #include <functional>
 #include <mutex>
-#include <list>
 
 namespace Core {
 
@@ -39,7 +38,7 @@ private:
 	* 1 - compressed
 	* 2 - encrypted
 	*/
-	uint32_t m_flag;
+	uint32_t m_flag{};
 	std::mutex m_mutex;
 
 	[[nodiscard]] bool p_getBit(uint8_t bitmask) const { return static_cast<bool>(m_flag & (1u << bitmask)); }

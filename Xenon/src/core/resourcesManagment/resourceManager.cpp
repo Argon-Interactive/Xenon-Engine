@@ -3,9 +3,10 @@
 
 #include <fstream>
 #include <cassert>
+#include <utility>
 
 //TODO: Create error handeling here
-Core::ResourceManager::ResourceManager(std::filesystem::path path) : m_rpPath(path) {
+Core::ResourceManager::ResourceManager(std::filesystem::path path) : m_rpPath(std::move(path)) {
 	std::ifstream file(m_rpPath, std::ios::binary);
 	if(!file.is_open()) {XN_LOG_ERR("{q} cannot be opened.", m_rpPath.string()); exit(1); }
 	struct ResourcePackHeader {
