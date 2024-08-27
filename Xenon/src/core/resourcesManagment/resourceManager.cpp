@@ -4,9 +4,9 @@
 #include <fstream>
 #include <cassert>
 
+//TODO: Create error handeling here
 Core::ResourceManager::ResourceManager(std::filesystem::path path) : m_rpPath(path) {
 	std::ifstream file(m_rpPath, std::ios::binary);
-	//TODO: This should be an elegant exception and not "this"
 	if(!file.is_open()) {XN_LOG_ERR("{q} cannot be opened.", m_rpPath.string()); exit(1); }
 	struct ResourcePackHeader {
 		char header[4];

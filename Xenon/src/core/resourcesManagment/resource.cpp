@@ -5,6 +5,7 @@
 
 #include <fstream>
 
+//TODO: Create error handeling here
 /////////////////////////////////////////////////////////////
 // Flag
 /////////////////////////////////////////////////////////////
@@ -102,9 +103,7 @@ std::future<void> Core::ResourceMetadata::p_asyncLoad(const Core::ResourceHandle
 		m_type = handle.type;
 	}
 	m_flag.setFlag(1); //TEMP: 
-	//TODO: Make sure to not exceed application thread limit (<500 per chatGpt) 
 	return std::async(std::launch::async, [this, handle, path, decryptionFunc]() {
-		//TODO: Make exceptions or something
 		std::ifstream file(*path, std::ios::binary);
 		if(!file.is_open()) {XN_LOG_ERR("Resourcepack failed to open."); return;}
 		file.seekg(handle.offset);
