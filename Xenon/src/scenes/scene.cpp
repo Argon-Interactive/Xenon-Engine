@@ -19,10 +19,6 @@ Scene::~Scene() {
 	XN_LOG_TRC("Scene {0}: Scene destroyed", p_debugIndex());
 }
 
-void Scene::unload() {
-	XN_LOG_TRC("Scene {0}: Unloading scene", p_debugIndex());
-}
-
 Entity Scene::createEntity() {
 	if(s_entityID == 0) [[unlikely]]
 		s_entityID = s_entityStartID;
