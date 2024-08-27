@@ -35,6 +35,7 @@ This class represents a game scene which holds it's components via ComponentClus
 - [ComponentCluster](ECS.md#componentcluster)
 - [ResourceManager]( )
 - [AppData]( )
+
 ## <a id="scenemanager"></a>SceneManager
 #### Defined in header `<scene/sceneManager.hpp>`
 ### Overview
