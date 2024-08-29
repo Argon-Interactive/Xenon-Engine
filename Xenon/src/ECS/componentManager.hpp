@@ -4,6 +4,8 @@
 #include "componentReferenceList.hpp"
 #include "ECS/componentImplementations/TestComp.hpp"
 
+#include "System/Transform.hpp"
+
 namespace Core {
 
 class ComponentManager {
@@ -16,6 +18,8 @@ public:
 
 	ComponentReferenceList<Comp> intCRL;
 	ComponentReferenceList<float> floatCRL;
+
+	ComponentReferenceList<Transform> transformCRL;
 
 private:
 	ComponentManager() = default;
