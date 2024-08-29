@@ -1,6 +1,7 @@
 #include "sceneManager.hpp"
 #include "devTools/logger_core.hpp"
 #include "Xenon/scene.hpp"
+#include "async.hpp"
 
 #include <cstdint>
 
@@ -40,9 +41,9 @@ void SceneManager::purgeAsync() {
 	const std::lock_guard<std::mutex> lockf(m_futuresMutex);
 	if(m_closing) return;
 	m_activeSceneIndex = 0;
-	m_futures.push_back(std::async(std::launch::async, [toDelete = std::move(m_scenes)]() mutable {
+	m_futures.emplace_back(al::async(al::launch::pooled, [this]() mutable {
 		XN_LOG_TRC("SceneManager: Purging scenes asynchronously");
-		toDelete.clear();
+		this->m_scenes.clear();
 		XN_LOG_TRC("SceneManager: Purging scenes complete");
 	}));
 }
@@ -103,7 +104,7 @@ void SceneManager::loadSceneAsync(uint64_t buildIndex) {
 	const std::lock_guard<std::mutex> lock(m_mutex);
 	const std::lock_guard<std::mutex> lockf(m_futuresMutex);
 	if(m_closing) return;
-	m_futures.push_back(std::async(std::launch::async, [this, buildIndex]() {
+	m_futures.push_back(al::async(al::launch::pooled, [this, buildIndex]() {
 		XN_LOG_TRC("SceneManager: Loading scene {0} asynchronously", buildIndex);
 		auto scene = std::make_unique<Scene>(buildIndex);
 		const std::lock_guard<std::mutex> lock(m_mutex);
@@ -117,7 +118,7 @@ void SceneManager::unloadSceneAsyncAt(uint64_t index) {
 	const std::lock_guard<std::mutex> lock(m_mutex);
 	const std::lock_guard<std::mutex> lockf(m_futuresMutex);
 	if(m_closing) return;
-	m_futures.push_back(std::async(std::launch::async, [this, index]() {
+	m_futures.push_back(al::async(al::launch::pooled, [this, index]() {
 		XN_LOG_TRC("SceneManager: Unloading scene at {0} asynchronously", index);
 		const std::unique_ptr<Scene> s = p_popScene(index);
 	}));
@@ -128,7 +129,7 @@ void SceneManager::unloadSceneAsync(Scene* scene) {
 	const std::lock_guard<std::mutex> lock(m_mutex);
 	const std::lock_guard<std::mutex> lockf(m_futuresMutex);
 	if(m_closing) return;
-	m_futures.push_back(std::async(std::launch::async, [this, scene]() {
+	m_futures.push_back(al::async(al::launch::pooled, [this, scene]() {
 		XN_LOG_TRC("SceneManager: Unloading scene {0} asynchronously", scene);
 		const std::unique_ptr<Scene> s = p_popScene(p_getSceneIndex(scene));
 	}));
@@ -139,7 +140,7 @@ void SceneManager::unloadSceneAsync(uint64_t buildIndex) {
 	const std::lock_guard<std::mutex> lock(m_mutex);
 	const std::lock_guard<std::mutex> lockf(m_futuresMutex);
 	if(m_closing) return;
-	m_futures.push_back(std::async(std::launch::async, [this, buildIndex]() {
+	m_futures.push_back(al::async(al::launch::pooled, [this, buildIndex]() {
 		XN_LOG_TRC("SceneManager: Unloading scene {0} asynchronously", buildIndex);
 		const std::unique_ptr<Scene> s = p_popScene(p_getSceneIndex(buildIndex));
 	}));
@@ -161,7 +162,7 @@ void SceneManager::switchSceneAsync(uint64_t buildIndex) {
 	const std::lock_guard<std::mutex> lock(m_mutex);
 	const std::lock_guard<std::mutex> lockf(m_futuresMutex);
 	if(m_closing) return;
-	m_futures.push_back(std::async(std::launch::async, [this, buildIndex]() {
+	m_futures.push_back(al::async(al::launch::pooled, [this, buildIndex]() {
 		XN_LOG_TRC("SceneManager: Loading scene {0} asynchronously", buildIndex);
 		auto scene = std::make_unique<Scene>(buildIndex);
 		std::vector<std::unique_ptr<Scene>> toDelete;

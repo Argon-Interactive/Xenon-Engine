@@ -1,5 +1,5 @@
-#ifndef _XENON_DEVTOOLS_LOGGER_
-#define _XENON_DEVTOOLS_LOGGER_
+#ifndef _ARGON_DEVTOOLS_LOGGER_
+#define _ARGON_DEVTOOLS_LOGGER_
 
 #include<iostream>
 #include<iomanip>
