@@ -27,7 +27,22 @@ public:
 	Scene &operator=(Scene &&) = delete;
 
 	Entity createEntity();
-	void deleteEntity(Entity uuid);
+	void deleteEntity(Entity entity);
+
+	template<class Component>
+	[[nodiscard]] Component& getComponent(Entity entity) {
+		return m_components.get<Component>().getComponent(entity);
+	}
+
+	template<class Component>
+	void addComponent(Entity entity) {
+		m_components.get<Component>().addComponent(entity, {});
+	}
+
+	template<class Component>
+	void removeComponent(Entity entity) {
+		m_components.get<Component>().removeComponent(entity);
+	}
 
 	[[nodiscard]] uint64_t getBuildIndex() const;
 	[[nodiscard]] bool isRuntimeCreated() const;

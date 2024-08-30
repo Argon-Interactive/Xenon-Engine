@@ -7,10 +7,7 @@
 namespace Core {
 
 SceneManager::SceneManager() = default;
-
-SceneManager::~SceneManager() {
-	close();
-};
+SceneManager::~SceneManager() = default;
 
 /*------------------------------------------------------------------------------------------------*/
 /*                                         Basic Methods                                          */
@@ -289,6 +286,10 @@ void SceneManager::close() {
 		}
 		for (auto &future : m_futures) {
 			future.wait();
+		}
+		{
+			const std::lock_guard<std::mutex> lock(m_mutex);
+			m_scenes.clear();
 		}
 	} catch (std::exception& e) {
 		try {

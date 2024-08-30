@@ -5,7 +5,7 @@ namespace Core {
 
 class Transform {
 public:
-	double x, y, z;
+	double x{}, y{}, z{};
 };
 
 }
