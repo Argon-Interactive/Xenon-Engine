@@ -12,6 +12,9 @@ public:
 	class iterator;
 	class const_iterator;
 
+	explicit ComponentReferenceList(std::pmr::memory_resource* memRsrc = std::pmr::get_default_resource())
+	: m_resource(memRsrc), m_head(nullptr), m_tail(nullptr) {}
+
 	~ComponentReferenceList() {
 		for(Node* node = m_head; node != nullptr; ) {
 			Node* temp = node;
@@ -34,9 +37,6 @@ public:
 	[[nodiscard]] const_iterator begin() const { return const_iterator(m_head); }
 	[[nodiscard]] const_iterator end() const { return const_iterator(this); }
 private:
-	explicit ComponentReferenceList(std::pmr::memory_resource* memRsrc = std::pmr::get_default_resource())
-	: m_resource(memRsrc), m_head(nullptr), m_tail(nullptr) {}
-
 	std::pmr::memory_resource* m_resource;
 	Node* m_head;
 	Node* m_tail;

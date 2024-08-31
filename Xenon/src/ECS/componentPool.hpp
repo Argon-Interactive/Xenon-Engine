@@ -12,6 +12,9 @@ namespace Core {
 template<typename T>
 class ComponentPool {
 public:
+	explicit ComponentPool(std::pmr::memory_resource* memRes = std::pmr::get_default_resource())
+	: m_data(memRes) {}
+
 	~ComponentPool() = default;
 
 	ComponentPool(ComponentPool&&) = delete;
@@ -44,9 +47,6 @@ public:
 		m_entitiesToRemove.clear();
 	}
 private:
-	explicit ComponentPool(std::pmr::memory_resource* memRes = std::pmr::get_default_resource())
-	: m_data(memRes) {}
-
 	ChunkedArray<T> m_data;
 	//PERF: get rid of std::unordered_map, and maybe std::vector, for something more performent
 	std::unordered_map<Entity, T*> m_ptrLookupTable;

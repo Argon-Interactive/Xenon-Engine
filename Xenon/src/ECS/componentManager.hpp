@@ -2,10 +2,7 @@
 #define _XENON_ECS_COMPONENT_MANAGER_
 
 #include "componentReferenceList.hpp"
-#include "ECS/componentImplementations/TestComp.hpp"
-
-#include "System/Transform.hpp"
-#include "devTools/logger_core.hpp"
+#include "componentTuple.hpp"
 
 namespace Core {
 
@@ -19,34 +16,17 @@ public:
 
 	template<class Component>
 	[[nodiscard]] ComponentReferenceList<Component>& get() {
-		XN_LOG_ERR("Undefined component type");
+		m_refs.get<Component>();
 	}
 
-	ComponentReferenceList<Comp> intCRL;
-	ComponentReferenceList<float> floatCRL;
-	ComponentReferenceList<Transform> transformCRL;
-
 private:
-	ComponentManager() = default;
+	ComponentManager();
 
+	ComponentReferenceListTuple m_refs;
 
 	friend class AppData;
+	friend struct ComponentCluster;
 };
-
-template<>
-inline ComponentReferenceList<Comp>& ComponentManager::get<Comp>() {
-	return intCRL;
-}
-
-template<>
-inline ComponentReferenceList<float>& ComponentManager::get<float>() {
-	return floatCRL;
-}
-
-template<>
-inline ComponentReferenceList<Transform>& ComponentManager::get<Transform>() {
-	return transformCRL;
-}
 
 }
 

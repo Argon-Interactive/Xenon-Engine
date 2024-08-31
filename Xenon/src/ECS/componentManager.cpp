@@ -1,7 +1,7 @@
 #include "componentManager.hpp"
-#include "componentPool.hpp"
 
 namespace Core {
 
+ComponentManager::ComponentManager() : m_refs(std::pmr::get_default_resource()) {}
 
 }

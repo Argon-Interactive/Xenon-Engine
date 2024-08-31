@@ -3,19 +3,21 @@
 
 //TEST:
 
+Core::ComponentCluster::ComponentCluster(std::pmr::memory_resource* resource) : m_resource(resource), m_pools(m_resource) {}
+
 Core::ComponentCluster::~ComponentCluster() { if(m_isLoaded) unload(); }
 
 void Core::ComponentCluster::load() { 
-	AppData::getComponentManager().intCRL.push(&intComp.m_data);
-	AppData::getComponentManager().floatCRL.push(&floatComp.m_data);
-	AppData::getComponentManager().transformCRL.push(&transformComp.m_data);
+	for_each([](auto& refList, auto& pool){
+		refList.push(&pool.m_data);
+	}, AppData::getComponentManager().m_refs, m_pools);
 	m_isLoaded = true;
 }
 
 void Core::ComponentCluster::unload() {
-	AppData::getComponentManager().intCRL.pop(&intComp.m_data);
-	AppData::getComponentManager().floatCRL.pop(&floatComp.m_data);
-	AppData::getComponentManager().transformCRL.pop(&transformComp.m_data);
+	for_each([](auto& refList, auto& pool){
+		refList.pop(&pool.m_data);
+	}, AppData::getComponentManager().m_refs, m_pools);
 	m_isLoaded = false;
 }
 
@@ -27,24 +29,24 @@ void Core::ComponentCluster::syncComponentData() {
 }
  
 void Core::ComponentCluster::p_resolveDependencies() {
-	intComp.p_resolveDependencies<float>(floatComp.m_movedEnts, [](Comp& comp, float* dep) { comp.ref = dep; });
+	m_pools.get<Comp>().p_resolveDependencies<float>(
+		m_pools.get<float>().m_movedEnts,
+		[](Comp& comp, float* dep) { comp.ref = dep; });
 }
 
 void Core::ComponentCluster::p_performRemovals() {
-	intComp.p_resolveRemovals();
-	floatComp.p_resolveRemovals();
-	transformComp.p_resolveRemovals();
+	for_each([](auto& pool){
+		pool.p_resolveRemovals();
+	}, m_pools);
 }
 void Core::ComponentCluster::p_performResolvingCleaup() {
-	intComp.m_movedEnts.clear();
-	floatComp.m_movedEnts.clear();
-	transformComp.m_movedEnts.clear();
+	for_each([](auto& pool){
+		pool.m_movedEnts.clear();
+	}, m_pools);
 }
 void Core::ComponentCluster::p_performAdditions() {
-	intComp.p_resolveAdditions();
-	intComp.m_entitiesToAdd.clear();
-	floatComp.p_resolveAdditions();
-	floatComp.m_entitiesToAdd.clear();
-	transformComp.p_resolveAdditions();
-	transformComp.m_entitiesToAdd.clear();
+	for_each([](auto& pool){
+		pool.p_resolveAdditions();
+		pool.m_entitiesToAdd.clear();
+	}, m_pools);
 }
