@@ -96,8 +96,16 @@ void for_each(Func&& func, [[maybe_unused]] Tuples&... tuples) {
     }
 }
 
-using ComponentPoolTuple = ContainerTuple<ComponentPool, Comp, float, Transform>;
-using ComponentReferenceListTuple = ContainerTuple<ComponentReferenceList, Comp, float, Transform>;
+template<template<typename Contained> typename Container>
+using ComponentListContainerTuple = ContainerTuple<Container,
+/*------------------------------------------------------------------------------------------------*/
+/*                                     List of all components                                     */
+/*------------------------------------------------------------------------------------------------*/
+	Comp, float, Transform
+>;
+
+using ComponentPoolTuple = ComponentListContainerTuple<ComponentPool>;
+using ComponentReferenceListTuple = ComponentListContainerTuple<ComponentReferenceList>;
 
 }
 
