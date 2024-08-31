@@ -23,12 +23,12 @@ struct ContainerTuple<Container> {
 
 	template<typename U>
 	Container<U>& get() {
-		static_assert(false, "Type not found in tuple.");
+		static_assert(sizeof(U) == 0, "Type not found in tuple.");
 	}
 
 	template<typename U>
 	const Container<U>& get() const {
-		static_assert(false, "Type not found in tuple.");
+		static_assert(sizeof(U) == 0, "Type not found in tuple.");
 	}
 
 	static constexpr std::size_t size = 0;
@@ -79,7 +79,7 @@ struct ContainerTuple<Container, T, Rest...> {
 };
 
 template <typename Func, std::size_t N = 0, typename Tuple, typename... Tuples>
-void for_each_indexed(Func&& func, Tuples&... tuples) {
+void for_each_indexed(Func&& func, [[maybe_unused]] Tuples&... tuples) {
 	constexpr std::size_t min = std::min({Tuples::size...});
     if constexpr (N < min) {
         func(N, tuples.template get<N>()...);
@@ -88,7 +88,7 @@ void for_each_indexed(Func&& func, Tuples&... tuples) {
 }
 
 template <std::size_t N = 0, typename Func, typename... Tuples>
-void for_each(Func&& func, Tuples&... tuples) {
+void for_each(Func&& func, [[maybe_unused]] Tuples&... tuples) {
 	constexpr std::size_t min = std::min({Tuples::size...});
     if constexpr (N < min) {
         func(tuples.template get<N>()...);
