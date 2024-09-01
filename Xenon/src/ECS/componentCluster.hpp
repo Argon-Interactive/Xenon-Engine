@@ -2,7 +2,7 @@
 #define _XENON_ECS_COMPOENNTSCLUSTER_
 
 //TEST: temp
-#include "componentTuple.hpp"
+#include "componentContainerTuple.hpp"
 #include "componentPool.hpp"
 
 namespace Core {
@@ -29,7 +29,7 @@ public:
 private:
 	bool m_isLoaded = false;
 	std::pmr::memory_resource* m_resource;
-	ComponentPoolTuple m_pools;
+	ComponentContainerTuple<ComponentPool> m_pools;
 
 	void p_performRemovals();
 	void p_resolveDependencies();

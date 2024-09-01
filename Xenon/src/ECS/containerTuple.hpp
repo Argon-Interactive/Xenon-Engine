@@ -1,17 +1,10 @@
-#ifndef _XENON_ECS_COMPONENTTUPLE_
-#define _XENON_ECS_COMPONENTTUPLE_
-
-#include "ECS/componentReferenceList.hpp"
-#include "componentPool.hpp"
-#include "componentImplementations/TestComp.hpp"
-#include "System/Transform.hpp"
+#ifndef _XENON_ECS_CONTAINERTUPLE_
+#define _XENON_ECS_CONTAINERTUPLE_
 
 #include <cstddef>
 #include <type_traits>
 #include <utility>
 #include <algorithm>
-
-namespace Core {
 
 template<template<typename Contained> typename Container, typename... Types>
 struct ContainerTuple;
@@ -96,17 +89,4 @@ void for_each(Func&& func, [[maybe_unused]] Tuples&... tuples) {
     }
 }
 
-template<template<typename Contained> typename Container>
-using ComponentListContainerTuple = ContainerTuple<Container,
-/*------------------------------------------------------------------------------------------------*/
-/*                                     List of all components                                     */
-/*------------------------------------------------------------------------------------------------*/
-	Comp, float, Transform
->;
-
-using ComponentPoolTuple = ComponentListContainerTuple<ComponentPool>;
-using ComponentReferenceListTuple = ComponentListContainerTuple<ComponentReferenceList>;
-
-}
-
-#endif // !_XENON_ECS_COMPONENTTUPLE_
+#endif // !_XENON_ECS_CONTAINERTUPLE_

@@ -2,7 +2,7 @@
 #define _XENON_ECS_COMPONENT_MANAGER_
 
 #include "componentReferenceList.hpp"
-#include "componentTuple.hpp"
+#include "componentContainerTuple.hpp"
 
 namespace Core {
 
@@ -22,7 +22,7 @@ public:
 private:
 	ComponentManager();
 
-	ComponentReferenceListTuple m_refs;
+	ComponentContainerTuple<ComponentReferenceList> m_refs;
 
 	friend class AppData;
 	friend struct ComponentCluster;
