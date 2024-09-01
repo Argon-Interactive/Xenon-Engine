@@ -24,14 +24,14 @@ void Core::ComponentCluster::unload() {
 void Core::ComponentCluster::syncComponentData() {
 	p_performRemovals(); 
 	p_performAdditions();
-	p_resolveDependencies(); 
+	// p_resolveDependencies(); 
 	p_performResolvingCleaup();
 }
  
 void Core::ComponentCluster::p_resolveDependencies() {
-	m_pools.get<Comp>().p_resolveDependencies<float>(
-		m_pools.get<float>().m_movedEnts,
-		[](Comp& comp, float* dep) { comp.ref = dep; });
+	// m_pools.get<Comp>().p_resolveDependencies<float>(
+	// 	m_pools.get<float>().m_movedEnts,
+	// 	[](Comp& comp, float* dep) { comp.ref = dep; });
 }
 
 void Core::ComponentCluster::p_performRemovals() {

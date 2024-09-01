@@ -1,8 +1,19 @@
 #pragma once
 //TEST:
-struct Comp {
-	Comp(int i, float* p) : val(i), ref(p) {}
+
+#include "ECS/reference.hpp"
+
+namespace Core {
+
+struct FComp : public Component {
+	float val;
+};
+
+struct Comp : public Component {
+	Comp(int i, FComp* p) : val(i), ref(p) {}
 	int val;
-	float* ref;
+	Reference<FComp> ref;
 	char bloat[500] = {};
 };
+
+}
