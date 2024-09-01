@@ -76,7 +76,7 @@ void for_each_indexed(Func&& func, [[maybe_unused]] Tuples&... tuples) {
 	constexpr std::size_t min = std::min({Tuples::size...});
     if constexpr (N < min) {
         func(N, tuples.template get<N>()...);
-        for_each_indexed<Func, N + 1>(std::forward<Func>(func), std::forward<Tuples>(tuples)...);
+        for_each_indexed<Func, N + 1>(std::forward<Func>(func), tuples...);
     }
 }
 
