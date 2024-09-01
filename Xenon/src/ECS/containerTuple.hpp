@@ -71,7 +71,7 @@ struct ContainerTuple<Container, T, Rest...> {
 	static constexpr std::size_t size = 1 + ContainerTuple<Container, Rest...>::size;
 };
 
-template <typename Func, std::size_t N = 0, typename Tuple, typename... Tuples>
+template <typename Func, std::size_t N = 0, typename... Tuples>
 void for_each_indexed(Func&& func, [[maybe_unused]] Tuples&... tuples) {
 	constexpr std::size_t min = std::min({Tuples::size...});
     if constexpr (N < min) {
