@@ -1,14 +1,13 @@
 #ifndef _XENON_ECS_REFERENCE
 #define _XENON_ECS_REFERENCE
 
-#include <type_traits>
 #include "component.hpp"
 
 namespace Core {
 
 template<typename T>
 class Reference {
-	static_assert(std::is_base_of<Component, T>::value, "Referenced type must be derived from Component");
+	static_assert(is_proper_component<T>());
 public:
 	explicit Reference(T *dep = nullptr) : m_ref(dep) {
 		p_addReference();
@@ -19,11 +18,12 @@ public:
 	}
 
 	Reference(const Reference& other) : m_ref(other.m_ref) {
-		 p_addReference();
+		p_addReference();
 	}
 
 	Reference(Reference&& other) noexcept
 	: m_ref(other.m_ref), m_next(other.m_next), m_prev(other.m_prev) {
+		other.m_ref = nullptr;
 		if(m_prev != nullptr)
 			m_prev->m_next = this;
 		if(m_next != nullptr)
@@ -34,7 +34,6 @@ public:
 
 	Reference &operator=(const Reference& other) {
 		if(this == &other) return *this;
-		p_removeReference();
 		set(other.m_ref);
 		return *this;
 	}
@@ -45,6 +44,7 @@ public:
 		m_ref = other.m_ref;
 		m_next = other.m_next;
 		m_prev = other.m_prev;
+		other.m_ref = nullptr;
 		if(m_prev != nullptr)
 			m_prev->m_next = this;
 		if(m_next != nullptr)
@@ -74,8 +74,8 @@ public:
 
 private:
 	T* m_ref;
-	Reference<Component>* m_next = nullptr;
-	Reference<Component>* m_prev = nullptr;
+	Reference<T>* m_next = nullptr;
+	Reference<T>* m_prev = nullptr;
 
 	void p_addReference() {
 		if(m_ref == nullptr) return;
@@ -98,7 +98,7 @@ private:
 			m_ref->m_listHead = m_prev;
 	}
 
-	void p_atCompMove(Component* pos) {
+	void p_atCompMove(T* pos) {
 		m_ref = pos;
 		if(m_prev != nullptr) m_prev->p_atCompMove(pos);
 	}
@@ -110,7 +110,7 @@ private:
 		m_prev = nullptr;
 	}
 
-	friend class Component;
+	friend class Component<T>;
 };
 
 }

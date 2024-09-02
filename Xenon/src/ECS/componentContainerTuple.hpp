@@ -13,7 +13,7 @@ using ComponentContainerTuple = ContainerTuple<Container,
 /*------------------------------------------------------------------------------------------------*/
 /*                                     List of all components                                     */
 /*------------------------------------------------------------------------------------------------*/
-	Comp, float, Transform
+	Comp, FComp, Transform
 >;
 
 }

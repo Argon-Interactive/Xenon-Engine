@@ -36,12 +36,14 @@ public:
 
 	template<class Component>
 	void addComponent(Entity entity) {
-		m_components.get<Component>().addComponent(entity, {});
+		m_components.get<Component>().addComponent(entity, Component{});
+		m_components.syncComponentData();
 	}
 
 	template<class Component>
 	void removeComponent(Entity entity) {
 		m_components.get<Component>().removeComponent(entity);
+		m_components.syncComponentData();
 	}
 
 	[[nodiscard]] uint64_t getBuildIndex() const;

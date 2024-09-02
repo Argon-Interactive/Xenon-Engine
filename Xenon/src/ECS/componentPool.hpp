@@ -11,6 +11,7 @@
 namespace Core {
 template<typename T>
 class ComponentPool {
+	static_assert(is_proper_component<T>());
 public:
 	explicit ComponentPool(std::pmr::memory_resource* memRes = std::pmr::get_default_resource())
 	: m_data(memRes) {}

@@ -1,16 +1,16 @@
 #pragma once
 //TEST:
 
+#include "ECS/component.hpp"
 #include "ECS/reference.hpp"
 
 namespace Core {
 
-struct FComp : public Component {
+COMPONENT(FComp) {
 	float val;
 };
 
-struct Comp : public Component {
-	Comp(int i, FComp* p) : val(i), ref(p) {}
+COMPONENT(Comp) {
 	int val;
 	Reference<FComp> ref;
 	char bloat[500] = {};

@@ -14,8 +14,9 @@ Scene::Scene(uint64_t buildIndex)
 	  m_runtimeCreated(false), m_buildIndex(buildIndex) {
 	m_components.load();
 	XN_LOG_TRC("Scene {0}: Loaded", p_debugIndex());
+
 	auto e = createEntity();
-	auto eTransform = getComponent<Transform>(e);
+	auto& eTransform = getComponent<Transform>(e);
 	eTransform.x = 7;
 	XN_LOG_DEB("entity position: {0}, {0}, {0}", eTransform.x, eTransform.y, eTransform.z);
 };
@@ -29,7 +30,6 @@ Entity Scene::createEntity() {
 	if(s_entityID == 0) [[unlikely]]
 		s_entityID = s_entityStartID;
 	addComponent<Transform>(s_entityID);
-	m_components.syncComponentData();
 	XN_LOG_TRC("Scene {0}: creating entity {0}", p_debugIndex(), static_cast<Entity>(s_entityID));
 	return s_entityID--;
 }
