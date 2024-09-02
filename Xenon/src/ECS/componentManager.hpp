@@ -25,7 +25,7 @@ private:
 	ComponentContainerTuple<ComponentReferenceList> m_refs;
 
 	friend class AppData;
-	friend struct ComponentCluster;
+	friend class ComponentCluster;
 };
 
 }

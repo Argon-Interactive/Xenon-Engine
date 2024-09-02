@@ -7,7 +7,7 @@
 
 namespace Core {
 
-struct ComponentCluster {
+class ComponentCluster {
 public:
 	explicit ComponentCluster(std::pmr::memory_resource* resource = std::pmr::get_default_resource());
 	~ComponentCluster();
@@ -19,7 +19,6 @@ public:
 
 	void load();
 	void unload();
-	void syncComponentData();
 
 	template<class Component>
 	[[nodiscard]] ComponentPool<Component>& get() {
@@ -30,11 +29,6 @@ private:
 	bool m_isLoaded = false;
 	std::pmr::memory_resource* m_resource;
 	ComponentContainerTuple<ComponentPool> m_pools;
-
-	void p_performRemovals();
-	void p_resolveDependencies();
-	void p_performResolvingCleaup();
-	void p_performAdditions();
 
 	friend class ComponentManager;
 };
