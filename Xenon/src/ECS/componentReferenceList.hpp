@@ -92,7 +92,7 @@ private:
 	}
 
 	friend class ComponentManager;
-	friend struct ComponentCluster;
+	friend class ComponentCluster;
 };
 
 template<typename T>

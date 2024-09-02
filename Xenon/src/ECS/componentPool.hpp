@@ -28,12 +28,17 @@ public:
 	///////////////////////////////////////
 	/// Entity interface
 	///////////////////////////////////////
+	
+	[[nodiscard]] bool hasComponent(Entity ent) { return m_ptrLookupTable.contains(ent); }
 
 	[[nodiscard]] T& getComponent(Entity ent) { return *m_ptrLookupTable.at(ent); }
 	[[nodiscard]] T* getComponentPtr(Entity ent) { return m_ptrLookupTable.at(ent); }
 
 	template<typename ...Args>
 	T* emplaceComponent(Entity ent, Args ...args) {
+		if(m_ptrLookupTable.contains(ent)) [[unlikely]] {
+			*m_ptrLookupTable[ent](std::forward<Args>(args)...);
+		}
 		T* ptr = m_data.emplace_back(std::forward<Args>(args)...);
 		m_ptrLookupTable[ent] = ptr;
 		m_entLookupTable[ptr] = ent;
@@ -45,11 +50,17 @@ public:
 		m_entLookupTable[ptr] = ent;
 	}
 	void addComponent(Entity ent, const T& data) {
+		if(m_ptrLookupTable.contains(ent)) [[unlikely]] {
+			*m_ptrLookupTable[ent](data);
+		}
 		T* ptr = m_data.emplace_back(data); 
 		m_ptrLookupTable[ent] = ptr;
 		m_entLookupTable[ptr] = ent;
 	}
 	void addComponent(Entity ent,T&& data) { 
+		if(m_ptrLookupTable.contains(ent)) [[unlikely]] {
+			*m_ptrLookupTable[ent](data);
+		}
 		T* ptr = m_data.emplace_back(std::move(data)); 
 		m_ptrLookupTable[ent] = ptr;
 		m_entLookupTable[ptr] = ent;

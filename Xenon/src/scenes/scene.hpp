@@ -30,6 +30,11 @@ public:
 	void deleteEntity(Entity entity);
 
 	template<class Component>
+	[[nodiscard]] bool hasComponent(Entity entity) {
+		return m_components.get<Component>().hasComponent(entity);
+	}
+
+	template<class Component>
 	[[nodiscard]] Component& getComponent(Entity entity) {
 		return m_components.get<Component>().getComponent(entity);
 	}
@@ -48,7 +53,7 @@ public:
 	}
 	template<class Component, typename... Args>
 	void emplaceComponent(Entity entity, Args... args) {
-		m_components.get<Component>().emplaceComponent(entity, args...);
+		m_components.get<Component>().emplaceComponent(entity, std::forward<Args>(args)...);
 	}
 
 	template<class Component>
