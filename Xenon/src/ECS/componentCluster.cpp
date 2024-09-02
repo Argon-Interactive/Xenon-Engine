@@ -1,8 +1,6 @@
 #include "componentCluster.hpp"
 #include "core/appData.hpp"
 
-//TEST:
-
 Core::ComponentCluster::ComponentCluster(std::pmr::memory_resource* resource) : m_resource(resource), m_pools(m_resource) {}
 
 Core::ComponentCluster::~ComponentCluster() { if(m_isLoaded) unload(); }

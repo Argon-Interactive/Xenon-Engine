@@ -1,7 +1,6 @@
-#ifndef _XENON_ECS_COMPOENNTSCLUSTER_
-#define _XENON_ECS_COMPOENNTSCLUSTER_
+#ifndef _XENON_ECS_COMPOENTCLUSTER_
+#define _XENON_ECS_COMPOENTCLUSTER_
 
-//TEST: temp
 #include "componentContainerTuple.hpp"
 #include "componentPool.hpp"
 
@@ -35,4 +34,4 @@ private:
 
 }
 
-#endif // !_XENON_ECS_COMPOENNTSCLUSTER_
+#endif // !_XENON_ECS_COMPOENTCLUSTER_

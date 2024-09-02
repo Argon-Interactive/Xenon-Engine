@@ -1,5 +1,5 @@
-#ifndef _XENON_ECS_COMPONENT_MANAGER_
-#define _XENON_ECS_COMPONENT_MANAGER_
+#ifndef _XENON_ECS_COMPONENTMANAGER_
+#define _XENON_ECS_COMPONENTMANAGER_
 
 #include "componentReferenceList.hpp"
 #include "componentContainerTuple.hpp"
@@ -30,4 +30,4 @@ private:
 
 }
 
-#endif // !_XENON_ECS_COMPONENT_MANAGER_
+#endif // !_XENON_ECS_COMPONENTMANAGER_

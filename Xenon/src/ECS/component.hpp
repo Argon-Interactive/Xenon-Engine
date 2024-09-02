@@ -59,11 +59,11 @@ private:
 template<typename T>
 constexpr bool is_proper_component() {
 	static_assert(std::is_base_of_v<Component<T>, T>, "T has to be declared with `COMPONENT(T)` macro ( equivalent to `struct T : Component<T>` )");
-	static_assert(std::is_default_constructible_v<T>, "T has to be trivially default constructible");
-	static_assert(std::is_copy_constructible_v<T>, "T has to be trivially copy constructible");
-	static_assert(std::is_move_constructible_v<T>, "T has to be trivially move constructible");
-	static_assert(std::is_copy_assignable_v<T>, "T has to be trivially copy assignable");
-	static_assert(std::is_move_assignable_v<T>, "T has to be trivially move assignable");
+	static_assert(std::is_default_constructible_v<T>, "T has to be default constructible");
+	static_assert(std::is_copy_constructible_v<T>, "T has to be copy constructible");
+	static_assert(std::is_move_constructible_v<T>, "T has to be move constructible");
+	static_assert(std::is_copy_assignable_v<T>, "T has to be copy assignable");
+	static_assert(std::is_move_assignable_v<T>, "T has to be move assignable");
     return true;
 }
 

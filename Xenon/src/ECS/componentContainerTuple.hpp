@@ -1,8 +1,10 @@
 #ifndef _XENON_ECS_COMPONENTCONTAINERTUPLE_
 #define _XENON_ECS_COMPONENTCONTAINERTUPLE_
 
-#include "componentImplementations/TestComp.hpp"
-#include "System/Transform.hpp"
+//TEST:
+#include "System/Components/TestComp.hpp"
+
+#include "System/Components/Transform.hpp"
 
 #include "containerTuple.hpp"
 

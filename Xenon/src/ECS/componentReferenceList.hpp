@@ -1,5 +1,5 @@
-#ifndef _XENON_ECS_COMPONENTLIST_
-#define _XENON_ECS_COMPONENTLIST_
+#ifndef _XENON_ECS_COMPONENTREFERENCELIST_
+#define _XENON_ECS_COMPONENTREFERENCELIST_
 
 #include "chunkedArray.hpp"
 #include "devTools/logger_core.hpp"
@@ -190,4 +190,4 @@ private:
 	ChunkedArray<T>::const_iterator m_caIt;
 };
 }
-#endif // !_XENON_ECS_COMPONENTLIST_
+#endif // !_XENON_ECS_COMPONENTREFERENCELIST_

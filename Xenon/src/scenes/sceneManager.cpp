@@ -103,7 +103,7 @@ void SceneManager::loadSceneAsync(uint64_t buildIndex) {
 	m_futures.push_back(std::async(std::launch::async, [this, buildIndex]() {
 		XN_LOG_TRC("SceneManager: Loading scene {0} asynchronously", buildIndex);
 		auto scene = std::make_unique<Scene>(buildIndex);
-		const std::lock_guard<std::mutex> lock(m_mutex);
+		const std::lock_guard<std::mutex> l(m_mutex);
 		m_activeSceneIndex = m_scenes.size();
 		m_scenes.push_back(std::move(scene));
 	}));
@@ -163,7 +163,7 @@ void SceneManager::switchSceneAsync(uint64_t buildIndex) {
 		auto scene = std::make_unique<Scene>(buildIndex);
 		std::vector<std::unique_ptr<Scene>> toDelete;
 		{
-			const std::lock_guard<std::mutex> lock(m_mutex);
+			const std::lock_guard<std::mutex> l(m_mutex);
 			toDelete = std::move(m_scenes);
 			m_scenes.push_back(std::move(scene));
 		}

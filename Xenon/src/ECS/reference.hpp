@@ -1,5 +1,5 @@
-#ifndef _XENON_ECS_REFERENCE
-#define _XENON_ECS_REFERENCE
+#ifndef _XENON_ECS_REFERENCE_
+#define _XENON_ECS_REFERENCE_
 
 #include "component.hpp"
 
@@ -115,4 +115,4 @@ private:
 
 }
 
-#endif // !_XENON_ECS_REFERENCE
+#endif // !_XENON_ECS_REFERENCE_
