@@ -20,8 +20,7 @@ macro(xenon_enable_cppcheck WARNINGS_AS_ERRORS CPPCHECK_OPTIONS)
 				--suppress=passedByValue
 				--suppress=syntaxError
 				--suppress=preprocessorErrorDirective
-				--inconclusive
-				--force)
+				--inconclusive)
 		else()
 			set(CMAKE_CXX_CPPCHECK ${CPPCHECK} --template=${CPPCHECK_TEMPLATE} ${CPPCHECK_OPTIONS})
 		endif()
