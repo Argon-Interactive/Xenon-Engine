@@ -93,7 +93,11 @@ public:
 		return m_dataPtrs[inxMajor][index - inxMajor * m_maxPartitionSize]; 
 	}
 	T& front() { return m_dataPtrs.front()[0]; }
-	T& back() { return m_dataPtrs[m_indexMajor][m_indexMinor - 1]; }
+	T& back() { 
+		if(m_indexMinor == 0)
+			return m_dataPtrs[m_indexMajor - 1][m_maxPartitionSize - 1];
+		return m_dataPtrs[m_indexMajor][m_indexMinor - 1]; 
+	}
 private:
 	uint16_t m_maxPartitionSize{};
 	uint16_t m_indexMinor{};

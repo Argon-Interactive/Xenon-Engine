@@ -1,10 +1,8 @@
-#ifndef _XENON_ECS_COMPONENT_MANAGER_
-#define _XENON_ECS_COMPONENT_MANAGER_
+#ifndef _XENON_ECS_COMPONENTMANAGER_
+#define _XENON_ECS_COMPONENTMANAGER_
 
 #include "componentReferenceList.hpp"
-#include "ECS/componentImplementations/TestComp.hpp"
-
-#include "System/Transform.hpp"
+#include "componentContainerTuple.hpp"
 
 namespace Core {
 
@@ -16,16 +14,20 @@ public:
 	ComponentManager& operator=(const ComponentManager&);
 	ComponentManager& operator=(ComponentManager&&) noexcept ;
 
-	ComponentReferenceList<Comp> intCRL;
-	ComponentReferenceList<float> floatCRL;
-
-	ComponentReferenceList<Transform> transformCRL;
+	template<class Component>
+	[[nodiscard]] ComponentReferenceList<Component>& get() {
+		m_refs.get<Component>();
+	}
 
 private:
-	ComponentManager() = default;
+	ComponentManager();
+
+	ComponentContainerTuple<ComponentReferenceList> m_refs;
 
 	friend class AppData;
+	friend class ComponentCluster;
 };
+
 }
 
-#endif // !_XENON_ECS_COMPONENT_MANAGER_
+#endif // !_XENON_ECS_COMPONENTMANAGER_

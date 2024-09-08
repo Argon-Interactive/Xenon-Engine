@@ -27,7 +27,39 @@ public:
 	Scene &operator=(Scene &&) = delete;
 
 	Entity createEntity();
-	void deleteEntity(Entity uuid);
+	void deleteEntity(Entity entity);
+
+	template<class Component>
+	[[nodiscard]] bool hasComponent(Entity entity) {
+		return m_components.get<Component>().hasComponent(entity);
+	}
+
+	template<class Component>
+	[[nodiscard]] Component& getComponent(Entity entity) {
+		return m_components.get<Component>().getComponent(entity);
+	}
+
+	template<class Component>
+	void addComponent(Entity entity) {
+		m_components.get<Component>().addComponent(entity);
+	}
+	template<class Component>
+	void addComponent(Entity entity, const Component& comp) {
+		m_components.get<Component>().addComponent(entity, comp);
+	}
+	template<class Component>
+	void addComponent(Entity entity, Component&& comp) {
+		m_components.get<Component>().addComponent(entity, comp);
+	}
+	template<class Component, typename... Args>
+	void emplaceComponent(Entity entity, Args... args) {
+		m_components.get<Component>().emplaceComponent(entity, std::forward<Args>(args)...);
+	}
+
+	template<class Component>
+	void removeComponent(Entity entity) {
+		m_components.get<Component>().removeComponent(entity);
+	}
 
 	[[nodiscard]] uint64_t getBuildIndex() const;
 	[[nodiscard]] bool isRuntimeCreated() const;

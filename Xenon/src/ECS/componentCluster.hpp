@@ -1,15 +1,14 @@
-#ifndef _XENON_ECS_COMPOENNTSCLUSTER_
-#define _XENON_ECS_COMPOENNTSCLUSTER_
+#ifndef _XENON_ECS_COMPOENTCLUSTER_
+#define _XENON_ECS_COMPOENTCLUSTER_
 
-//TEST: temp
+#include "componentContainerTuple.hpp"
 #include "componentPool.hpp"
-#include "ECS/componentImplementations/TestComp.hpp"
-
 
 namespace Core {
 
-struct ComponentCluster {
-	explicit ComponentCluster(std::pmr::memory_resource* resource) : m_resource(resource) {}
+class ComponentCluster {
+public:
+	explicit ComponentCluster(std::pmr::memory_resource* resource = std::pmr::get_default_resource());
 	~ComponentCluster();
 
 	ComponentCluster(ComponentCluster &&) = delete;
@@ -20,25 +19,19 @@ struct ComponentCluster {
 	void load();
 	void unload();
 
-	void syncComponentData() {
-		p_performRemovals(); 
-		p_performAdditions();
-		p_resolveDependencies(); 
-		p_performResolvingCleaup();
+	template<class Component>
+	[[nodiscard]] ComponentPool<Component>& get() {
+		return m_pools.get<Component>();
 	}
+
 private:
 	bool m_isLoaded = false;
 	std::pmr::memory_resource* m_resource;
+	ComponentContainerTuple<ComponentPool> m_pools;
 
-	void p_performRemovals();
-	void p_resolveDependencies();
-	void p_performResolvingCleaup();
-	void p_performAdditions();
-public:
-	ComponentPool<Comp> intComp{m_resource};
-	ComponentPool<float> floatComp{m_resource};
+	friend class ComponentManager;
 };
 
 }
 
-#endif // !_XENON_ECS_COMPOENNTSCLUSTER_
+#endif // !_XENON_ECS_COMPOENTCLUSTER_
