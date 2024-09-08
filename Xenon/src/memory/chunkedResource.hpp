@@ -51,6 +51,7 @@ private:
 	std::size_t m_freeChunksCount;
 	std::mutex m_mutex;
 	std::condition_variable m_cond;
+	bool m_allocating = false;
 	std::pmr::memory_resource* m_upstream;
 
 	void* allocFromPool();

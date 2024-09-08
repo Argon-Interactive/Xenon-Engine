@@ -9,7 +9,7 @@ namespace Core {
 ChunkedResource::ChunkedResource(std::pmr::memory_resource* upstream) : m_freeChunksCount(m_blockSize), m_upstream(upstream) {
 	std::unique_lock lock(m_mutex);
 	void* ptr = m_upstream->allocate(m_blockSize * s_CHUNK_SIZE, s_CHUNK_SIZE);
-	m_blocks.emplace_front(ptr, m_blockSize * s_CHUNK_SIZE);
+	m_blocks.emplace_front(ptr);
 	m_freeChunks.emplace(static_cast<std::byte*>(ptr), m_blockSize);
 	lock.unlock();
 	m_cond.notify_all();
@@ -89,16 +89,14 @@ void ChunkedResource::addToPool(std::byte* chunkPtr) {
 	}
 
 	if(!mergedPrev && !mergedNext)
-		m_freeChunks.insert(it, {chunkPtr, 1});
+		m_freeChunks.insert(it, {chunkPtr, s_CHUNK_SIZE});
 	m_freeChunksCount++;
 	tryDeplatePool();
 }
 
 void ChunkedResource::tryReplenishPool() {
-	if(m_allocating) return;
-	if(m_freeChunksCount >= s_MINIMAL_FREE_CHUNKS) return;
+	if(m_freeChunksCount < s_MINIMAL_FREE_CHUNKS + m_blockSize) return;
 
-	m_allocating = true;
 	std::thread t{ [this](){
 		std::unique_lock lock(m_mutex);
 		m_blockSize *= 2;
@@ -108,8 +106,7 @@ void ChunkedResource::tryReplenishPool() {
 		void* ptr = m_upstream->allocate(m_blockSize * s_CHUNK_SIZE, s_CHUNK_SIZE);
 		lock.lock();
 
-		m_allocating = false;
-		m_blocks.emplace_front(ptr, m_blockSize * s_CHUNK_SIZE);
+		m_blocks.emplace_front(ptr);
 		m_freeChunks.emplace(static_cast<std::byte*>(ptr), m_blockSize);
 		m_freeChunksCount += m_blockSize;
 		lock.unlock();
@@ -119,8 +116,7 @@ void ChunkedResource::tryReplenishPool() {
 }
 
 void ChunkedResource::tryDeplatePool() {
-	return;
-	if(m_freeChunksCount < 2 * s_MINIMAL_FREE_CHUNKS + m_blockSize) return;
+	if(m_freeChunksCount >= s_MINIMAL_FREE_CHUNKS + m_blockSize) return;
 	if(std::prev(m_freeChunks.end())->chunks != m_blockSize) return;
 
 	std::thread t{ [this](){
