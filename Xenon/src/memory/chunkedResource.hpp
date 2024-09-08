@@ -47,8 +47,8 @@ private:
 
 	std::forward_list<Block> m_blocks;
 	std::set<FreeSpace, FreeSpace::Compare> m_freeChunks;
-	std::size_t m_freeChunksCount = 0;
 	std::size_t m_blockSize = s_START_BLOCK_SIZE;
+	std::size_t m_freeChunksCount;
 	std::mutex m_mutex;
 	std::condition_variable m_cond;
 	std::pmr::memory_resource* m_upstream;

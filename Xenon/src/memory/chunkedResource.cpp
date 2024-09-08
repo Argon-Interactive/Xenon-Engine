@@ -6,7 +6,13 @@
 
 namespace Core {
 
-ChunkedResource::ChunkedResource(std::pmr::memory_resource* upstream) : m_upstream(upstream) {}
+ChunkedResource::ChunkedResource(std::pmr::memory_resource* upstream) : m_freeChunksCount(m_blockSize), m_upstream(upstream) {
+	std::unique_lock lock(m_mutex);
+	void* ptr = m_upstream->allocate(m_blockSize * s_CHUNK_SIZE, s_CHUNK_SIZE);
+	m_blocks.emplace_front(ptr);
+	lock.unlock();
+	m_cond.notify_all();
+}
 
 ChunkedResource::~ChunkedResource() {
 	for(const auto& block : m_blocks)
