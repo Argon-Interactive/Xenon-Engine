@@ -1,28 +1,28 @@
 #include "chunkedResource.hpp"
+
 #include <cassert>
 #include <cstdlib>
-#include <algorithm>
+#include <stdexcept>
 #include <thread>
 
 namespace Core {
 
-ChunkedResource::ChunkedResource(std::pmr::memory_resource* upstream) : m_freeChunksCount(m_blockSize), m_upstream(upstream) {
+ChunkedResource::ChunkedResource(std::pmr::memory_resource* upstream) 
+: m_freeChunksCount(m_blockSize), m_upstream(upstream) {
 	std::unique_lock lock(m_mutex);
 	void* ptr = m_upstream->allocate(m_blockSize * s_CHUNK_SIZE, s_CHUNK_SIZE);
-	m_blocks.emplace_front(ptr, m_blockSize * s_CHUNK_SIZE);
-	m_freeChunks.emplace(static_cast<std::byte*>(ptr), m_blockSize);
+	m_blocks.emplace_back(ptr, m_blockSize * s_CHUNK_SIZE);
+	m_freeChunks.emplace(static_cast<std::byte*>(ptr), m_blockSize, 0);
 	lock.unlock();
 	m_cond.notify_all();
 }
 
 ChunkedResource::~ChunkedResource() {
 	for(const auto& block : m_blocks)
-		m_upstream->deallocate(block.address, block.size); 
+		m_upstream->deallocate(block.address, block.size, s_CHUNK_SIZE); 
 }
 
 void* ChunkedResource::do_allocate(std::size_t bytes, std::size_t alignment) { 
-	assert(bytes % s_CHUNK_SIZE == 0 && "Memory allocation in ChunkedResource must be a multiple of 4096 bytes");
-
 	std::unique_lock lock(m_mutex);
 	if (bytes == s_CHUNK_SIZE) {
 		while(m_freeChunks.empty()) m_cond.wait(lock);
@@ -31,7 +31,7 @@ void* ChunkedResource::do_allocate(std::size_t bytes, std::size_t alignment) {
 
 	// This allocation is special: it is only for pre-defined scene data
 	void* ptr = m_upstream->allocate(bytes, alignment);
-	m_blocks.emplace_front(ptr, bytes);
+	m_blocks.emplace_back(ptr, bytes);
 	return ptr;
 }
 
@@ -45,6 +45,15 @@ bool ChunkedResource::do_is_equal(const std::pmr::memory_resource& other) const 
 }
 
 
+
+std::size_t ChunkedResource::findBlock(std::byte* ptr) const {
+	for(std::size_t i = 0; i < m_blocks.size(); i++) {
+		const auto& blk = m_blocks[i];
+		if(blk.address <= ptr && blk.address > ptr - blk.size)
+			return i;
+	}
+	throw std::invalid_argument("Trying to deallocate memory that is not in any ChunkedResource block");
+}
 
 void* ChunkedResource::allocFromPool() {
 	auto chunk = m_freeChunks.begin();
@@ -61,10 +70,9 @@ void* ChunkedResource::allocFromPool() {
 }
 
 void ChunkedResource::addToPool(std::byte* chunkPtr) {
-	auto it = std::lower_bound(m_freeChunks.begin(), m_freeChunks.end(), chunkPtr,
-							[](const FreeSpace& a, void* b) {
-								return a.address < b;
-							});
+	auto blockIndex = findBlock(chunkPtr);
+	FreeSpace chunk(chunkPtr, 1, blockIndex);
+	auto it = m_freeChunks.lower_bound(chunk);
 
 	bool mergedPrev = false;
 	bool mergedNext = false;
@@ -86,10 +94,11 @@ void ChunkedResource::addToPool(std::byte* chunkPtr) {
 			it->address -= s_CHUNK_SIZE;
 			it->chunks++;
 		}
+		mergedNext = true;
 	}
 
 	if(!mergedPrev && !mergedNext)
-		m_freeChunks.insert(it, {chunkPtr, 1});
+		m_freeChunks.insert(it, chunk);
 	m_freeChunksCount++;
 	tryDeplatePool();
 }
@@ -109,8 +118,8 @@ void ChunkedResource::tryReplenishPool() {
 		lock.lock();
 
 		m_allocating = false;
-		m_blocks.emplace_front(ptr, m_blockSize * s_CHUNK_SIZE);
-		m_freeChunks.emplace(static_cast<std::byte*>(ptr), m_blockSize);
+		m_blocks.emplace_back(ptr, m_blockSize * s_CHUNK_SIZE);
+		m_freeChunks.emplace(static_cast<std::byte*>(ptr), m_blockSize, m_blocks.size() - 1);
 		m_freeChunksCount += m_blockSize;
 		lock.unlock();
 		m_cond.notify_all();

@@ -22,7 +22,11 @@ public:
 		auto* newData = static_cast<T*>(m_resource->allocate(ALLOCATION_SIZE));
 		m_dataPtrs.push_back(newData);
 	}
-	~ChunkedArray() { for(auto ptr : m_dataPtrs) { m_resource->deallocate(ptr, ALLOCATION_SIZE); } }
+	~ChunkedArray() { 
+		if(m_resource == std::pmr::get_default_resource()) 
+			for(auto ptr : m_dataPtrs) 
+				m_resource->deallocate(ptr, ALLOCATION_SIZE);
+	}
 	ChunkedArray(ChunkedArray &&) = delete;
 	ChunkedArray(const ChunkedArray &) = delete;
 	ChunkedArray &operator=(ChunkedArray &&) = delete;
