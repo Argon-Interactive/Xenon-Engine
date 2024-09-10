@@ -1,7 +1,7 @@
 #ifndef _XENON_SCENES_SCENE_
 #define _XENON_SCENES_SCENE_
 
-#include "memory/chunkedPMR.hpp"
+#include "memory/chunkedResource.hpp"
 #include "ECS/componentCluster.hpp"
 #include "ECS/entity.hpp"
 
@@ -74,10 +74,10 @@ private:
 	private:
 #ifdef __DEBUG__
 		DebugMemoryResource mem2;
-		ChunkedPMR mem1;
+		ChunkedResource mem1;
 		DebugMemoryResource mem0;
 #else
-		ChunkedPMR mem0;
+		ChunkedResource mem0;
 #endif // !__DEBUG__
 	};
 
