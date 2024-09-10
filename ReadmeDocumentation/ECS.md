@@ -1,78 +1,126 @@
 ## Contents
+- [Component](#component)
 - [ComponentPool](#componentpool)
 - [ComponentCluster](#componentcluster)
 - [ComponentReferenceList](#componentreferencelist)
 - [ComponentManager](#componentmanager)
+- [ChunkedArray](#chunkedarray)
+- [Reference](#reference)
 - [ComponentContainerTuple](#componentcontainertuple)
-- [ContainerTuple](#containertuple) (probably shouldn't be here)
+- [ContainerTuple](#containertuple)
+
+## <a id="component"></a>Component
+#### Defined in header `<ECS/component.hpp>`
+### Overview
+Templated component base class which every component must properly derive from.
+It stores the ID of the owner of an entity which is used by the ComponentPool as well as provides default move/copy semantics to ensure Reference validity.
+The proper derivation of this class should be done using curiously recurring template pattern (CRTP) as follows:
+```
+struct MyComponent : Component<MyComponent> { ... }
+```
+which can be simplified with COMPONENT declaration macro:
+```
+COMPONENT(MyComponent) { ... }
+```
+In order for the component to be safely usable it is unadvised to implicitly provide destructor as well as copy/move constructor/assign operator.
+If it is necessary, remember: copy/move constructor/assign operators should invoke its base class counterparts.
+### Member functions
+- 'void p_atDelete() private'
+  - Description: the only relevant method - it should be called by ComponentPool at destruction.
+### Non-member functions
+- `bool is_proper_component<T>()`
+  - Return value: (at compile time) returns whether T satisfies all component requirements.
+### References
+- [ComponentPool](#componentpool)
+- [Reference](#reference)
 
 ## <a id="componentpool"></a>ComponentPool
-#### Defined in header `<ComponentPool.hpp>`
+#### Defined in header `<ECS/componentPool.hpp>`
 ### Overview
-This is a class that holds components and provides an interface to add, remove and access them.  
-An instance of this class cannot be constructed outside ComponentCluster.
+This is a templated class that holds components and provides an interface to add, remove and access them.  
+Template parameter T has to be a proper component implementation:
+1) must be derived from Component<T> template (it can be done via COMPONENT() declaration macro)
+2) must be default constructible and copy/move constructible/assignable.
 ### Member functions
 - `ComponentPool(std::pmr::memory_resorce* memres)`
   - Parameters:
-    - memres - a memory resource that will be used to initialize all of its private fields
+    - memres - a memory resource that will be used to initialize underlying ChunkedArray container.
+- `T& hasComponent(Entity ent)`
+  - Parameters:  
+    - ent - Entity to check if it has component of this type.
 - `T& getComponent(Entity ent)`
   - Parameters:  
-    - ent - Entity that owns required component
+    - ent - Entity that owns required component.
+  - Return value: reference to this entity's component T.
 - `T* getComponentPtr(Entity ent)`
   - Parameters:  
-    - ent - Entity that owns required component
+    - ent - Entity that owns required component.
+  - Return value: pointer to this entity's component T.
 - `T* emplaceComponent(Entity ent, Args ...args)`
   - Parameters:  
-    - ent - Entity that will own the new component  
-    - args - constructor arguments of T
-  - Return value: returns a pointer to created component
-  - Note: This funcion is not SRTS(Systems Run Time Save) so should be only used to add components before loading ComponentCluster.
+    - ent - Entity that will own the new component.
+    - args - constructor arguments of the component.
+  - Return value: returns a pointer to created component.
+- `void addComponent(Entity ent)`
+  - Parameters:  
+    - ent - Entity that will own the new component.
 - `void addComponent(Entity ent, const T& data)`
   - Parameters:  
-    - ent - Entity that will own the new component  
-    - data - The new component
-  - Note: This is much slower then emplaceCompoennt but is SRTS. It will only take effect when a ComponentCluster is synced.
+    - ent - Entity that will own the new component.
+    - data - The component that will be taken copy of.
+- `void addComponent(Entity ent, T&& data)`
+  - Parameters: 
+    - ent - Entity that will own the new component.
+    - data - Component that will be moved to the entity.
 - `void removeComponent(Entity ent)`
   - Parameters:  
-    - ent - Entity which component will be removed
-  - Note: This will only take effect when a ComponentCluster is synced.
+    - ent - Entity whose component will be removed.
 - `void purge()`
   - Description: It wipes the entire memory of the ComponentPool.
-
 ### References
+- [Component](#component)
 - [ComponentCluster](#componentcluster)
+- [ChunkedArray](#chunkedarray)
+
 ## <a id="componentcluster"></a>ComponentCluster
-#### Defined in header `<ComponentCluster.hpp>`
+#### Defined in header `<ECS/componentCluster.hpp>`
 ### Overview
-This is a structure that holds ComponentPool instances and provides an interface to synchronize them.  
-It also provides a way to load and unload all components to and from ComponentManager.  
+This is a structure that holds ComponentPool instances and via ContainerTuple and serves as an access point to components through a scene.
+It also provides a way to load and unload all components to and from ComponentManager. 
 The complete list of components is taken from ComponentContainerTuple type.
-Resolving dependencies is currently fucked but we're working on it
-Each scene should have exactly one instance of ComponentCluster and run ComponentCluster.load() ,after initializing and emplacing all components, and unload()
-when the scene no longer needs to be updated.
 ### Member functions
 - `void load()`
   - Description: It adds a reference to all ComponentPools data to corresponding ComponentReferenceLists in ComponentManager.
 - `void unload()`
   - Description: It removes a reference from all ComponentPools data to corresponding ComponentReferenceLists in ComponentManager.
-- `void syncComponentData()`
-  - Description: It syncs a ComponentCluster.
 - `ComponentPool<T>& get<T>()`
   - Return value: the ComponentPool of corresponding component type T.
 ### References
+- [Component](#component)
 - [ComponentPool](#componentpool)
 - [ComponentContainerTuple](#componentcontainertuple)
 - [ComponentReferenceList](#componentreferencelist)
 - [ComponentManager](#componentmanager)
 - [Scene](SceneManagement.md#scene)
 - [AppData](AppCore.md#appdata)
+
 ## <a id="componentreferencelist"></a>ComponentReferenceList
 #### Maybe referred to as CRL
-#### Defined in header `<ComponentReferenceList.hpp>`
+#### Defined in header `<ECS/componentReferenceList.hpp>`
 ### Overview
-It stores references to loaded components data and provides an interface for iterating over them, using the standard iterator syntax `for(auto& a : CRL)` it 
-will iterate over all loaded components and not the nodes of the underlying data structure, that is linked list.
+It stores references to loaded components from all scenes and provides an interface for iterating over them.
 ### Member functions
+- `ComponentReferenceList(std::pmr::memory_resorce* memRsrc)`
+  - Parameters:
+    - memRsrc - the memory resource the reference list will use for its allocations.
+- `bool contains(ChunkedArray<T>* elem)`
+  - Parameters:
+    - elem - target chunked array instance.
+  - Return value: true if the elements of the array are included in reference list.
+- `iterator begin()`
+  - Return value: an iterator to the begining of the list.
+- `iterator end()`
+  - Return value: an iterator to the end of the list.
 - `void push(ChunkedArray<T>* elem) private`
   - Parameters:  
     - elem - a pointer to a ChunkedArray<T> that will be added.
@@ -80,12 +128,14 @@ will iterate over all loaded components and not the nodes of the underlying data
   - Parameters:  
     - elem - a pointer to a ChunkedArray<T> that will be removed.
 ### References
-- [ChunkedArray]( )
+- [Component](#component)
+- [Scene](SceneManagement.md#scene)
+- [ChunkedArray](#chunkedarray)
 
 ## <a id="componentmanager"></a>ComponentManager
-#### Defined in header `<ComponentManager.hpp>`
+#### Defined in header `<ECS/componentManager.hpp>`
 ### Overview
-This class should only have exactly one instance inside AppData. It is used as global way to access all loaded components for systems.  
+This class is used as a global way (through AppData) to access reference lists of components for systems.  
 It takes the list of all Component types from ComponentContainerTuple.
 ### Member functions
 - `ComponentReferenceList<T>& get<T>()`
@@ -95,21 +145,81 @@ It takes the list of all Component types from ComponentContainerTuple.
 - [ComponentReferenceList](#componentreferencelist)
 - [ComponentContainerTuple](#componentcontainertuple)
 
-## <a id="componentcontainertuple"></a>ComponentContainerTuple
-#### Defined in header `<componentContainerTuple.hpp>`
+## <a id="chunkedarray"></a>ChunkedArray
+#### Defined in header `<ECS/chunkedArray.hpp>`
 ### Overview
-It is just a template `using` declaration for ContainerTuple types with all component types.
+Templated container that is intended to avoid realocations entirely. Stores data in 4kB chunks which are being added/deleted as needed.
+### Member functions
+- `ChunkedArray(std::pmr::memory_resorce* memoryRsrc)`
+  - Parameters:
+    - memoryRsrc - the resource used to allocate arrays chunks.
+- `iterator begin()`
+  - Return value: an iterator to the begining of the array.
+- `iterator end()`
+  - Return value: an iterator to the end of the array.
+- `T* emplace_back(Args&&... args)`
+  - Parameters:
+    - ...args - arguments that are passed to the constructor of T.
+  - Return value: pointer to newly emplaced element.
+  - Note: the new element is placed at the end of the array.
+- `void push_back(const T& value)`
+  - Parameters:
+    - value - object copied to the end of the array.
+- `void push_back(T&& value)`
+  - Parameters:
+    - value - object moved to the end of the array.
+- `void pop_back()`
+  - Description: pops the last element from the array.
+- `void clear()`
+  - Description: clears contents of the array.
+
+## <a id="reference"></a>Reference
+#### Defined in header `<ECS/reference.hpp>`
+### Overview
+Templated class of reference/pointer type that is designed to stay valid even after the referenced object is moved.
+The reference has to be a component type.
+For referencing game assets use (NOT IMPLEMENTED YET).
+### Member functions
+- `T& get()`
+  - Return value: a reference to the referenced component (hell yeah that's fuckin' useful info right there).
+  - Note: this method might try do dereference nullptr if the reference got destroyed, reset or was simply not set.
+- `T* getPtr()`
+  - Return value: a pointer to the referenced component.
+- `void set(T* dep)`
+  - Parameters:
+    - dep - pointer to component to set the reference to
+- `void set(T& dep)`
+  - Parameters:
+    - dep - component to set the reference to
+### References
+- [Component](#component)
+
+## <a id="componentcontainertuple"></a>ComponentContainerTuple
+#### Defined in header `<ECS/componentContainerTuple.hpp>`
+### Overview
+It is just a template `using` declaration for ContainerTuple types with a list of all component types.
 To add a new component type add it's type name to the list.
 ### Usage
 To define a tuple of Containers with all component types just use:
 ```ComponentContainerTuple<Container> tupleOfContainers;```
 e.g.
 ```ComponentContainerTuple<std::vector> vectors;```
+will produce a tuple like:
+```
+struct {
+std::vector<Transform> v0; 
+std::vector<Model3D> v1; 
+std::vector<RigidBody> v2; 
+...
+} vectors;
+```
+Note that the order of elements in tuples depends solely on the order in the list declaration (which is to say every component container tuple will have the same order of elements).
 ### References
+- [Component](#component)
 - [ContainerTuple](#containertuple)
 
 ## <a id="containertuple"></a>ContainerTuple
-#### Defined in header `<containerTuple.hpp>`
+#### Defined in header `<ECS/containerTuple.hpp>`
 ### Overview
 Tuple-like structure to hold a list of containers with different stored types.
 ### Template arguments

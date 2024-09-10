@@ -21,6 +21,27 @@ This class represents a game scene which holds it's components via ComponentClus
 - `deleteEntity(Entity entity)`
   - Parameters:
     - entity - entity ID to delete
+- `bool hasComponent<T>(Entity entity)`
+  - Parameters:  
+    - entity - Entity to check if it has component T.
+- `T& getComponent<T>(Entity entity)`
+  - Parameters:  
+    - entity - Entity that owns required component of type T.
+  - Return value: reference to this entity's component T.
+- `void addComponent<T>(Entity ent)`
+  - Parameters:  
+    - ent - Entity that will be added component T.
+- `void addComponent<T>(Entity entity, const T& data)`
+  - Parameters:  
+    - entity - Entity that will own the new component.
+    - data - The component T that will be taken copy of.
+- `void addComponent<T>(Entity entity, T&& data)`
+  - Parameters: 
+    - entity - Entity that will own the new component.
+    - data - Component T that will be moved to the entity.
+- `void removeComponent<T>(Entity ent)`
+  - Parameters:  
+    - ent - Entity whose component T will be removed.
 - `getBuildIndex()`
   - Return value: build index of this scene
   - Note: if the scene was runtime-created this method returns 0 which is an invalid buildIndex
@@ -33,8 +54,8 @@ This class represents a game scene which holds it's components via ComponentClus
   - Note: this method is meant to be only called once by AppData at the application launch
 ### References
 - [ComponentCluster](ECS.md#componentcluster)
-- [ResourceManager]( )
-- [AppData]( )
+- [ResourceManager](ResourceManagement.md#resourcemanager)
+- [AppData](AppCore.md#appdata)
 
 ## <a id="scenemanager"></a>SceneManager
 #### Defined in header `<scene/sceneManager.hpp>`
@@ -124,4 +145,4 @@ Every method in this class is thread safe.
     - targetScene - pointer to the scene to move the entity to
 ### References
 - [Scene](#scene)
-- [AppData]( )
+- [AppData](AppCore.md#appdata)
