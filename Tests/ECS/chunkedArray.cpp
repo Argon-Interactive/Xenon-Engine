@@ -28,7 +28,7 @@ struct Test {
 	}
 };
 
-TEST_CASE("ChunkedArray", "[ECS][ChunkedArray]") {
+TEST_CASE( "ChunkedArraySemantics", "[ECS] [ChunkedArray]") {
 	Core::ChunkedArray<Test> ca;
 
 	SECTION("Adding") {

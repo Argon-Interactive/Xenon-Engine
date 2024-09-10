@@ -53,7 +53,7 @@ int bench(Core::ComponentCluster& cc) {
 	return 5;
 }
 
-TEST_CASE("CR") {
+TEST_CASE( "ChunkedResource", "[ECS] [ComponentCluster] [ChunkedResource]") {
 	Core::DebugMemoryResource deb1("[Upstream]");
 	Core::ChunkedResource cr(&deb1);
 	// Core::DebugMemoryResource deb0("[Main]", &cr);
@@ -61,7 +61,7 @@ TEST_CASE("CR") {
 	REQUIRE(bench(cc) == 5);
 }
 
-TEST_CASE("ComponentCluster with ChunkedResource performance", "[ECS] [ComponentCluster] [ChunkedResource]") {
+TEST_CASE( "ChunkedResourcePerformance", "[ECS] [ComponentCluster] [ChunkedResource] [Benchmark]") {
 	BENCHMARK("New/Delete resource") {
 		Core::ComponentCluster cc(std::pmr::new_delete_resource());
 		return bench(cc);
