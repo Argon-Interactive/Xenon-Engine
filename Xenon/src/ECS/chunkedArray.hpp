@@ -50,20 +50,26 @@ public:
 	void push_back(const T& value) { emplace_back(value); }
 	void push_back(T&& value) { emplace_back(std::move(value)); }
 	void pop_back() {
+		back().~T();
 		if(m_indexMinor == 0) {
 			m_indexMajor--;
 			m_indexMinor = m_maxPartitionSize - 1;
 			m_resource->deallocate(m_dataPtrs.back(), ALLOCATION_SIZE);
 			m_dataPtrs.pop_back();
+		} else {
+			m_indexMinor--; 
 		}
-		else { m_indexMinor--; }
 	}
+
+	// TODO: call stored objects destructor at clear()
 	void clear() { 
 		for(auto ptr : m_dataPtrs) { m_resource->deallocate(ptr, ALLOCATION_SIZE); }
 		m_dataPtrs.clear();
 		m_indexMinor = 0;
 		m_indexMajor = 0;
 	}
+
+	// FIX: I don't know it these two work. They look like they don't.
 	void push_chunk(T* ptr) {
 		T* last = m_dataPtrs.back();
 		m_dataPtrs.pop_back();
@@ -78,6 +84,7 @@ public:
 		m_dataPtrs.push_back(last);
 		m_indexMajor += ptrs.size();
 	}
+
 	///////////////////////////////////////
 	/// Capacity 
 	///////////////////////////////////////
