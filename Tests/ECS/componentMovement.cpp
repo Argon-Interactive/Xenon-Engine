@@ -6,6 +6,14 @@
 #include "System/Components/TestComp.hpp"
 #include "System/Components/Transform.hpp"
 
+TEST_CASE( "Test", "[ECS] [Component]") {
+	Core::ComponentCluster cc;
+	for(Core::Entity i = 1; i < 100; i++) {
+		cc.get<Core::Transform>().addComponent(i);
+	}
+	REQUIRE(true);
+}
+
 TEST_CASE( "Check ComponentCluster", "[ECS][Component][ComponentCluster]" ) {
 	auto _ = GENERATE(range(1, 20));
 	Core::ComponentCluster cc;

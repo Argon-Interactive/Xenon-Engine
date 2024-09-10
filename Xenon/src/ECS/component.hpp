@@ -12,10 +12,7 @@ template<typename T>
 class Component {
 public:
 	Component() = default;
-
-	virtual ~Component() {
-		p_atDelete();
-	}
+	~Component() = default;
 
 	Component([[maybe_unused]] const Component& other) {}
 
@@ -38,6 +35,10 @@ public:
 		other.m_listHead = nullptr;
 		p_atMove();
 		return *this;
+	}
+
+	void destroy() {
+		p_atDelete();
 	}
 
 private:
