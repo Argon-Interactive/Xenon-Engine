@@ -24,6 +24,7 @@ This class represents a game scene which holds it's components via ComponentClus
 - `bool hasComponent<T>(Entity entity)`
   - Parameters:  
     - entity - Entity to check if it has component T.
+  - Return value: return whether or not the entity has component T.
 - `T& getComponent<T>(Entity entity)`
   - Parameters:  
     - entity - Entity that owns required component of type T.
