@@ -45,9 +45,10 @@ Template parameter T has to be a proper component implementation:
 - `ComponentPool(std::pmr::memory_resorce* memres)`
   - Parameters:
     - memres - a memory resource that will be used to initialize underlying ChunkedArray container.
-- `T& hasComponent(Entity ent)`
+- `bool hasComponent(Entity ent)`
   - Parameters:  
     - ent - Entity to check if it has component of this type.
+  - Return value: returns whether or not the entity has component T.
 - `T& getComponent(Entity ent)`
   - Parameters:  
     - ent - Entity that owns required component.
