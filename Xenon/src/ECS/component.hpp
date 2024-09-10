@@ -6,6 +6,8 @@
 namespace Core {
 
 template<typename T>
+class ComponentPool;
+template<typename T>
 class Reference;
 
 template<typename T>
@@ -37,10 +39,6 @@ public:
 		return *this;
 	}
 
-	void destroy() {
-		p_atDelete();
-	}
-
 private:
 	Reference<T>* m_listHead = nullptr;
 
@@ -55,6 +53,7 @@ private:
 	}
 
 	friend class Reference<T>;
+	friend class ComponentPool<T>;
 };
 
 template<typename T>

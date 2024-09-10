@@ -77,7 +77,7 @@ public:
 		}
 		m_ptrLookupTable.erase(ent);
 		m_entLookupTable.erase(ptrLast);
-		ptrLast->destroy();
+		ptrLast->p_atDelete();
 		m_data.pop_back();
 	}
 
