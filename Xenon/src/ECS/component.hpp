@@ -1,6 +1,8 @@
 #ifndef _XENON_ECS_COMPONENT_
 #define _XENON_ECS_COMPONENT_
 
+#include "ECS/entity.hpp"
+
 #include <type_traits>
 
 namespace Core {
@@ -40,6 +42,7 @@ public:
 	}
 
 private:
+	Entity m_owner = 0;
 	Reference<T>* m_listHead = nullptr;
 
 	void p_atDelete() {

@@ -36,18 +36,18 @@ public:
 
 	template<typename ...Args>
 	T* emplaceComponent(Entity ent, Args ...args) {
-		if(m_ptrLookupTable.contains(ent)) [[unlikely]] {
+		if(m_ptrLookupTable.contains(ent)) [[unlikely]] {			// TEST: this
 			*m_ptrLookupTable[ent](std::forward<Args>(args)...);
 		}
 		T* ptr = m_data.emplace_back(std::forward<Args>(args)...);
 		m_ptrLookupTable[ent] = ptr;
-		m_entLookupTable[ptr] = ent;
+		ptr->m_owner = ent;
 		return ptr;
 	}
 	void addComponent(Entity ent) { 
 		T* ptr = m_data.emplace_back(); 
 		m_ptrLookupTable[ent] = ptr;
-		m_entLookupTable[ptr] = ent;
+		ptr->m_owner = ent;
 	}
 	void addComponent(Entity ent, const T& data) {
 		if(m_ptrLookupTable.contains(ent)) [[unlikely]] {
@@ -55,7 +55,7 @@ public:
 		}
 		T* ptr = m_data.emplace_back(data); 
 		m_ptrLookupTable[ent] = ptr;
-		m_entLookupTable[ptr] = ent;
+		ptr->m_owner = ent;
 	}
 	void addComponent(Entity ent,T&& data) { 
 		if(m_ptrLookupTable.contains(ent)) [[unlikely]] {
@@ -63,20 +63,19 @@ public:
 		}
 		T* ptr = m_data.emplace_back(std::move(data)); 
 		m_ptrLookupTable[ent] = ptr;
-		m_entLookupTable[ptr] = ent;
+		ptr->m_owner = ent;
 	}
 
 	void removeComponent(Entity ent) {
 		T* ptr = m_ptrLookupTable.at(ent);
 		T* ptrLast = &m_data.back();
 		if(ptrLast != ptr) {
-			Entity entLast = m_entLookupTable.at(ptrLast);
+			Entity entLast = ptrLast->m_owner;
 			*ptr = std::move(*ptrLast);
 			m_ptrLookupTable[entLast] = ptr;
-			m_entLookupTable[ptr] = entLast;
+			ptr->m_owner = ent;
 		}
 		m_ptrLookupTable.erase(ent);
-		m_entLookupTable.erase(ptrLast);
 		ptrLast->p_atDelete();
 		m_data.pop_back();
 	}
@@ -84,13 +83,11 @@ public:
 	void purge() {
 		m_data.clear();
 		m_ptrLookupTable.clear();
-		m_entLookupTable.clear();
 	}
 private:
 	ChunkedArray<T> m_data;
 	//PERF: get rid of std::unordered_map, for something more performent
 	std::unordered_map<Entity, T*> m_ptrLookupTable;
-	std::unordered_map<T*, Entity> m_entLookupTable;
 
 	friend class ComponentCluster;
 };	
