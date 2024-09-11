@@ -6,7 +6,6 @@
 
 #include <queue>
 #include <mutex>
-#include <condition_variable>
 
 namespace Xenon { class Application; }
 
@@ -34,7 +33,6 @@ private:
 
 	std::queue<Core::Event> m_eventQueue;
 	mutable std::mutex m_mutex;
-	std::condition_variable m_cond;
 
 	friend class Xenon::Application;
 };
