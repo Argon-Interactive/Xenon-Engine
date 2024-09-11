@@ -1,20 +1,29 @@
 #include "componentCluster.hpp"
 #include "core/appData.hpp"
 
-Core::ComponentCluster::ComponentCluster(std::pmr::memory_resource* resource) : m_resource(resource), m_pools(m_resource) {}
+namespace Core {
 
-Core::ComponentCluster::~ComponentCluster() { if(m_isLoaded) unload(); }
+ComponentCluster::ComponentCluster(std::pmr::memory_resource* resource) : m_resource(resource), m_pools(m_resource) {}
 
-void Core::ComponentCluster::load() { 
+ComponentCluster::~ComponentCluster() { if(m_isLoaded) unload(); }
+
+void ComponentCluster::load() { 
 	for_each([](auto& refList, auto& pool){
 		refList.push(&pool.m_data);
 	}, AppData::getComponentManager().m_refs, m_pools);
 	m_isLoaded = true;
 }
 
-void Core::ComponentCluster::unload() {
+void ComponentCluster::unload() {
 	for_each([](auto& refList, auto& pool){
 		refList.pop(&pool.m_data);
 	}, AppData::getComponentManager().m_refs, m_pools);
 	m_isLoaded = false;
+}
+
+
+ComponentContainerTuple<ComponentPool>& ComponentCluster::getPools() {
+	return m_pools;
+}
+
 }

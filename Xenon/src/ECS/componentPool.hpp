@@ -23,21 +23,33 @@ public:
 	ComponentPool &operator=(ComponentPool &&) = delete;
 	ComponentPool &operator=(const ComponentPool &) = delete;
 
-	[[nodiscard]] size_t size() { return m_data.size(); }
+	[[nodiscard]] size_t size() const { return m_data.size(); }
 
 	///////////////////////////////////////
 	/// Entity interface
 	///////////////////////////////////////
 	
-	[[nodiscard]] bool hasComponent(Entity ent) { return m_ptrLookupTable.contains(ent); }
+	[[nodiscard]] bool hasComponent(Entity ent) const { 
+		return m_ptrLookupTable.contains(ent); 
+	}
 
-	[[nodiscard]] T& getComponent(Entity ent) { return *m_ptrLookupTable.at(ent); }
-	[[nodiscard]] T* getComponentPtr(Entity ent) { return m_ptrLookupTable.at(ent); }
+	[[nodiscard]] T& getComponent(Entity ent) const { 
+		if(!m_ptrLookupTable.contains(ent)) [[unlikely]] {
+			throw std::runtime_error("Access to component from entity that doesn't have it");
+		}
+		return *m_ptrLookupTable.at(ent); 
+	}
+	[[nodiscard]] T* getComponentPtr(Entity ent) const { 
+		if(!m_ptrLookupTable.contains(ent)) [[unlikely]] {
+			throw std::runtime_error("Access to component from entity that doesn't have it");
+		}
+		return m_ptrLookupTable.at(ent); 
+	}
 
 	template<typename ...Args>
 	T* emplaceComponent(Entity ent, Args ...args) {
-		if(m_ptrLookupTable.contains(ent)) [[unlikely]] {			// TEST: this
-			*m_ptrLookupTable[ent](std::forward<Args>(args)...);
+		if(m_ptrLookupTable.contains(ent)) [[unlikely]] {
+			throw std::runtime_error("Emplace already existing component");
 		}
 		T* ptr = m_data.emplace_back(std::forward<Args>(args)...);
 		m_ptrLookupTable[ent] = ptr;
@@ -45,13 +57,16 @@ public:
 		return ptr;
 	}
 	void addComponent(Entity ent) { 
+		if(m_ptrLookupTable.contains(ent)) [[unlikely]] {
+			throw std::runtime_error("Add already existing component");
+		}
 		T* ptr = m_data.emplace_back(); 
 		m_ptrLookupTable[ent] = ptr;
 		ptr->m_owner = ent;
 	}
 	void addComponent(Entity ent, const T& data) {
 		if(m_ptrLookupTable.contains(ent)) [[unlikely]] {
-			*m_ptrLookupTable[ent](data);
+			throw std::runtime_error("Add already existing component");
 		}
 		T* ptr = m_data.emplace_back(data); 
 		m_ptrLookupTable[ent] = ptr;
@@ -59,7 +74,7 @@ public:
 	}
 	void addComponent(Entity ent,T&& data) { 
 		if(m_ptrLookupTable.contains(ent)) [[unlikely]] {
-			*m_ptrLookupTable[ent](data);
+			throw std::runtime_error("Add already existing component");
 		}
 		T* ptr = m_data.emplace_back(std::move(data)); 
 		m_ptrLookupTable[ent] = ptr;
@@ -67,6 +82,24 @@ public:
 	}
 
 	void removeComponent(Entity ent) {
+		if(!m_ptrLookupTable.contains(ent)) {
+			throw std::runtime_error("Remove component from entity that doesn't have it");
+		}
+		T* ptr = m_ptrLookupTable.at(ent);
+		T* ptrLast = &m_data.back();
+		if(ptrLast != ptr) {
+			Entity entLast = ptrLast->m_owner;
+			*ptr = std::move(*ptrLast);
+			m_ptrLookupTable[entLast] = ptr;
+			ptr->m_owner = ent;
+		}
+		m_ptrLookupTable.erase(ent);
+		ptrLast->p_atDelete();
+		m_data.pop_back();
+	}
+
+	void removeComponentOptional(Entity ent) {
+		if(!m_ptrLookupTable.contains(ent)) return;
 		T* ptr = m_ptrLookupTable.at(ent);
 		T* ptrLast = &m_data.back();
 		if(ptrLast != ptr) {
