@@ -1,4 +1,5 @@
 #include "scene.hpp"
+#include "ECS/containerTuple.hpp"
 #include "devTools/logger_core.hpp"
 
 namespace Core {
@@ -19,6 +20,8 @@ Scene::Scene(uint64_t buildIndex)
 	auto& eTransform = getComponent<Transform>(e);
 	eTransform.x = 7;
 	XN_LOG_DEB("entity position: {0}, {0}, {0}", eTransform.x, eTransform.y, eTransform.z);
+
+	deleteEntity(e);
 };
 
 Scene::~Scene() {
@@ -27,15 +30,18 @@ Scene::~Scene() {
 }
 
 Entity Scene::createEntity() {
+	XN_LOG_TRC("Scene {0}: creating entity {0}", p_debugIndex(), static_cast<Entity>(s_entityID));
 	if(s_entityID == 0) [[unlikely]]
 		s_entityID = s_entityStartID;
 	addComponent<Transform>(s_entityID);
-	XN_LOG_TRC("Scene {0}: creating entity {0}", p_debugIndex(), static_cast<Entity>(s_entityID));
 	return s_entityID--;
 }
 
 void Scene::deleteEntity(Entity entity) {
 	XN_LOG_TRC("Scene {0}: Deleting entity {0}", p_debugIndex(), entity);
+	for_each([entity](auto& pool){
+		pool.removeComponentOptional(entity);
+	}, m_components.getPools());
 }
 
 uint64_t Scene::getBuildIndex() const {

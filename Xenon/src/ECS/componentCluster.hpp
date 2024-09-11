@@ -24,6 +24,8 @@ public:
 		return m_pools.get<Component>();
 	}
 
+	[[nodiscard]] ComponentContainerTuple<ComponentPool>& getPools();
+
 private:
 	bool m_isLoaded = false;
 	std::pmr::memory_resource* m_resource;
