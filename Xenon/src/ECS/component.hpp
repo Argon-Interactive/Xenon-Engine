@@ -41,8 +41,8 @@ public:
 		return *this;
 	}
 
-private:
 	Entity m_owner = 0;
+private:
 	Reference<T>* m_listHead = nullptr;
 
 	void p_atDelete() {

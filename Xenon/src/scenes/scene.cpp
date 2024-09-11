@@ -1,5 +1,6 @@
 #include "scene.hpp"
 #include "ECS/containerTuple.hpp"
+#include "System/Components/Parenting.hpp"
 #include "devTools/logger_core.hpp"
 
 namespace Core {
@@ -19,9 +20,7 @@ Scene::Scene(uint64_t buildIndex)
 	auto e = createEntity();
 	auto& eTransform = getComponent<Transform>(e);
 	eTransform.x = 7;
-	XN_LOG_DEB("entity position: {0}, {0}, {0}", eTransform.x, eTransform.y, eTransform.z);
-
-	deleteEntity(e);
+	XN_LOG_DEB("entity position: {0}, {0}", eTransform.x, eTransform.y);
 };
 
 Scene::~Scene() {

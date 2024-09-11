@@ -6,8 +6,11 @@
 namespace Core {
 
 COMPONENT(Transform) {
-public:
-	double x, y, z;
+	double x = 0;
+	double y = 0;
+	double angle = 0;
+	double xScale = 1;
+	double yScale = 1;
 };
 
 }

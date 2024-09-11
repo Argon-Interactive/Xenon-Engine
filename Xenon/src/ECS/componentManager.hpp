@@ -16,7 +16,7 @@ public:
 
 	template<class Component>
 	[[nodiscard]] ComponentReferenceList<Component>& get() {
-		m_refs.get<Component>();
+		return m_refs.get<Component>();
 	}
 
 private:

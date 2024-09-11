@@ -7,7 +7,6 @@ namespace Core {
 
 template<typename T>
 class Reference {
-	static_assert(is_proper_component<T>());
 public:
 	explicit Reference(T *dep = nullptr) : m_ref(dep) {
 		p_addReference();
@@ -52,6 +51,14 @@ public:
 		else if(m_ref != nullptr)
 			m_ref->m_listHead = this;
 		return *this;
+	}
+
+	[[nodiscard]] T* operator->() {
+		return getPtr();
+	}
+
+	[[nodiscard]] bool isNull() {
+		return m_ref == nullptr;
 	}
 
 	[[nodiscard]] T& get() const {

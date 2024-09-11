@@ -2,6 +2,8 @@
 #include "appData.hpp"
 #include "devTools/logger_core.hpp"
 #include "input/input.hpp"
+#include "System/parenting.hpp"
+
 #include <exception>
 
 namespace Core {
@@ -50,7 +52,8 @@ void Application::render() {
 }
 
 void Application::update([[maybe_unused]] double deltaT) {
-
+	// TEMP: there should propably be a better place to do this
+	updateChildPositions();
 }
 
 void Application::fixedUpdate() {

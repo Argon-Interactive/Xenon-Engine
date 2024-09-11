@@ -5,6 +5,7 @@
 #include "System/Components/TestComp.hpp"
 
 #include "System/Components/Transform.hpp"
+#include "System/Components/Parenting.hpp"
 
 #include "containerTuple.hpp"
 
@@ -15,7 +16,7 @@ using ComponentContainerTuple = ContainerTuple<Container,
 /*------------------------------------------------------------------------------------------------*/
 /*                                     List of all components                                     */
 /*------------------------------------------------------------------------------------------------*/
-	Comp, FComp, Transform
+	Comp, FComp, Transform, Child, Parent
 >;
 
 }
