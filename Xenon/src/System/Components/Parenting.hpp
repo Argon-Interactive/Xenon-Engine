@@ -15,7 +15,7 @@ COMPONENT(Child) {
 	double angle = 0;
 	double xScale = 0;
 	double yScale = 0;
-	Reference<Parent> parent;
+	Entity parentID;
 	Reference<Child> next;
 	Reference<Child> prev;
 	Reference<Transform> transform;

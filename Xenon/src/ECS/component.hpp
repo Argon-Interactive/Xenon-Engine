@@ -57,6 +57,7 @@ private:
 
 	friend class Reference<T>;
 	friend class ComponentPool<T>;
+	friend class Scene;
 };
 
 template<typename T>

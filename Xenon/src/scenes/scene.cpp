@@ -16,11 +16,6 @@ Scene::Scene(uint64_t buildIndex)
 	  m_runtimeCreated(false), m_buildIndex(buildIndex) {
 	m_components.load();
 	XN_LOG_TRC("Scene {0}: Loaded", p_debugIndex());
-
-	auto e = createEntity();
-	auto& eTransform = getComponent<Transform>(e);
-	eTransform.x = 7;
-	XN_LOG_DEB("entity position: {0}, {0}", eTransform.x, eTransform.y);
 };
 
 Scene::~Scene() {
@@ -38,9 +33,72 @@ Entity Scene::createEntity() {
 
 void Scene::deleteEntity(Entity entity) {
 	XN_LOG_TRC("Scene {0}: Deleting entity {0}", p_debugIndex(), entity);
+	if(hasComponent<Child>(entity))
+		detachFromParent(entity);
+	if(hasComponent<Parent>(entity)) {
+		auto* child = &getComponent<Parent>(entity).childList.get();
+		while(child != nullptr) {
+			auto* del = child;
+			child = child->next.getPtr();
+			deleteEntity(del->m_owner);
+		}
+	}
 	for_each([entity](auto& pool){
 		pool.removeComponentOptional(entity);
 	}, m_components.getPools());
+}
+
+Entity Scene::createChild(Entity parent) {
+	auto e = createEntity();
+	makeChildOf(parent, e);
+	return e;
+}
+
+void Scene::makeChildOf(Entity parent, Entity child) {
+	if(hasComponent<Child>(child))
+		detachFromParent(child);
+
+	addComponent<Child>(child);
+	auto& cComp = getComponent<Child>(child);
+	cComp.transform.set(getComponent<Transform>(child));
+	cComp.parentID = parent;
+
+	if(hasComponent<Parent>(parent)) {
+		auto& pComp = getComponent<Parent>(parent);
+		auto& first = pComp.childList.get();
+		auto& last = first.prev.get();
+		first.prev.set(cComp);
+		last.next.set(cComp);
+		cComp.prev.set(last);
+	} else {
+		addComponent<Parent>(parent);
+		auto& pComp = getComponent<Parent>(parent);
+		pComp.childList.set(cComp);
+		pComp.transform.set(getComponent<Transform>(parent));
+		pComp.root = !hasComponent<Child>(parent);
+		cComp.prev.set(cComp);
+	}
+}
+
+void Scene::detachFromParent(Entity child) {
+	auto& cComp = getComponent<Child>(child);
+
+	if(cComp.prev->next.isNull()) {
+		if(cComp.next.isNull()) {
+			removeComponent<Parent>(cComp.parentID);
+		} else {
+			cComp.next->prev.set(cComp.prev.get());
+			getComponent<Parent>(cComp.parentID).childList.set(cComp.next.get());
+		}
+	} else {
+		cComp.prev->next.set(cComp.next.getPtr());
+		if(!cComp.next.isNull())
+			cComp.next->prev.set(cComp.prev.get());
+	}
+
+	if(hasComponent<Parent>(child))
+		getComponent<Parent>(child).root = true;
+	removeComponent<Child>(child);
 }
 
 uint64_t Scene::getBuildIndex() const {

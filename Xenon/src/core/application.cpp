@@ -1,8 +1,12 @@
 #include "application.hpp"
 #include "appData.hpp"
-#include "devTools/logger_core.hpp"
 #include "input/input.hpp"
+
+#include "devTools/logger_core.hpp"
+
+// TEST:
 #include "System/parenting.hpp"
+#include "System/Components/Transform.hpp"
 
 #include <exception>
 
@@ -57,7 +61,25 @@ void Application::update([[maybe_unused]] double deltaT) {
 }
 
 void Application::fixedUpdate() {
+	static Entity e0 = 0;
+	static Entity e1 = 0;
+	auto* scene = AppData::getSceneManager().getActiveScene();
 
+	if(Input::getKeyPress(XN_KEY_1)) {
+		e0 = scene->createEntity();
+	}
+	if(Input::getKeyPress(XN_KEY_2)) {
+		e1 = scene->createChild(e0);
+	}
+	if(Input::getKeyPress(XN_KEY_3)) {
+		scene->getComponent<Transform>(e0).x += 1;
+	}
+	if(Input::getKeyPress(XN_KEY_4)) {
+		scene->deleteEntity(e1);
+	}
+	if(Input::getKeyPress(XN_KEY_5)) {
+		scene->deleteEntity(e0);
+	}
 }
 
 void Application::handleEvents() {

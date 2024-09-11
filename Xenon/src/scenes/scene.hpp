@@ -29,6 +29,10 @@ public:
 	Entity createEntity();
 	void deleteEntity(Entity entity);
 
+	Entity createChild(Entity parent);
+	void makeChildOf(Entity parent, Entity child);
+	void detachFromParent(Entity child);
+
 	template<class Component>
 	[[nodiscard]] bool hasComponent(Entity entity) {
 		return m_components.get<Component>().hasComponent(entity);
