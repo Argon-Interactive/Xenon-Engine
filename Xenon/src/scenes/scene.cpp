@@ -35,13 +35,9 @@ void Scene::deleteEntity(Entity entity) {
 	XN_LOG_TRC("Scene {0}: Deleting entity {0}", p_debugIndex(), entity);
 	if(hasComponent<Child>(entity))
 		detachFromParent(entity);
-	if(hasComponent<Parent>(entity)) {
-		auto* child = &getComponent<Parent>(entity).childList.get();
-		while(child != nullptr) {
-			auto* del = child;
-			child = child->next.getPtr();
-			deleteEntity(del->m_owner);
-		}
+	while(hasComponent<Parent>(entity)) {
+		auto& c = getComponent<Parent>(entity).childList.get();
+		deleteEntity(c.m_owner);
 	}
 	for_each([entity](auto& pool){
 		pool.removeComponentOptional(entity);
@@ -66,28 +62,30 @@ void Scene::makeChildOf(Entity parent, Entity child) {
 	if(hasComponent<Parent>(parent)) {
 		auto& pComp = getComponent<Parent>(parent);
 		auto& first = pComp.childList.get();
-		auto& last = first.prev.get();
 		first.prev.set(cComp);
-		last.next.set(cComp);
-		cComp.prev.set(last);
+		cComp.next.set(first);
+		pComp.childList.set(cComp);
 	} else {
 		addComponent<Parent>(parent);
 		auto& pComp = getComponent<Parent>(parent);
 		pComp.childList.set(cComp);
 		pComp.transform.set(getComponent<Transform>(parent));
 		pComp.root = !hasComponent<Child>(parent);
-		cComp.prev.set(cComp);
+		if(hasComponent<Child>(parent)) {
+			auto& pcComp = getComponent<Child>(parent);
+			pcComp.selfParent.set(pComp);
+		}
 	}
 }
 
 void Scene::detachFromParent(Entity child) {
 	auto& cComp = getComponent<Child>(child);
 
-	if(cComp.prev->next.isNull()) {
+	if(cComp.prev.isNull()) {
 		if(cComp.next.isNull()) {
 			removeComponent<Parent>(cComp.parentID);
 		} else {
-			cComp.next->prev.set(cComp.prev.get());
+			cComp.next->prev.set();
 			getComponent<Parent>(cComp.parentID).childList.set(cComp.next.get());
 		}
 	} else {
@@ -96,8 +94,10 @@ void Scene::detachFromParent(Entity child) {
 			cComp.next->prev.set(cComp.prev.get());
 	}
 
-	if(hasComponent<Parent>(child))
-		getComponent<Parent>(child).root = true;
+	if(hasComponent<Parent>(child)) {
+		auto& p = getComponent<Parent>(child);
+		p.root = true;
+	}
 	removeComponent<Child>(child);
 }
 

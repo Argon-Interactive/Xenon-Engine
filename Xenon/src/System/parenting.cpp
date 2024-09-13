@@ -2,7 +2,6 @@
 #include "core/appData.hpp"
 #include "System/Components/Transform.hpp"
 #include "System/Components/Parenting.hpp"
-#include "devTools/logger_core.hpp"
 
 void updateRecursive(Core::Child& child, Core::Transform& parentTransform) {
 	// TODO: make it actually work as intended
@@ -24,14 +23,5 @@ void Core::updateChildPositions() {
 	for(auto& parent : parents) {
 		if(parent.root)
 			updateRecursive(parent.childList.get(), parent.transform.get());
-	}
-
-	// TEST:
-	auto& transforms = AppData::getComponentManager().get<Transform>();
-
-	XN_LOG_DEB("Check transform validity:");
-	for(auto& transform : transforms) {
-		XN_LOG_DEB("Entity {0}: Transform: x={0}, y={0}, angle={0}, xScale={0}, yScale={0}", 
-			 transform.m_owner, transform.x, transform.y, transform.angle, transform.xScale, transform.yScale);
 	}
 }

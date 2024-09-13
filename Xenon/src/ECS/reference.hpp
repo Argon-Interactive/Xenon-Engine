@@ -103,6 +103,9 @@ private:
 			m_next->m_prev = m_prev;
 		else
 			m_ref->m_listHead = m_prev;
+		m_ref = nullptr;
+		m_next = nullptr;
+		m_prev = nullptr;
 	}
 
 	void p_atCompMove(T* pos) {

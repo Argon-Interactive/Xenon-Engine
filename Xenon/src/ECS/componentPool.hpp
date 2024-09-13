@@ -91,7 +91,6 @@ public:
 			Entity entLast = ptrLast->m_owner;
 			*ptr = std::move(*ptrLast);
 			m_ptrLookupTable[entLast] = ptr;
-			ptr->m_owner = ent;
 		}
 		m_ptrLookupTable.erase(ent);
 		ptrLast->p_atDelete();
@@ -106,7 +105,6 @@ public:
 			Entity entLast = ptrLast->m_owner;
 			*ptr = std::move(*ptrLast);
 			m_ptrLookupTable[entLast] = ptr;
-			ptr->m_owner = ent;
 		}
 		m_ptrLookupTable.erase(ent);
 		ptrLast->p_atDelete();

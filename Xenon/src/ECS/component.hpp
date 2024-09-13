@@ -20,7 +20,8 @@ public:
 
 	Component([[maybe_unused]] const Component& other) {}
 
-	Component(Component&& other) noexcept : m_listHead(other.m_listHead) {
+	Component(Component&& other) noexcept :  m_owner(other.m_owner), m_listHead(other.m_listHead) {
+		other.m_owner = 0;
 		other.m_listHead = nullptr;
 		p_atMove();
 	}
@@ -35,7 +36,9 @@ public:
 	Component &operator=(Component&& other) noexcept {
 		if(this == &other) return *this;
 		p_atDelete();
+		m_owner = other.m_owner;
 		m_listHead = other.m_listHead;
+		other.m_owner = 0;
 		other.m_listHead = nullptr;
 		p_atMove();
 		return *this;

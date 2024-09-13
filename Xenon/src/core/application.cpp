@@ -61,25 +61,51 @@ void Application::update([[maybe_unused]] double deltaT) {
 }
 
 void Application::fixedUpdate() {
-	static Entity e0 = 0;
-	static Entity e1 = 0;
+	static Entity ID = 0;
+	bool pressed = false;
 	auto* scene = AppData::getSceneManager().getActiveScene();
 
+	if(Input::getKeyPress(XN_KEY_UP)) {
+		ID++;
+		XN_LOG_WAR("Currently selected ID: {0}", ID);
+	}
+	if(Input::getKeyPress(XN_KEY_DOWN)) {
+		ID--;
+		XN_LOG_WAR("Currently selected ID: {0}", ID);
+	}
+	if(Input::getKeyPress(XN_KEY_SPACE)) {
+		pressed = true;
+	}
 	if(Input::getKeyPress(XN_KEY_1)) {
-		e0 = scene->createEntity();
+		ID = scene->createEntity();
+		pressed = true;
 	}
 	if(Input::getKeyPress(XN_KEY_2)) {
-		e1 = scene->createChild(e0);
+		ID = scene->createChild(ID);
+		pressed = true;
 	}
 	if(Input::getKeyPress(XN_KEY_3)) {
-		scene->getComponent<Transform>(e0).x += 1;
+		scene->getComponent<Transform>(ID).x += 1;
+		pressed = true;
 	}
 	if(Input::getKeyPress(XN_KEY_4)) {
-		scene->deleteEntity(e1);
+		scene->deleteEntity(ID);
+		pressed = true;
 	}
 	if(Input::getKeyPress(XN_KEY_5)) {
-		scene->deleteEntity(e0);
+		scene->deleteEntity(ID);
+		pressed = true;
 	}
+
+	if(pressed) {
+		auto& transforms = AppData::getComponentManager().get<Transform>();
+		XN_LOG_DEB("Check transform validity:");
+		for(auto& transform : transforms) {
+			XN_LOG_DEB("Entity {0}: Transform: x={0}, y={0}, angle={0}, xScale={0}, yScale={0}", 
+			  transform.m_owner, transform.x, transform.y, transform.angle, transform.xScale, transform.yScale);
+		}
+	}
+
 }
 
 void Application::handleEvents() {
