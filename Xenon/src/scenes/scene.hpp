@@ -34,7 +34,7 @@ public:
 	void detachFromParent(Entity child);
 
 	template<class Component>
-	[[nodiscard]] bool hasComponent(Entity entity) {
+	[[nodiscard]] bool hasComponent(Entity entity) const {
 		return m_components.get<Component>().hasComponent(entity);
 	}
 

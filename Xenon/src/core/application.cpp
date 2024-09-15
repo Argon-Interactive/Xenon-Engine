@@ -4,10 +4,6 @@
 
 #include "devTools/logger_core.hpp"
 
-// TEST:
-#include "System/parenting.hpp"
-#include "System/Components/Transform.hpp"
-
 #include <exception>
 
 namespace Core {
@@ -56,55 +52,10 @@ void Application::render() {
 }
 
 void Application::update([[maybe_unused]] double deltaT) {
-	// TEMP: there should propably be a better place to do this
-	updateChildPositions();
+
 }
 
 void Application::fixedUpdate() {
-	static Entity ID = 0;
-	bool pressed = false;
-	auto* scene = AppData::getSceneManager().getActiveScene();
-
-	if(Input::getKeyPress(XN_KEY_UP)) {
-		ID++;
-		XN_LOG_WAR("Currently selected ID: {0}", ID);
-	}
-	if(Input::getKeyPress(XN_KEY_DOWN)) {
-		ID--;
-		XN_LOG_WAR("Currently selected ID: {0}", ID);
-	}
-	if(Input::getKeyPress(XN_KEY_SPACE)) {
-		pressed = true;
-	}
-	if(Input::getKeyPress(XN_KEY_1)) {
-		ID = scene->createEntity();
-		pressed = true;
-	}
-	if(Input::getKeyPress(XN_KEY_2)) {
-		ID = scene->createChild(ID);
-		pressed = true;
-	}
-	if(Input::getKeyPress(XN_KEY_3)) {
-		scene->getComponent<Transform>(ID).x += 1;
-		pressed = true;
-	}
-	if(Input::getKeyPress(XN_KEY_4)) {
-		scene->deleteEntity(ID);
-		pressed = true;
-	}
-	if(Input::getKeyPress(XN_KEY_5)) {
-		scene->deleteEntity(ID);
-		pressed = true;
-	}
-
-	if(pressed) {
-		auto& transforms = AppData::getComponentManager().get<Transform>();
-		XN_LOG_DEB("Check transform validity:");
-		for(auto& transform : transforms) {
-			XN_LOG_DEB("Entity {0}: Transform: x={0}, y={0}, angle={0}, xScale={0}, yScale={0}", 
-			  transform.m_owner, transform.x, transform.y, transform.angle, transform.xScale, transform.yScale);
-		}
-	}
 
 }
 

@@ -24,6 +24,11 @@ public:
 		return m_pools.get<Component>();
 	}
 
+	template<class Component>
+	[[nodiscard]] const ComponentPool<Component>& get() const {
+		return m_pools.get<Component>();
+	}
+
 	[[nodiscard]] ComponentContainerTuple<ComponentPool>& getPools();
 
 private:

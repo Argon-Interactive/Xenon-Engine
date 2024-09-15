@@ -67,7 +67,7 @@ public:
 		return *this;
 	}
 
-	[[nodiscard]] bool isNull() {
+	[[nodiscard]] bool isNull() const {
 		return m_ref == nullptr;
 	}
 
