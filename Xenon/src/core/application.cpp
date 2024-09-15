@@ -13,7 +13,7 @@ Application::Application(const Xenon::AppConfig& config) {
 	XN_LOG_TRC("Application: created");
 	std::vector<std::future<void>> test;
 	for (int i = 0; i < 200; i++) {
-		test.push_back(al::async(al::launch::async, []() { std::this_thread::sleep_for(std::chrono::minutes(10)); }));
+		test.push_back(al::async(al::launch::pooled, []() { std::this_thread::sleep_for(std::chrono::seconds(1)); }));
 	}
 }
 

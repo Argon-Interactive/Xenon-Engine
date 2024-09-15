@@ -3,7 +3,7 @@
 al::ThreadPool::ThreadPool() : m_stop(false) {
 	m_workers.reserve(s_POOL_SIZE);
 	for (size_t i = 0; i < s_POOL_SIZE; ++i) {
-		m_workers.emplace_back([this] {
+		m_workers.emplace_back([this, i] {
 			while (true) {
 				std::function<void()> task;
 				std::unique_lock<std::mutex> lock(this->m_mutex);
@@ -21,7 +21,7 @@ al::ThreadPool::ThreadPool() : m_stop(false) {
 al::ThreadPool::~ThreadPool() {
 	for (;;) {
 		const std::unique_lock<std::mutex> lock(m_mutex);
-		if (m_tasks.empty()) exit;
+		if (m_tasks.empty()) break;
 	}
 	std::unique_lock<std::mutex> lock(m_mutex);
 	m_stop = true;
