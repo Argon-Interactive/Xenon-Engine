@@ -31,13 +31,13 @@ public:
 			m_ref->m_listHead = this;
 	}
 
-	Reference &operator=(const Reference& other) {
+	Reference& operator=(const Reference& other) {
 		if(this == &other) return *this;
 		set(other.m_ref);
 		return *this;
 	}
 
-	Reference &operator=(Reference&& other) noexcept {
+	Reference& operator=(Reference&& other) noexcept {
 		if(this == &other) return *this;
 		p_removeReference();
 		m_ref = other.m_ref;
@@ -57,6 +57,16 @@ public:
 		return getPtr();
 	}
 
+	Reference& operator=(T& comp) {
+		set(comp);
+		return *this;
+	}
+
+	Reference& operator=(T* comp) {
+		set(comp);
+		return *this;
+	}
+
 	[[nodiscard]] bool isNull() {
 		return m_ref == nullptr;
 	}
@@ -69,7 +79,11 @@ public:
 		return static_cast<T*>(m_ref);
 	}
 
-	void set(T* dep = nullptr) {
+	void reset() {
+		p_removeReference();
+	}
+
+	void set(T* dep) {
 		p_removeReference();
 		m_ref = dep;
 		p_addReference();

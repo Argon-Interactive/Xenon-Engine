@@ -56,29 +56,32 @@ public:
 		ptr->m_owner = ent;
 		return ptr;
 	}
-	void addComponent(Entity ent) { 
+	T* addComponent(Entity ent) { 
 		if(m_ptrLookupTable.contains(ent)) [[unlikely]] {
 			throw std::runtime_error("Add already existing component");
 		}
 		T* ptr = m_data.emplace_back(); 
 		m_ptrLookupTable[ent] = ptr;
 		ptr->m_owner = ent;
+		return ptr;
 	}
-	void addComponent(Entity ent, const T& data) {
+	T* addComponent(Entity ent, const T& data) {
 		if(m_ptrLookupTable.contains(ent)) [[unlikely]] {
 			throw std::runtime_error("Add already existing component");
 		}
 		T* ptr = m_data.emplace_back(data); 
 		m_ptrLookupTable[ent] = ptr;
 		ptr->m_owner = ent;
+		return ptr;
 	}
-	void addComponent(Entity ent,T&& data) { 
+	T* addComponent(Entity ent,T&& data) { 
 		if(m_ptrLookupTable.contains(ent)) [[unlikely]] {
 			throw std::runtime_error("Add already existing component");
 		}
 		T* ptr = m_data.emplace_back(std::move(data)); 
 		m_ptrLookupTable[ent] = ptr;
 		ptr->m_owner = ent;
+		return ptr;
 	}
 
 	void removeComponent(Entity ent) {

@@ -44,20 +44,20 @@ public:
 	}
 
 	template<class Component>
-	void addComponent(Entity entity) {
-		m_components.get<Component>().addComponent(entity);
+	Component& addComponent(Entity entity) {
+		return *m_components.get<Component>().addComponent(entity);
 	}
 	template<class Component>
-	void addComponent(Entity entity, const Component& comp) {
-		m_components.get<Component>().addComponent(entity, comp);
+	Component& addComponent(Entity entity, const Component& comp) {
+		return *m_components.get<Component>().addComponent(entity, comp);
 	}
 	template<class Component>
-	void addComponent(Entity entity, Component&& comp) {
-		m_components.get<Component>().addComponent(entity, comp);
+	Component& addComponent(Entity entity, Component&& comp) {
+		return *m_components.get<Component>().addComponent(entity, comp);
 	}
 	template<class Component, typename... Args>
-	void emplaceComponent(Entity entity, Args... args) {
-		m_components.get<Component>().emplaceComponent(entity, std::forward<Args>(args)...);
+	Component& emplaceComponent(Entity entity, Args... args) {
+		return *m_components.get<Component>().emplaceComponent(entity, std::forward<Args>(args)...);
 	}
 
 	template<class Component>

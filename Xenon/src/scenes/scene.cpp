@@ -35,10 +35,10 @@ void Scene::deleteEntity(Entity entity) {
 	XN_LOG_TRC("Scene {0}: Deleting entity {0}", p_debugIndex(), entity);
 	if(hasComponent<Child>(entity))
 		detachFromParent(entity);
-	while(hasComponent<Parent>(entity)) {
-		auto& c = getComponent<Parent>(entity).childList.get();
-		deleteEntity(c.m_owner);
-	}
+
+	while(hasComponent<Parent>(entity))
+		deleteEntity(getComponent<Parent>(entity).childList->m_owner);
+
 	for_each([entity](auto& pool){
 		pool.removeComponentOptional(entity);
 	}, m_components.getPools());
@@ -54,26 +54,23 @@ void Scene::makeChildOf(Entity parent, Entity child) {
 	if(hasComponent<Child>(child))
 		detachFromParent(child);
 
-	addComponent<Child>(child);
-	auto& cComp = getComponent<Child>(child);
-	cComp.transform.set(getComponent<Transform>(child));
+	auto& cComp = addComponent<Child>(child);
+	cComp.transform = getComponent<Transform>(child);
 	cComp.parentID = parent;
 
 	if(hasComponent<Parent>(parent)) {
 		auto& pComp = getComponent<Parent>(parent);
 		auto& first = pComp.childList.get();
-		first.prev.set(cComp);
-		cComp.next.set(first);
-		pComp.childList.set(cComp);
+		first.prev = cComp;
+		cComp.next = first;
+		pComp.childList = cComp;
 	} else {
-		addComponent<Parent>(parent);
-		auto& pComp = getComponent<Parent>(parent);
-		pComp.childList.set(cComp);
-		pComp.transform.set(getComponent<Transform>(parent));
+		auto& pComp = addComponent<Parent>(parent);
+		pComp.childList = cComp;
+		pComp.transform = getComponent<Transform>(parent);
 		pComp.root = !hasComponent<Child>(parent);
-		if(hasComponent<Child>(parent)) {
-			auto& pcComp = getComponent<Child>(parent);
-			pcComp.selfParent.set(pComp);
+		if(!pComp.root) {
+			getComponent<Child>(parent).selfParent = pComp;
 		}
 	}
 }
@@ -85,19 +82,19 @@ void Scene::detachFromParent(Entity child) {
 		if(cComp.next.isNull()) {
 			removeComponent<Parent>(cComp.parentID);
 		} else {
-			cComp.next->prev.set();
-			getComponent<Parent>(cComp.parentID).childList.set(cComp.next.get());
+			cComp.next->prev.reset();
+			getComponent<Parent>(cComp.parentID).childList = cComp.next;
 		}
 	} else {
-		cComp.prev->next.set(cComp.next.getPtr());
-		if(!cComp.next.isNull())
-			cComp.next->prev.set(cComp.prev.get());
+		cComp.prev->next = cComp.next;
+		if(!cComp.next.isNull()) {
+			cComp.next->prev = cComp.prev;
+		}
 	}
 
-	if(hasComponent<Parent>(child)) {
-		auto& p = getComponent<Parent>(child);
-		p.root = true;
-	}
+	if(hasComponent<Parent>(child))
+		getComponent<Parent>(child).root = true;
+
 	removeComponent<Child>(child);
 }
 
