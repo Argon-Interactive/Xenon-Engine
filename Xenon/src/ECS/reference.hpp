@@ -53,7 +53,7 @@ public:
 		return *this;
 	}
 
-	[[nodiscard]] T* operator->() {
+	[[nodiscard]] T* operator->() const {
 		return getPtr();
 	}
 

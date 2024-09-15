@@ -39,7 +39,7 @@ public:
 	}
 
 	template<class Component>
-	[[nodiscard]] Component& getComponent(Entity entity) {
+	[[nodiscard]] Component& getComponent(Entity entity) const {
 		return m_components.get<Component>().getComponent(entity);
 	}
 

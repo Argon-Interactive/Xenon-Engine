@@ -29,17 +29,25 @@ This class represents a game scene which holds it's components via ComponentClus
   - Parameters:  
     - entity - Entity that owns required component of type T.
   - Return value: reference to this entity's component T.
-- `void addComponent<T>(Entity ent)`
+- `T& addComponent<T>(Entity ent)`
   - Parameters:  
     - ent - Entity that will be added component T.
-- `void addComponent<T>(Entity entity, const T& data)`
+  - Return value: newly created component T.
+- `T& addComponent<T>(Entity entity, const T& data)`
   - Parameters:  
     - entity - Entity that will own the new component.
     - data - The component T that will be taken copy of.
-- `void addComponent<T>(Entity entity, T&& data)`
+  - Return value: newly created component T.
+- `T& addComponent<T>(Entity entity, T&& data)`
   - Parameters: 
     - entity - Entity that will own the new component.
     - data - Component T that will be moved to the entity.
+  - Return value: newly created component T.
+- `T& emplaceComponent<T>(Entity entity, Args... args)`
+  - Parameters: 
+    - entity - Entity that will own the new component.
+    - ...args - Constructor arguments for type T.
+  - Return value: newly created component T.
 - `void removeComponent<T>(Entity ent)`
   - Parameters:  
     - ent - Entity whose component T will be removed.

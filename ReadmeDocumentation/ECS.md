@@ -62,20 +62,27 @@ Template parameter T has to be a proper component implementation:
     - ent - Entity that will own the new component.
     - args - constructor arguments of the component.
   - Return value: returns a pointer to created component.
-- `void addComponent(Entity ent)`
+- `T* addComponent(Entity ent)`
   - Parameters:  
     - ent - Entity that will own the new component.
-- `void addComponent(Entity ent, const T& data)`
+  - Return value: returns a pointer to created component.
+- `T* addComponent(Entity ent, const T& data)`
   - Parameters:  
     - ent - Entity that will own the new component.
     - data - The component that will be taken copy of.
-- `void addComponent(Entity ent, T&& data)`
+  - Return value: returns a pointer to created component.
+- `T* addComponent(Entity ent, T&& data)`
   - Parameters: 
     - ent - Entity that will own the new component.
     - data - Component that will be moved to the entity.
+  - Return value: returns a pointer to created component.
 - `void removeComponent(Entity ent)`
   - Parameters:  
     - ent - Entity whose component will be removed.
+- `void removeComponentOptional(Entity ent)`
+  - Parameters:  
+    - ent - Entity whose component will be removed.
+  - Note: this method simply returns if the entity does not have said component.
 - `void purge()`
   - Description: It wipes the entire memory of the ComponentPool.
 ### References
@@ -186,12 +193,26 @@ For referencing game assets use (NOT IMPLEMENTED YET).
   - Note: this method might try do dereference nullptr if the reference got destroyed, reset or was simply not set.
 - `T* getPtr()`
   - Return value: a pointer to the referenced component.
-- `void set(T* dep)`
-  - Parameters:
-    - dep - pointer to component to set the reference to
 - `void set(T& dep)`
   - Parameters:
-    - dep - component to set the reference to
+    - dep - component to set the reference to.
+- `void set(T* dep)`
+  - Parameters:
+    - dep - pointer to component to set the reference to.
+- `void reset()`
+  - Description: resets the reference so that it points to nullptr.
+- `bool isNull()`
+  - Return value: return whether the reference is invalid (set to nullptr).
+- `T* operator ->`
+  - Description: allows for pointer-like reference usage.
+- `Reference& operator = (T& comp)`
+  - Parameters:
+    - comp - component to set the reference to.
+  - Description: more convenient alternative to set() method.
+- `Reference& operator = (T* comp)`
+  - Parameters:
+    - comp - component pointer to set the reference to.
+  - Description: more convenient alternative to set() method.
 ### References
 - [Component](#component)
 

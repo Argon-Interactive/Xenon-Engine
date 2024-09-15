@@ -19,6 +19,11 @@ public:
 		return m_refs.get<Component>();
 	}
 
+	template<class Component>
+	[[nodiscard]] const ComponentReferenceList<Component>& get() const {
+		return m_refs.get<Component>();
+	}
+
 private:
 	ComponentManager();
 
