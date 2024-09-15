@@ -114,7 +114,7 @@ Scene::SceneMemory::SceneMemory(const std::string& name)
 	  mem1(&mem2),
 	  mem0(name, &mem1) {}
 #else 
-Scene::SceneMemory::SceneMemory(const std::string& name)
+Scene::SceneMemory::SceneMemory([[maybe_unused]] const std::string& name)
 	: mem0(std::pmr::get_default_resource()) {}
 #endif //!__DEBUG__
 
