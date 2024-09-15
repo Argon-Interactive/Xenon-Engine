@@ -71,7 +71,7 @@ void* ChunkedResource::allocFromPool() {
 
 void ChunkedResource::addToPool(std::byte* chunkPtr) {
 	auto blockIndex = findBlock(chunkPtr);
-	FreeSpace chunk(chunkPtr, 1, blockIndex);
+	const FreeSpace chunk(chunkPtr, 1, blockIndex);
 	auto it = m_freeChunks.lower_bound(chunk);
 
 	bool mergedPrev = false;
