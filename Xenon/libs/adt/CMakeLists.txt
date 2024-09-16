@@ -6,14 +6,15 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 project(
     ArgonDevTools
     VERSION 1.0.0
-    DESCRIPTION "Tools used for assisting development from Argon Interactive"
-    # HOMEPAGE_URL "jebacdziekana.pl"
+    DESCRIPTION "Tools used for development in Argon Interactive"
     LANGUAGES CXX C
 )
 
 set(SRC 
     logger.cpp
     logger.hpp
+    async.cpp
+    async.hpp
 )
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)

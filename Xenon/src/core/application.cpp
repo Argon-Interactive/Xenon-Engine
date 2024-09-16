@@ -5,6 +5,7 @@
 #include "devTools/logger_core.hpp"
 
 #include <exception>
+#include "async.hpp"
 
 namespace Core {
 
@@ -12,6 +13,10 @@ Application::Application(const Xenon::AppConfig& config) {
 	XN_LOG_TO_FILE("Xenon-log");
 	Core::AppData::init([this](auto && a) { pushEvent(std::forward<decltype(a)>(a)); }, config);
 	XN_LOG_TRC("Application: created");
+	std::vector<std::future<void>> test;
+	for (int i = 0; i < 200; i++) {
+		test.push_back(al::async(al::launch::pooled, []() { std::this_thread::sleep_for(std::chrono::seconds(1)); }));
+	}
 }
 
 Application::~Application() {
