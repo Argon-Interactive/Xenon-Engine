@@ -2,7 +2,7 @@
 #define LOGGER_CLIENT_HPP
 
 #define _LOGGER_CLIENT_
-#include"logger.hpp"
+#include "logger.hpp"
 
 namespace XNTools {
 	Logger& getLogger();

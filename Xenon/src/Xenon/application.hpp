@@ -2,7 +2,7 @@
 #define _XENON_XENON_APPLICATION_
 
 #include "api.h"
-#include "Xenon/appConfig.hpp"
+#include "appConfig.hpp"
 
 extern int main(int argc, char** argv);
 

@@ -4,6 +4,5 @@
 #include "Xenon/entryPoint.hpp"
 #include "Xenon/logger_client.hpp" 
 #include "Xenon/scene.hpp" 
-// #include "core/input/input.hpp" // probably a bad idea
 
 #endif // !_XENON_XENON_H_

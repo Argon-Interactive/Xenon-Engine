@@ -1,7 +1,7 @@
 #ifndef _XENON_XENON_ENTRYPOINT_
 #define _XENON_XENON_ENTRYPOINT_
 
-#include "Xenon/appConfig.hpp"
+#include "appConfig.hpp"
 #include "application.hpp"
 #include "logger.hpp"
 
