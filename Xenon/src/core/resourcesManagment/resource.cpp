@@ -2,6 +2,7 @@
 
 #include "devTools/logger_core.hpp"
 #include "core/appData.hpp"
+#include "async.hpp"
 
 #include <fstream>
 
@@ -104,7 +105,7 @@ std::future<void> Core::ResourceMetadata::p_asyncLoad(const Core::ResourceHandle
 		m_type = handle.type;
 	}
 	m_flag.setFlag(1); //TEMP: 
-	return std::async(std::launch::async, [this, handle, path, decryptionFunc]() {
+	return al::async(al::launch::pooled, [this, handle, path, decryptionFunc]() {
 		std::ifstream file(*path, std::ios::binary);
 		if(!file.is_open()) {XN_LOG_ERR("Resourcepack failed to open."); return;}
 		file.seekg(handle.offset);

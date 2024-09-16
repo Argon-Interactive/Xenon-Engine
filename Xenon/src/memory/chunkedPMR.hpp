@@ -1,5 +1,5 @@
-#ifndef _XENON_ECS_CHUNKEDPMR_
-#define _XENON_ECS_CHUNKEDPMR_
+#ifndef _XENON_MEMORY_CHUNKEDPMR_
+#define _XENON_MEMORY_CHUNKEDPMR_
 
 #include <list>
 #include <memory_resource>
@@ -28,4 +28,4 @@ private:
 };
 }
 
-#endif // !_XENON_ECS_CHUNKEDPMR_
+#endif // !_XENON_MEMORY_CHUNKEDPMR_

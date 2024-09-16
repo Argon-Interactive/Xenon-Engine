@@ -46,11 +46,9 @@ endif()
 add_compile_definitions(GLM_FORCE_CXX11)
 add_compile_definitions(GLM_FORCE_SILENT_WARNINGS)
 
-include_directories(Libs/ArgonDevTools)
+include_directories(Xenon/libs/all)
 include_directories(Xenon/include)
 include_directories(Xenon/vendor/all)
-
-add_subdirectory(Xenon/vendor)
 
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ProjectOptions.cmake)
 include(ProjectOptions.cmake)
@@ -63,5 +61,6 @@ if(${xenon_BUILD_TESTS})
 else()
 	add_subdirectory(Sandbox)
 endif()
+
 add_subdirectory(Xenon)
-add_subdirectory(Xenon/Libs/ArgonDevTools)
+add_subdirectory(Sandbox)

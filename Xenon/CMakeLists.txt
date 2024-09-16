@@ -6,3 +6,5 @@ include_directories(vendor/glm)
 include_directories(vendor/stb)
 
 add_subdirectory(src)
+add_subdirectory(libs)
+add_subdirectory(vendor)
