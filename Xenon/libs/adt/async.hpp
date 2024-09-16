@@ -1,7 +1,6 @@
 #ifndef _ARGON_DEVTOOLS_ASYNC_
 #define _ARGON_DEVTOOLS_ASYNC_
 
-#include <iostream>
 #include <type_traits>
 #include <future>
 #include <vector>
@@ -54,6 +53,9 @@ template<typename F, typename ...Args>
 auto async(const launch& launchPolicy, F&& f, Args&&... args) -> std::future<typename std::invoke_result<F, Args...>::type> {
 	using return_type = typename std::invoke_result<F, Args...>::type;
 		switch (launchPolicy) {
+		default:
+			throw std::invalid_argument("al::async - invalid launch policy");
+		break;
 		case al::launch::async:
 			return std::async(std::launch::async, std::forward<F>(f), std::forward<Args>(args)...);
 		case al::launch::deferred:
