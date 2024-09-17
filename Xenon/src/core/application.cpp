@@ -4,7 +4,6 @@
 
 #include "devTools/logger_core.hpp"
 
-
 namespace Core {
 
 Application::Application(const Xenon::AppConfig& config) {

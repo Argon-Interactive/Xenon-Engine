@@ -46,11 +46,6 @@ endif()
 add_compile_definitions(GLM_FORCE_CXX11)
 add_compile_definitions(GLM_FORCE_SILENT_WARNINGS)
 
-include_directories(Xenon/src/all)
-include_directories(Xenon/libs/all)
-include_directories(Xenon/vendor/all)
-include_directories(Xenon/include)
-add_subdirectory(Xenon)
 
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ProjectOptions.cmake)
 include(ProjectOptions.cmake)
@@ -58,8 +53,15 @@ xenon_options_setup()
 xenon_apply_options()
 target_compile_features(xenon_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
 
+include_directories(Xenon/include)
+include_directories(Xenon/src/all)
+include_directories(Xenon/libs/all)
+include_directories(Xenon/vendor/all)
+
 if(${xenon_BUILD_TESTS})
 	add_subdirectory(Tests)
 else()
 	add_subdirectory(Sandbox)
 endif()
+
+add_subdirectory(Xenon)

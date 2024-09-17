@@ -1,11 +1,12 @@
 #include <functional>
-#include<glad.h> //this must be included before window.h
-#include<stb_image.h>
-#include<numeric>
+#include <glad.h> //this must be included before window.hpp
+#include <stb_image.h>
+#include <numeric>
 #include <utility>
-#include"window.hpp"
+#include "window.hpp"
 #include "devTools/logger_core.hpp"
 #include "glfw3.h"
+#include "devTools/profiler.hpp"
 
 Core::Window::Window(uint32_t width, uint32_t height, std::string title)
 	:m_ID(nullptr), m_isVSync(true), m_isBorderless(false), m_title(std::move(title)), m_monitor(glfwGetPrimaryMonitor())
