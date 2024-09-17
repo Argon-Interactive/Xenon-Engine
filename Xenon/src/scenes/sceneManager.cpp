@@ -38,7 +38,12 @@ void SceneManager::purgeAsync() {
 	const std::lock_guard<std::mutex> lockf(m_futuresMutex);
 	if(m_closing) return;
 	m_activeSceneIndex = 0;
-	m_futures.emplace_back(al::async(al::launch::pooled, [toDelete = std::move(m_scenes)]() mutable {
+	m_futures.push_back(al::async(al::launch::pooled, [this]() {
+		std::vector<std::unique_ptr<Scene>> toDelete;
+		{
+			const std::lock_guard<std::mutex> l(m_mutex);
+			toDelete = std::move(m_scenes);
+		}
 		XN_LOG_TRC("SceneManager: Purging scenes asynchronously");
 		toDelete.clear();
 		XN_LOG_TRC("SceneManager: Purging scenes complete");
