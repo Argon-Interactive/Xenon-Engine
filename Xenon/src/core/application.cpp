@@ -1,15 +1,24 @@
 #include "application.hpp"
 #include "appData.hpp"
-#include "input/input.hpp"
-
+#include "devTools/profiler.hpp"
 #include "devTools/logger_core.hpp"
+#include "input/input.hpp"
 
 namespace Core {
 
+int test(int a) {
+	std::this_thread::sleep_for(std::chrono::milliseconds(3));
+	return a * a;
+}
+
 Application::Application(const Xenon::AppConfig& config) {
 	XN_LOG_TO_FILE("Xenon-log");
-	Core::AppData::init([this](auto && a) { pushEvent(std::forward<decltype(a)>(a)); }, config);
+	XN_PROFILE(Core::AppData::init([this](auto && a) { pushEvent(std::forward<decltype(a)>(a)); }, config), "inits");
+	int a = 12;
+	a = XN_PROFILE(test(12), "test");
 	XN_LOG_TRC("Application: created");
+	XN_LOG_DEB("TEST!!!: {0}", a);
+	XNTools::Profiler::getInstance().log();
 }
 
 Application::~Application() {

@@ -1,4 +1,8 @@
 file(GLOB_RECURSE XENON_SRC "*.cpp" "*.hpp" "*.h")
+message(STATUS "Files added by GLOB: ")
+foreach(file ${XENON_SRC})
+	message(STATUS "${file}")
+endforeach()
 
 if(xenon_BUILD_TESTS)
 	set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Test")

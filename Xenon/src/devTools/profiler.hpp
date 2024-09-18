@@ -1,11 +1,16 @@
 #ifndef _XENON_DEVTOOLS_PROFILER_
 #define _XENON_DEVTOOLS_PROFILER_
 
-#include "devTools/logger_core.hpp"
 #include <chrono>
 #include <map>
 
-#define XN_PROFILE(func, category) XNTools::Profiler::getInstance().profile(category, [&](){ return func; })
+#ifdef __DEBUG__
+	#define XN_PROFILE(func, category) XNTools::Profiler::getInstance().profile(category, [&](){ return func; })
+	#define XN_PROFILER_LOG XNTools::Profiler::getInstance().log()
+#elif 
+	#define XN_PROFILE(func, category) func
+	#define XN_PROFILER_LOG
+#endif
 
 namespace XNTools {
 
@@ -35,21 +40,14 @@ public:
 		auto end = std::chrono::high_resolution_clock::now();
 		m_timesMap[category] = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count());
 	}
+	[[nodiscard]] static Profiler& getInstance();
+	void log();
 
-	inline void log() {
-		for(auto& entry : m_timesMap) {
-			XN_LOG_DEB("{q} - {0}", entry.first, entry.second);
-		}
-	}
-
-	[[nodiscard]] static inline Profiler& getInstance() {
-		static Profiler prof;
-		return prof;
-	}
 private:
-	Profiler();
+	Profiler() = default;
 	std::map<std::string, uint64_t> m_timesMap;
 };
+
 }
 
 #endif // !_XENON_DEVTOOLS_PROFILER_
